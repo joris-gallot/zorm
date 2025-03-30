@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userQueryBuilder } from '@/orm/queries'
+import { userQueryBuilder } from '@/queries'
 import { computed } from 'vue'
 
 const user = computed(() => userQueryBuilder.find(1, { with: ['posts'] }))
