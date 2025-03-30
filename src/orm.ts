@@ -1,6 +1,5 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
 import type { Simplify } from './types'
-import { ref } from 'vue'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }, any, any> {}
 
@@ -29,7 +28,7 @@ interface Entity<S extends ZodSchemaWithId> {
 }
 
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>> {
-  find: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>>
+  findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>>
   save: (entities: TR[]) => void
 }
 
@@ -57,6 +56,10 @@ interface HasOneOptions {
 interface HasManyOptions {
   reference: Field
   field: Field
+}
+
+function isRelationKind<K extends RelationKind>(relation: Relation, kind: K): relation is Relation<K, Entity<any>> {
+  return relation.kind === kind
 }
 
 function hasOne<E extends Entity<any>>(entity: E, { reference, field }: HasOneOptions): Relation<'hasOne', E> {
@@ -88,6 +91,8 @@ interface RelationsOptions {
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
 
+const db: Record<string, Record<number | string, any>> = {}
+
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
     acc[key as keyof S['shape']] = {
@@ -97,40 +102,91 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
     return acc
   }, {} as ShapeToFields<S>)
 
+  db[name] = {}
+
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
 
-export function defineQueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR extends T & Simplify<Partial<WithRelations<R>>>>(
+export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR extends T & Simplify<Partial<WithRelations<R>>>>(
   entity: E,
   relationsFn: Relations<R>,
 ) {
-  const data = ref<Record<number | string, TR>>({})
-
-  // eslint-disable-next-line unused-imports/no-unused-vars
   const relations = relationsFn({ hasOne, hasMany })
 
+  const relationsNames = Object.keys(relations)
+
   function save(_entities: TR[]) {
-    _entities.forEach((e) => {
-      data.value[e.id] = e
-    })
+    for (const e of _entities) {
+      db[entity.name]![e.id] = {}
+      
+      // Iterate through all properties of the entity
+      for (const key of Object.keys(e)) {
+        // Check if the property is a relation
+        if (relationsNames.includes(key)) {
+          const relation = relations[key]
+
+          // Validate that the relation exists
+          if (!relation) {
+            throw new Error(`Relation ${key} not found on entity ${entity.name}`)
+          }
+          
+          const refEntityName = relation.reference.entity.name
+
+          // Handle array relations (hasMany)
+          if (Array.isArray(e[key])) {
+            for (const refEntity of e[key]) {
+              // TODO: parse zod schema
+              db[refEntityName]![refEntity.id] = refEntity
+            }
+          }
+          else {
+            // TODO: for non-array relations (hasOne)
+          }
+        }
+        // else handle regular properties
+        else {
+          // TODO: parse zod schema
+          db[entity.name]![e.id][key] = e[key]
+        }
+      }
+    }
   }
 
-  function find<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> {
-    const entity = data.value[id]
+  function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> {
+    const foundEntity = structuredClone(db[entity.name]![id])
 
-    if (!entity) {
+    if (!foundEntity) {
       throw new Error(`Entity ${entity.name} with id ${id} not found`)
     }
 
-    if (options?.with) {
-      // TODO: Implement
+    if (options?.with && options.with.length > 0) {
+      for (const _refName of options.with) {
+        const refName = String(_refName)
+        const relation = relations[refName]
+
+        if (!relation) {
+          throw new Error(`Relation ${refName} not found on entity ${entity.name}`)
+        }
+
+        const refDb = structuredClone(db[relation.reference.entity.name])
+
+        if (!refDb) {
+          throw new Error(`Database for entity ${relation.reference.entity.name} not found`)
+        }
+
+        if (isRelationKind(relation, 'hasMany')) {
+          foundEntity[refName] = Object.values(refDb).filter((value) => {
+            return value[relation.reference.field.name] === foundEntity[relation.field.name]
+          })
+        }
+      }
     }
 
-    return entity as FindResult<T, R, O>
+    return foundEntity as FindResult<T, R, O>
   }
 
   return {
-    find,
+    findById,
     save,
   } satisfies QueryBuilder<E, T, R, TR>
 }

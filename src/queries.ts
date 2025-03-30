@@ -3,7 +3,7 @@ import { Post, User } from './entities'
 
 export const userQueryBuilder = defineQueryBuilder(User, ({ hasMany }) => ({
   posts: hasMany(Post, {
-    reference: Post.fields.id,
+    reference: Post.fields.userId,
     field: User.fields.id,
   }),
 }))
