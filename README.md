@@ -1,6 +1,6 @@
-# Zorm
+# zorm
 
-Zorm is a minimalist ORM based on [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
+zorm is a minimalist ORM based on [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
 Currently, it is designed specifically for Vue but is planned to become framework-agnostic.
 
