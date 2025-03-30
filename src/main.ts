@@ -11,6 +11,7 @@ userQueryBuilder.save([{
   firstName: 'John',
   lastName: 'Doe',
   age: 10,
+  posts: [],
 }, {
   id: 2,
   firstName: 'Jane',
