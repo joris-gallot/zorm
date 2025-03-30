@@ -42,7 +42,6 @@ interface Field {
 
 interface Relation<K extends RelationKind = RelationKind, E extends Entity = Entity> {
   kind: K
-  relationName: string
   field: Field
   reference: {
     entity: E['zodSchema']
@@ -68,7 +67,6 @@ function hasOne<E extends Entity<any>>(entity: E, { reference, field }: HasOneOp
       entity,
       field: reference,
     },
-    relationName: 'relationName',
   }
 }
 
@@ -80,7 +78,6 @@ function hasMany<E extends Entity<any>>(entity: E, { reference, field }: HasMany
       entity,
       field: reference,
     },
-    relationName: 'relationName',
   }
 }
 
