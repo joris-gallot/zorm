@@ -50,7 +50,7 @@ export const userQueryBuilder = defineQueryBuilder(User, ({ hasMany }) => ({
   }),
 }))
 
-const user = userQueryBuilder.find(1, { with: ['posts'] })
+const user = userQueryBuilder.findById(1, { with: ['posts'] })
 /*
 {
   id: number
