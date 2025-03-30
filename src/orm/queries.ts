@@ -1,4 +1,4 @@
-import { defineQueryBuilder } from '@/composables/defineEntity'
+import { defineQueryBuilder } from '@/orm/defineEntity'
 import { Post, User } from './entities'
 
 export const userQueryBuilder = defineQueryBuilder(User, ({ hasMany }) => ({

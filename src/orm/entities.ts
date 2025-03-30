@@ -1,4 +1,4 @@
-import { defineEntity } from '@/composables/defineEntity'
+import { defineEntity } from '@/orm/defineEntity'
 import { z } from 'zod'
 
 export const User = defineEntity(
