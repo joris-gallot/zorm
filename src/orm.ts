@@ -15,20 +15,20 @@ interface FindOptions<R extends Record<never, Relation>> { with?: Array<keyof R>
 
 type WithRelations<R extends Record<string, Relation>, T extends keyof R = keyof R> =
   {
-    [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends Entity> ?
+    [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends Entity<any>> ?
       K extends 'hasMany' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
       : never
   }
 
 type FindResult<T, R extends Record<never, Relation>, O extends FindOptions<R>> = O extends { with: Array<infer U extends keyof R> } ? Simplify<T & WithRelations<R, U>> : T
 
-interface Entity<S extends ZodSchemaWithId = ZodSchemaWithId> {
+interface Entity<S extends ZodSchemaWithId> {
   zodSchema: S
   name: string
   fields: ShapeToFields<S>
 }
 
-interface QueryBuilder<E extends Entity, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>> {
+interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>> {
   find: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>>
   save: (entities: TR[]) => void
 }
@@ -40,7 +40,7 @@ interface Field {
   name: string
 }
 
-interface Relation<K extends RelationKind = RelationKind, E extends Entity = Entity> {
+interface Relation<K extends RelationKind = RelationKind, E extends Entity<any> = Entity<any>> {
   kind: K
   field: Field
   reference: {
@@ -100,7 +100,7 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
 
-export function defineQueryBuilder<E extends Entity, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>>(
+export function defineQueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR extends T & Simplify<Partial<WithRelations<R>>>>(
   entity: E,
   relationsFn: Relations<R>,
 ) {
