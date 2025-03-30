@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { userQueryBuilder } from '@/queries'
+import { userQuery } from '@/queries'
 import { computed } from 'vue'
 
-const user = computed(() => userQueryBuilder.findById(1))
-const userWithPosts = computed(() => userQueryBuilder.findById(1, { with: ['posts'] }))
+const user = computed(() => userQuery.findById(1))
+const userWithPosts = computed(() => userQuery.findById(1, { with: ['posts'] }))
 </script>
 
 <template>

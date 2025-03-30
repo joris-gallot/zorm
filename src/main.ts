@@ -1,18 +1,18 @@
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import { postQueryBuilder, userQueryBuilder } from './queries'
+import { postQuery, userQuery } from './queries'
 import './style.css'
 
 const app = createApp(App)
 
-postQueryBuilder.save([{
+postQuery.save([{
   id: 1,
   title: 'Post 1',
   userId: 1,
 }])
 
-userQueryBuilder.save([
+userQuery.save([
   {
     id: 1,
     firstName: 'John',

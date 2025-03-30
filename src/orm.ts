@@ -119,13 +119,10 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     for (const e of _entities) {
       db[entity.name]![e.id] = {}
       
-      // Iterate through all properties of the entity
       for (const key of Object.keys(e)) {
-        // Check if the property is a relation
         if (relationsNames.includes(key)) {
           const relation = relations[key]
 
-          // Validate that the relation exists
           if (!relation) {
             throw new Error(`Relation ${key} not found on entity ${entity.name}`)
           }
