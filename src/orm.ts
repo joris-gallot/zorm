@@ -97,7 +97,7 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
 
-export function defineQueryBuilder<E extends Entity<any>, R extends Record<never, Relation>>(
+export function defineQueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(
   entity: E,
   relationsFn: Relations<R>,
 ) {
@@ -112,7 +112,7 @@ export function defineQueryBuilder<E extends Entity<any>, R extends Record<never
     })
   }
 
-  function find<O extends FindOptions<R>>(id: z.infer<E['zodSchema']['shape']['id']>, options?: O): FindResult<z.infer<E['zodSchema']>, R, O> {
+  function find<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> {
     const entity = data.value[id]
 
     if (!entity) {
@@ -123,7 +123,7 @@ export function defineQueryBuilder<E extends Entity<any>, R extends Record<never
       // TODO: Implement
     }
 
-    return entity as FindResult<z.infer<E['zodSchema']>, R, O>
+    return entity as FindResult<T, R, O>
   }
 
   return {
