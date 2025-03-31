@@ -32,7 +32,7 @@ interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>,
   save: (entities: TR[]) => void
 }
 
-type RelationKind = 'hasOne' | 'hasMany' | 'belongsTo' | 'belongsToMany'
+type RelationKind = 'hasOne' | 'hasMany'
 
 interface Field {
   zodType: ZodNumber | ZodString
@@ -175,6 +175,10 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           foundEntity[refName] = Object.values(refDb).filter((value) => {
             return value[relation.reference.field.name] === foundEntity[relation.field.name]
           })
+        }
+
+        if (isRelationKind(relation, 'hasOne')) {
+          foundEntity[refName] = refDb[foundEntity[relation.field.name]]
         }
       }
     }
