@@ -114,7 +114,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   function save(_entities: TR[]) {
     for (const e of _entities) {
       db[entity.name]![e.id] = {}
-      
+
       for (const key of Object.keys(e)) {
         if (relationsNames.includes(key)) {
           const relation = relations[key]
@@ -122,7 +122,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           if (!relation) {
             throw new Error(`Relation ${key} not found on entity ${entity.name}`)
           }
-          
+
           const refEntityName = relation.reference.entity.name
 
           // Handle array relations (hasMany)
@@ -138,8 +138,8 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         }
         // else handle regular properties
         else {
-          // TODO: parse zod schema
-          db[entity.name]![e.id][key] = e[key]
+          const k = key as keyof ShapeToFields<ZodSchemaWithId>
+          db[entity.name]![e.id][k] = entity.fields[k].zodType.parse(e[k])
         }
       }
     }
@@ -169,8 +169,8 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
         // if relation is hasMany, use filter to get all related entities
         // if relation is hasOne, use find to get the related entity
-        let arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
-        
+        const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
+
         foundEntity[refName] = Object.values(refDb)[arrayFunc]((value) => {
           return value[relation.reference.field.name] === foundEntity[relation.field.name]
         })

@@ -5,8 +5,8 @@ export const User = defineEntity(
   'user',
   z.object({
     id: z.number(),
-    firstName: z.string(),
-    lastName: z.string(),
+    name: z.string(),
+    email: z.string().email(),
     age: z.number().optional(),
   }),
 )

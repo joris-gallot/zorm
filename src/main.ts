@@ -15,8 +15,8 @@ postQuery.save([{
 userQuery.save([
   {
     id: 1,
-    firstName: 'John',
-    lastName: 'Doe',
+    name: 'John',
+    email: 'john@doe.com',
     age: 10,
     posts: [
       {
@@ -28,14 +28,14 @@ userQuery.save([
   },
   {
     id: 2,
-    firstName: 'Jane',
-    lastName: 'Doe',
+    name: 'Jane',
+    email: 'jane@doe.com',
     age: 20,
   },
   {
     id: 3,
-    firstName: 'Jim',
-    lastName: 'Beam',
+    name: 'Jim',
+    email: 'jim@beam.com',
     age: 30,
   },
 ])
