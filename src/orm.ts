@@ -58,10 +58,6 @@ interface HasManyOptions {
   field: Field
 }
 
-function isRelationKind<K extends RelationKind>(relation: Relation, kind: K): relation is Relation<K, Entity<any>> {
-  return relation.kind === kind
-}
-
 function hasOne<E extends Entity<any>>(entity: E, { reference, field }: HasOneOptions): Relation<'hasOne', E> {
   return {
     kind: 'hasOne',
@@ -171,15 +167,13 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           throw new Error(`Database for entity ${relation.reference.entity.name} not found`)
         }
 
-        if (isRelationKind(relation, 'hasMany')) {
-          foundEntity[refName] = Object.values(refDb).filter((value) => {
-            return value[relation.reference.field.name] === foundEntity[relation.field.name]
-          })
-        }
-
-        if (isRelationKind(relation, 'hasOne')) {
-          foundEntity[refName] = refDb[foundEntity[relation.field.name]]
-        }
+        // if relation is hasMany, use filter to get all related entities
+        // if relation is hasOne, use find to get the related entity
+        let arrayFunc: 'filter' | 'find' = relation.kind === 'hasMany' ? 'filter' : 'find'
+        
+        foundEntity[refName] = Object.values(refDb)[arrayFunc]((value) => {
+          return value[relation.reference.field.name] === foundEntity[relation.field.name]
+        })
       }
     }
 
