@@ -105,9 +105,9 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
 
 export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR extends T & Simplify<Partial<WithRelations<R>>>>(
   entity: E,
-  relationsFn: Relations<R>,
+  relationsFn?: Relations<R>,
 ) {
-  const relations = relationsFn({ one, many })
+  const relations = relationsFn?.({ one, many }) || {} as R
 
   const relationsNames = Object.keys(relations)
 
