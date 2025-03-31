@@ -43,7 +43,7 @@ interface Relation<K extends RelationKind = RelationKind, E extends Entity<any> 
   kind: K
   field: Field
   reference: {
-    entity: E['zodSchema']
+    entity: E
     field: Field
   }
 }
