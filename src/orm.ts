@@ -15,7 +15,7 @@ interface FindOptions<R extends Record<never, Relation>> { with?: Array<keyof R>
 type WithRelations<R extends Record<string, Relation>, T extends keyof R = keyof R> =
   {
     [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends Entity<any>> ?
-      K extends 'hasMany' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
+      K extends 'many' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
       : never
   }
 
@@ -32,7 +32,7 @@ interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>,
   save: (entities: TR[]) => void
 }
 
-type RelationKind = 'hasOne' | 'hasMany'
+type RelationKind = 'one' | 'many'
 
 interface Field {
   zodType: ZodNumber | ZodString
@@ -58,9 +58,9 @@ interface HasManyOptions {
   field: Field
 }
 
-function hasOne<E extends Entity<any>>(entity: E, { reference, field }: HasOneOptions): Relation<'hasOne', E> {
+function one<E extends Entity<any>>(entity: E, { reference, field }: HasOneOptions): Relation<'one', E> {
   return {
-    kind: 'hasOne',
+    kind: 'one',
     field,
     reference: {
       entity,
@@ -69,9 +69,9 @@ function hasOne<E extends Entity<any>>(entity: E, { reference, field }: HasOneOp
   }
 }
 
-function hasMany<E extends Entity<any>>(entity: E, { reference, field }: HasManyOptions): Relation<'hasMany', E> {
+function many<E extends Entity<any>>(entity: E, { reference, field }: HasManyOptions): Relation<'many', E> {
   return {
-    kind: 'hasMany',
+    kind: 'many',
     field,
     reference: {
       entity,
@@ -81,8 +81,8 @@ function hasMany<E extends Entity<any>>(entity: E, { reference, field }: HasMany
 }
 
 interface RelationsOptions {
-  hasOne: typeof hasOne
-  hasMany: typeof hasMany
+  one: typeof one
+  many: typeof many
 }
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
@@ -107,7 +107,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   entity: E,
   relationsFn: Relations<R>,
 ) {
-  const relations = relationsFn({ hasOne, hasMany })
+  const relations = relationsFn({ one, many })
 
   const relationsNames = Object.keys(relations)
 
@@ -169,7 +169,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
         // if relation is hasMany, use filter to get all related entities
         // if relation is hasOne, use find to get the related entity
-        let arrayFunc: 'filter' | 'find' = relation.kind === 'hasMany' ? 'filter' : 'find'
+        let arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
         
         foundEntity[refName] = Object.values(refDb)[arrayFunc]((value) => {
           return value[relation.reference.field.name] === foundEntity[relation.field.name]
