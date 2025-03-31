@@ -43,14 +43,14 @@ export const Post = defineEntity(
 import { defineQueryBuilder } from 'zorm'
 import { Post, User } from './entities'
 
-export const userQueryBuilder = defineQueryBuilder(User, ({ hasMany }) => ({
+export const userQuery = defineQueryBuilder(User, ({ hasMany }) => ({
   posts: hasMany(Post, {
     reference: Post.fields.userId,
     field: User.fields.id,
   }),
 }))
 
-const user = userQueryBuilder.findById(1, { with: ['posts'] })
+const user = userQuery.findById(1, { with: ['posts'] })
 /*
 {
   id: number
