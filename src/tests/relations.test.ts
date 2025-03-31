@@ -57,7 +57,7 @@ describe('relations', () => {
     assertType<{
       id: number
       name: string
-    }>(user)
+    } | null>(user)
 
     const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 
@@ -82,7 +82,7 @@ describe('relations', () => {
         title: string
         userId: number
       }>
-    }>(userWithPosts)
+    } | null>(userWithPosts)
 
     const post = postQuery.findById(1)
 
@@ -95,7 +95,7 @@ describe('relations', () => {
       id: number
       title: string
       userId: number
-    }>(post)
+    } | null>(post)
 
     const postWithUser = postQuery.findById(1, { with: ['user'] })
 
@@ -116,6 +116,6 @@ describe('relations', () => {
         id: number
         name: string
       }
-    }>(postWithUser)
+    } | null>(postWithUser)
   })
 })
