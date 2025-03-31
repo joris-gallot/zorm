@@ -127,12 +127,13 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           const refEntityName = relation.reference.entity.name
           const relationObject = e[key]! as ObjectWithId | ObjectWithId[]
 
-          // Handle array relations (hasMany)
+          // Handle array relations (many)
           if (Array.isArray(relationObject)) {
             for (const refEntity of relationObject) {
               db[refEntityName]![refEntity.id] = relation.reference.entity.zodSchema.parse(refEntity)
             }
           }
+          // Handle single relations (one)
           else {
             db[refEntityName]![relationObject.id] = relation.reference.entity.zodSchema.parse(relationObject)
           }
