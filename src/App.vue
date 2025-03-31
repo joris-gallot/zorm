@@ -2,11 +2,11 @@
 import { postQuery, userQuery } from '@/queries'
 import { computed } from 'vue'
 
-const userId = 2
+const userId = 1
 const user = computed(() => userQuery.findById(userId))
 const userWithPosts = computed(() => userQuery.findById(userId, { with: ['posts'] }))
 
-const postId = 3
+const postId = 1
 const post = computed(() => postQuery.findById(postId))
 const postWithUser = computed(() => postQuery.findById(postId, { with: ['user'] }))
 </script>

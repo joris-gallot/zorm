@@ -29,7 +29,7 @@ interface Entity<S extends ZodSchemaWithId> {
 }
 
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>> {
-  findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>>
+  findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
   save: (entities: TR[]) => void
 }
 
@@ -88,7 +88,7 @@ interface RelationsOptions {
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
 
-const db: Record<string, Record<ObjectWithId['id'], any>> = {}
+const db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
 
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
@@ -114,7 +114,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
   function save(_entities: TR[]) {
     for (const e of _entities) {
-      db[entity.name]![e.id] = {}
+      db[entity.name]![e.id] = { id: e.id }
 
       for (const key of Object.keys(e)) {
         if (relationsNames.includes(key)) {
@@ -141,17 +141,17 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         // else handle regular properties
         else {
           const k = key as keyof ShapeToFields<ZodSchemaWithId>
-          db[entity.name]![e.id][k] = entity.fields[k].zodType.parse(e[k])
+          db[entity.name]![e.id]![k] = entity.fields[k].zodType.parse(e[k])
         }
       }
     }
   }
 
-  function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> {
-    const foundEntity = structuredClone(db[entity.name]![id])
+  function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> | null {
+    const foundEntity: ObjectWithId = structuredClone(db[entity.name]![id])
 
     if (!foundEntity) {
-      throw new Error(`Entity ${entity.name} with id ${id} not found`)
+      return null
     }
 
     if (options?.with && options.with.length > 0) {
@@ -173,13 +173,14 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         // if relation is hasOne, use find to get the related entity
         const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
 
-        foundEntity[refName] = Object.values(refDb)[arrayFunc]((value) => {
-          return value[relation.reference.field.name] === foundEntity[relation.field.name]
+        // @ts-expect-error refName is a string, but we can use it to index the object
+        foundEntity[refName] = Object.values(refDb)[arrayFunc]((value: ObjectWithId) => {
+          return value[relation.reference.field.name as keyof ObjectWithId] === foundEntity[relation.field.name as keyof ObjectWithId]
         })
       }
     }
 
-    return foundEntity as FindResult<T, R, O>
+    return foundEntity as FindResult<T, R, O> | null
   }
 
   return {
