@@ -15,7 +15,7 @@ export const Post = defineEntity(
   'post',
   z.object({
     id: z.number(),
-    title: z.string(),
+    title: z.string().max(10),
     userId: z.number(),
   }),
 )

@@ -2,6 +2,7 @@ import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
 import type { Simplify } from './types'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }, any, any> {}
+interface ObjectWithId { id: number | string }
 
 type ShapeToFields<S extends ZodObject<{ id: ZodNumber | ZodString }, any, any>> = {
   [K in keyof S['shape']]: {
@@ -87,7 +88,7 @@ interface RelationsOptions {
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
 
-const db: Record<string, Record<number | string, any>> = {}
+const db: Record<string, Record<ObjectWithId['id'], any>> = {}
 
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
@@ -124,16 +125,16 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           }
 
           const refEntityName = relation.reference.entity.name
+          const relationObject = e[key]! as ObjectWithId | ObjectWithId[]
 
           // Handle array relations (hasMany)
-          if (Array.isArray(e[key])) {
-            for (const refEntity of e[key]) {
-              // TODO: parse zod schema
-              db[refEntityName]![refEntity.id] = refEntity
+          if (Array.isArray(relationObject)) {
+            for (const refEntity of relationObject) {
+              db[refEntityName]![refEntity.id] = relation.reference.entity.zodSchema.parse(refEntity)
             }
           }
           else {
-            // TODO: for non-array relations (hasOne)
+            db[refEntityName]![relationObject.id] = relation.reference.entity.zodSchema.parse(relationObject)
           }
         }
         // else handle regular properties
