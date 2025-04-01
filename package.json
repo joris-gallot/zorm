@@ -12,7 +12,8 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "zod": "^3.24.2"

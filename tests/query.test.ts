@@ -75,6 +75,25 @@ describe('query', () => {
     assertType<Parameters<typeof _postQuery.findById>[1]>({ with: ['user', 'invalid'] })
     // @ts-expect-error invalid relation name
     assertType<Parameters<typeof _postQuery.findById>[1]>({ with: ['invalid'] })
+
+    const entityWithRelations = defineEntity('entityWithRelations', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const _entityWithRelationsQuery = defineQueryBuilder(entityWithRelations)
+
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(1)
+    // @ts-expect-error invalid type should be number
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>('1')
+    // @ts-expect-error invalid type should be number
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(null)
+    // @ts-expect-error invalid type should be number
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(undefined)
+
+    // @ts-expect-error invalid relation name
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[1]>({ with: ['foo'] })
+    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[1]>({ with: [] })
   })
 
   it('save', () => {
@@ -222,6 +241,32 @@ describe('query', () => {
     // @ts-expect-error missing id
     assertType<Parameters<typeof _settingsQuery.save>[0]>([{
       name: 'Admin',
+    }])
+
+    const entityWithoutRelations = defineEntity('entityWithoutRelations', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const _entityWithoutRelationsQuery = defineQueryBuilder(entityWithoutRelations)
+
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+      id: 1,
+      name: 'John Doe',
+    }])
+
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error should not have relations
+      foo: [],
+    }])
+
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error should not have relations
+      bar: {},
     }])
   })
 })

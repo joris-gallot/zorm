@@ -13,14 +13,16 @@ type ShapeToFields<S extends ZodObject<{ id: ZodNumber | ZodString }, any, any>>
 
 interface FindOptions<R extends Record<never, Relation>> { with?: Array<keyof R> }
 
-type WithRelations<R extends Record<string, Relation>, T extends keyof R = keyof R> =
-  {
-    [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends Entity<any>> ?
-      K extends 'many' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
-      : never
-  }
+type RelationsToType<R extends Record<never, Relation>, T extends keyof R = keyof R> =
+    {
+      [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends Entity<any>> ?
+        K extends 'many' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
+        : never
+    }
 
-type FindResult<T, R extends Record<never, Relation>, O extends FindOptions<R>> = O extends { with: Array<infer U extends keyof R> } ? Simplify<T & WithRelations<R, U>> : T
+type EntityWithOptionalRelations<T extends ObjectWithId, R extends Record<never, Relation>> = keyof R extends never ? T : T & Simplify<Partial<RelationsToType<R>>>
+
+type FindResult<T, R extends Record<never, Relation>, O extends FindOptions<R>> = O extends { with: Array<infer U extends keyof R> } ? Simplify<T & RelationsToType<R, U>> : T
 
 interface Entity<S extends ZodSchemaWithId> {
   zodSchema: S
@@ -28,9 +30,9 @@ interface Entity<S extends ZodSchemaWithId> {
   fields: ShapeToFields<S>
 }
 
-interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR = Simplify<T & Partial<WithRelations<R>>>> {
+interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>> {
   findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
-  save: (entities: TR[]) => void
+  save: (entities: EntityWithOptionalRelations<T, R>[]) => void
 }
 
 type RelationKind = 'one' | 'many'
@@ -88,7 +90,7 @@ interface RelationsOptions {
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
 
-const db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
+export const db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
 
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
@@ -104,7 +106,7 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
 
-export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>, TR extends T & Simplify<Partial<WithRelations<R>>>>(
+export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(
   entity: E,
   relationsFn?: Relations<R>,
 ) {
@@ -112,19 +114,21 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
   const relationsNames = Object.keys(relations)
 
-  function save(_entities: TR[]) {
+  function save(_entities: EntityWithOptionalRelations<T, R>[]) {
     for (const e of _entities) {
       db[entity.name]![e.id] = { id: e.id }
 
       for (const key of Object.keys(e)) {
         if (relationsNames.includes(key)) {
-          const relation = relations[key]
+          // @ts-expect-error key is a string, but we can use it to index the object
+          const relation = relations[key] as Relation
 
           if (!relation) {
             throw new Error(`Relation ${key} not found on entity ${entity.name}`)
           }
 
           const refEntityName = relation.reference.entity.name
+          // @ts-expect-error key is a string, but we can use it to index the object
           const relationObject = e[key]! as ObjectWithId | ObjectWithId[]
 
           // Handle array relations (many)
@@ -157,7 +161,8 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     if (options?.with && options.with.length > 0) {
       for (const _refName of options.with) {
         const refName = String(_refName)
-        const relation = relations[refName]
+        // @ts-expect-error refName is a string, but we can use it to index the object
+        const relation = relations[refName] as Relation
 
         if (!relation) {
           throw new Error(`Relation ${refName} not found on entity ${entity.name}`)
@@ -186,5 +191,5 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   return {
     findById,
     save,
-  } satisfies QueryBuilder<E, T, R, TR>
+  } satisfies QueryBuilder<E, T, R>
 }
