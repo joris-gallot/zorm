@@ -12,5 +12,5 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["env.d.ts", "src/**/*", "vite.config.*", "eslint.config.*"]
+  "include": ["env.d.ts", "src/**/*", "vite.config.*", "eslint.config.*", "tests"]
 }
