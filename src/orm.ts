@@ -24,6 +24,27 @@ type EntityWithOptionalRelations<T extends ObjectWithId, R extends Record<never,
 
 type FindResult<T, R extends Record<never, Relation>, O extends FindOptions<R>> = O extends { with: Array<infer U extends keyof R> } ? Simplify<T & RelationsToType<R, U>> : T
 
+type QueryOperator = '=' | '!=' | '>' | '<' | '>=' | '<='
+
+type OperatorFunction<T extends ObjectWithId, P extends keyof T = keyof T> = (a: T[P], b: T[P]) => boolean
+function getOperatorFunction<T extends ObjectWithId>(operator: QueryOperator) {
+  const operatorsMap: Record<QueryOperator, OperatorFunction<T>> = {
+    '=': (a, b) => a === b,
+    '!=': (a, b) => a !== b,
+    '>': (a, b) => a > b,
+    '<': (a, b) => a < b,
+    '>=': (a, b) => a >= b,
+    '<=': (a, b) => a <= b,
+  }
+
+  return operatorsMap[operator]
+}
+
+interface Query<T extends ObjectWithId> {
+  where: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T>
+  get: () => T[]
+}
+
 interface Entity<S extends ZodSchemaWithId> {
   zodSchema: S
   name: string
@@ -33,6 +54,7 @@ interface Entity<S extends ZodSchemaWithId> {
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>> {
   findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
   save: (entities: EntityWithOptionalRelations<T, R>[]) => void
+  query: () => Query<T>
 }
 
 type RelationKind = 'one' | 'many'
@@ -110,9 +132,14 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   entity: E,
   relationsFn?: Relations<R>,
 ) {
-  const relations = relationsFn?.({ one, many }) || {} as R
+  if (!db[entity.name]) {
+    throw new Error(`Did you forget to call defineEntity for ${entity.name}?`)
+  }
 
+  const relations = relationsFn?.({ one, many }) || {} as R
   const relationsNames = Object.keys(relations)
+
+  const queryFilters: Array<(arr: T[]) => T[]> = []
 
   function save(_entities: EntityWithOptionalRelations<T, R>[]) {
     for (const e of _entities) {
@@ -152,7 +179,8 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   }
 
   function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> | null {
-    const foundEntity: ObjectWithId = structuredClone(db[entity.name]![id])
+    const dbEntity = structuredClone(db[entity.name])!
+    const foundEntity = dbEntity[id] as T
 
     if (!foundEntity) {
       return null
@@ -188,8 +216,32 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     return foundEntity as FindResult<T, R, O> | null
   }
 
+  function query(): Query<T> {
+    const dbEntity = structuredClone(db[entity.name])!
+
+    return {
+      where: (field, operator, value) => {
+        queryFilters.push(arr => arr.filter((item) => {
+          const operatorFunction = getOperatorFunction<T>(operator)
+          return operatorFunction(item[field], value)
+        }))
+
+        return query()
+      },
+      get: () => {
+        const result = queryFilters.reduce((acc, filter) => filter(acc), Object.values(dbEntity) as T[])
+
+        // clear query filters
+        queryFilters.length = 0
+
+        return result
+      },
+    }
+  }
+
   return {
     findById,
     save,
+    query,
   } satisfies QueryBuilder<E, T, R>
 }

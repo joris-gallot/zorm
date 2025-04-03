@@ -3,7 +3,7 @@ import { postQuery, userQuery } from '@/queries'
 import { computed } from 'vue'
 
 const userId = 1
-const user = computed(() => userQuery.findById(userId))
+const user = computed(() => userQuery.query().where('name', '=', 'John').where('age', '>', 10).get())
 const userWithPosts = computed(() => userQuery.findById(userId, { with: ['posts'] }))
 
 const postId = 1
