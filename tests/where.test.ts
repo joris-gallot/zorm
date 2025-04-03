@@ -8,6 +8,7 @@ describe('where', () => {
       id: z.number(),
       name: z.string(),
       isAdmin: z.boolean().optional(),
+      age: z.number().nullable(),
     }))
 
     const userQuery = defineQueryBuilder(User)
@@ -16,6 +17,9 @@ describe('where', () => {
       .where('name', '=', 'John')
       .where('id', '>', 10)
       .where('isAdmin', '=', true)
+      .where('age', '=', null)
+      // @ts-expect-error invalid value
+      .where('age', '!=', undefined)
       .where('isAdmin', '!=', undefined)
       // @ts-expect-error invalid operator
       .where('isAdmin', 'is', true)
@@ -39,102 +43,183 @@ describe('where', () => {
       id: 1,
       name: 'John Doe',
       isAdmin: true,
+      age: null,
     }])
   })
 
-  it('should filter by field', () => {
-    const User = defineEntity('user', z.object({
-      id: z.number(),
-      name: z.string(),
-      isAdmin: z.boolean().optional(),
-    }))
+  describe('filter with operators', () => {
+    it('number', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+      }))
 
-    const userQuery = defineQueryBuilder(User)
+      const userQuery = defineQueryBuilder(User)
 
-    userQuery.save([{
-      id: 1,
-      name: 'John Doe',
-      isAdmin: true,
-    }, {
-      id: 2,
-      name: 'Simon Eder',
-      isAdmin: false,
-    }, {
-      id: 3,
-      name: 'Max Mustermann',
-      isAdmin: false,
-    }])
+      userQuery.save([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
-    const users = userQuery.query()
-      .where('name', '=', 'John Doe')
-      .get()
+      /* = operator */
+      const users = userQuery.query()
+        .where('id', '=', 1)
+        .get()
 
-    const expectedUsers = [{
-      id: 1,
-      name: 'John Doe',
-      isAdmin: true,
-    }]
-    assertType<typeof users>(expectedUsers)
-    expect(users).toEqual(expectedUsers)
+      expect(users).toEqual([{ id: 1 }])
 
-    const users2 = userQuery.query()
-      .where('id', '>', 1)
-      .get()
+      /* != operator */
+      const users2 = userQuery.query()
+        .where('id', '!=', 1)
+        .get()
 
-    const expectedUsers2 = [{
-      id: 2,
-      name: 'Simon Eder',
-      isAdmin: false,
-    }, {
-      id: 3,
-      name: 'Max Mustermann',
-      isAdmin: false,
-    }]
-    assertType<typeof users2>(expectedUsers2)
-    expect(users2).toEqual(expectedUsers2)
+      expect(users2).toEqual([{ id: 2 }, { id: 3 }, { id: 4 }])
 
-    const users3 = userQuery.query()
-      .where('id', '>', 1)
-      .where('id', '<', 3)
-      .get()
+      /* > operator */
+      const users3 = userQuery.query()
+        .where('id', '>', 2)
+        .get()
 
-    const expectedUsers3 = [{
-      id: 2,
-      name: 'Simon Eder',
-      isAdmin: false,
-    }]
-    assertType<typeof users3>(expectedUsers3)
-    expect(users3).toEqual(expectedUsers3)
+      expect(users3).toEqual([{ id: 3 }, { id: 4 }])
 
-    const users4 = userQuery.query()
-      .where('isAdmin', '=', false)
-      .where('id', '<', 3)
-      .where('name', '=', 'Simon Eder')
-      .get()
+      /* < operator */
+      const users4 = userQuery.query()
+        .where('id', '<', 3)
+        .get()
 
-    const expectedUsers4 = [{
-      id: 2,
-      name: 'Simon Eder',
-      isAdmin: false,
-    }]
-    assertType<typeof users4>(expectedUsers4)
-    expect(users4).toEqual(expectedUsers4)
+      expect(users4).toEqual([{ id: 1 }, { id: 2 }])
 
-    const users5 = userQuery.query()
-      .where('isAdmin', '=', false)
-      .where('id', '<=', 3)
-      .get()
+      /* >= operator */
+      const users5 = userQuery.query()
+        .where('id', '>=', 2)
+        .get()
 
-    const expectedUsers5 = [{
-      id: 2,
-      name: 'Simon Eder',
-      isAdmin: false,
-    }, {
-      id: 3,
-      name: 'Max Mustermann',
-      isAdmin: false,
-    }]
-    assertType<typeof users5>(expectedUsers5)
-    expect(users5).toEqual(expectedUsers5)
+      expect(users5).toEqual([{ id: 2 }, { id: 3 }, { id: 4 }])
+
+      /* <= operator */
+      const users6 = userQuery.query()
+        .where('id', '<=', 3)
+        .get()
+
+      expect(users6).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }])
+    })
+
+    it('string', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        name: z.string(),
+      }))
+
+      const userQuery = defineQueryBuilder(User)
+
+      userQuery.save([
+        { id: 1, name: 'John' },
+        { id: 2, name: 'Sarah' },
+        { id: 3, name: 'Paul' },
+        { id: 4, name: 'Emma' },
+      ])
+
+      /* = operator */
+      const users = userQuery.query()
+        .where('name', '=', 'John')
+        .get()
+
+      expect(users).toEqual([{ id: 1, name: 'John' }])
+
+      /* != operator */
+      const users2 = userQuery.query()
+        .where('name', '!=', 'John')
+        .get()
+
+      expect(users2).toEqual([{ id: 2, name: 'Sarah' }, { id: 3, name: 'Paul' }, { id: 4, name: 'Emma' }])
+    })
+
+    it('boolean', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        isAdmin: z.boolean(),
+      }))
+
+      const userQuery = defineQueryBuilder(User)
+
+      userQuery.save([
+        { id: 1, isAdmin: true },
+        { id: 2, isAdmin: false },
+        { id: 3, isAdmin: true },
+        { id: 4, isAdmin: false },
+      ])
+
+      /* = operator */
+      const users = userQuery.query()
+        .where('isAdmin', '=', true)
+        .get()
+
+      expect(users).toEqual([{ id: 1, isAdmin: true }, { id: 3, isAdmin: true }])
+
+      /* != operator */
+      const users2 = userQuery.query()
+        .where('isAdmin', '!=', true)
+        .get()
+
+      expect(users2).toEqual([{ id: 2, isAdmin: false }, { id: 4, isAdmin: false }])
+    })
+
+    it('null', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        name: z.string().nullable(),
+      }))
+
+      const userQuery = defineQueryBuilder(User)
+
+      userQuery.save([
+        { id: 1, name: 'John' },
+        { id: 2, name: null },
+        { id: 3, name: 'Zoe' },
+        { id: 4, name: null },
+        { id: 5, name: 'Paul' },
+      ])
+
+      /* = operator */
+      const users = userQuery.query()
+        .where('name', '=', null)
+        .get()
+
+      expect(users).toEqual([{ id: 2, name: null }, { id: 4, name: null }])
+
+      /* != operator */
+      const users2 = userQuery.query()
+        .where('name', '!=', null)
+        .get()
+
+      expect(users2).toEqual([{ id: 1, name: 'John' }, { id: 3, name: 'Zoe' }, { id: 5, name: 'Paul' }])
+    })
+
+    it('undefined', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        name: z.string().optional(),
+      }))
+
+      const userQuery = defineQueryBuilder(User)
+
+      userQuery.save([
+        { id: 1, name: 'John' },
+        { id: 2, name: undefined },
+        { id: 3, name: 'Doe' },
+        { id: 4, name: undefined },
+        { id: 5, name: 'Paul' },
+      ])
+
+      /* = operator */
+      const users = userQuery.query()
+        .where('name', '=', undefined)
+        .get()
+
+      expect(users).toEqual([{ id: 2, name: undefined }, { id: 4, name: undefined }])
+
+      /* != operator */
+      const users2 = userQuery.query()
+        .where('name', '!=', undefined)
+        .get()
+
+      expect(users2).toEqual([{ id: 1, name: 'John' }, { id: 3, name: 'Doe' }, { id: 5, name: 'Paul' }])
+    })
   })
 })
