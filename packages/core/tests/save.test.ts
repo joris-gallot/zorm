@@ -1,6 +1,6 @@
-import { db, defineEntity, defineQueryBuilder } from '@/orm'
 import { assertType, beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
+import { db, defineEntity, defineQueryBuilder } from '../src/orm'
 
 describe('save', () => {
   beforeEach(() => {

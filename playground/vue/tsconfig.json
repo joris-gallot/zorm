@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@/*": ["./src/*"]
+      "zorm": ["../../packages/core/src/index.ts"]
     },
-    "types": ["node"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["env.d.ts", "src/**/*", "vite.config.*", "eslint.config.*", "tests/**/*"]
+  "include": ["src/**/*", "vite.config.ts", "env.d.ts"]
 }

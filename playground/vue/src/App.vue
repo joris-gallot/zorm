@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { postQuery, userQuery } from '@/queries'
 import { computed } from 'vue'
+import { postQuery, userQuery } from './queries.js'
 
 const userId = 1
 const user = computed(() => userQuery.query().where('name', '=', 'John').where('age', '>', 10).get())

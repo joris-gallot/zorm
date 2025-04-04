@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import { postQuery, userQuery } from './queries'
+import { postQuery, userQuery } from './queries.js'
 import './style.css'
 
 const app = createApp(App)

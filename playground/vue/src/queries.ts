@@ -1,5 +1,5 @@
-import { defineQueryBuilder } from '@/orm'
-import { Post, User } from './entities'
+import { defineQueryBuilder } from 'zorm'
+import { Post, User } from './entities.js'
 
 export const userQuery = defineQueryBuilder(User, ({ many }) => ({
   posts: many(Post, {
