@@ -76,24 +76,24 @@ describe('findById', () => {
     // @ts-expect-error invalid relation name
     assertType<Parameters<typeof _postQuery.findById>[1]>({ with: ['invalid'] })
 
-    const entityWithRelations = defineEntity('entityWithRelations', z.object({
+    const entityWithoutRelations = defineEntity('entityWithoutRelations', z.object({
       id: z.number(),
       name: z.string(),
     }))
 
-    const _entityWithRelationsQuery = defineQueryBuilder(entityWithRelations)
+    const _entityWithoutRelationsQuery = defineQueryBuilder(entityWithoutRelations)
 
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(1)
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[0]>(1)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>('1')
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[0]>('1')
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(null)
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[0]>(null)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[0]>(undefined)
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[0]>(undefined)
 
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[1]>({ with: ['foo'] })
-    assertType<Parameters<typeof _entityWithRelationsQuery.findById>[1]>({ with: [] })
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[1]>({ with: ['foo'] })
+    assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[1]>({ with: [] })
   })
 
   it('should find by id with relations', () => {
