@@ -1,12 +1,18 @@
 # zorm
 
-zorm is a minimalist ORM based on [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
+zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
 Currently, it is designed specifically for Vue but is planned to become framework-agnostic.
 
 ## Features
-- **Strong validation and typing** with Zod
-- **Relations** (`one`, `many`)
+- ✅  Type-safe schema definition and validation powered by Zod
+- 🔍  Fully typed query builder with:
+  - Type-safe field names and operators in where clauses
+  - Autocomplete for relation names in eager loading
+  - Inferred return types including nested relations
+- 🤝  Support for one-to-one and one-to-many relationships
+- 🚀  Eager loading of related entities
+- 🛡️  Runtime validation of data through Zod schemas
 
 ## Installation
 (Currently not published)
@@ -25,6 +31,7 @@ export const User = defineEntity(
     firstName: z.string(),
     lastName: z.string(),
     age: z.number().optional(),
+    isAdmin: z.boolean()
   })
 )
 
@@ -50,7 +57,20 @@ export const userQuery = defineQueryBuilder(User, ({ many }) => ({
   }),
 }))
 
-const user = userQuery.findById(1, { with: ['posts'] })
+const user = userQuery.query()
+  .where('age', '>', 18)
+  .where('isAdmin', '=', false)
+  .get()
+/*
+[{
+  id: number
+  firstName: string
+  lastName: string
+  age?: number
+}]
+*/
+
+const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 /*
 {
   id: number
@@ -64,7 +84,7 @@ const user = userQuery.findById(1, { with: ['posts'] })
   }>
 }
 */
-````
+```
 
 ## License
 MIT
