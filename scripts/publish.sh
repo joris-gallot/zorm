@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "GITHUB_TOKEN is not set"
+  exit 1
+fi
+
 pnpm build
 
 cp README.md LICENSE packages/core/
