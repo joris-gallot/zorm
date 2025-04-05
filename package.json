@@ -11,7 +11,8 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "type-check": "nr -r type-check",
-    "build": "nr -r build"
+    "build": "nr -r build",
+    "npm:publish": "sh scripts/publish.sh"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
