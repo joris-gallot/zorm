@@ -7,7 +7,7 @@ cp README.md LICENSE packages/core/
 cd packages/core
 
 echo "Publishing to npm..."
-npm publish
+pnpm publish --no-git-checks
 
 rm README.md LICENSE
 
