@@ -1,6 +1,8 @@
 import { assertType, beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { db, defineEntity, defineQueryBuilder } from '../src/orm'
+import { defineEntity, defineQueryBuilder, getDb } from '../src/orm'
+
+const db = getDb()
 
 describe('save', () => {
   beforeEach(() => {

@@ -1,8 +1,25 @@
-import { createApp } from 'vue'
+import { createApp, shallowRef, triggerRef } from 'vue'
+import { defineReactivityAdapter } from 'zorm'
 
 import App from './App.vue'
 import { postQuery, userQuery } from './queries.js'
 import './style.css'
+
+defineReactivityAdapter(
+  () => {
+    const state = shallowRef(0)
+
+    return {
+      depend: () => {
+        // eslint-disable-next-line ts/no-unused-expressions
+        state.value
+      },
+      trigger: () => {
+        triggerRef(state)
+      },
+    }
+  },
+)
 
 const app = createApp(App)
 

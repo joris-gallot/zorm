@@ -112,7 +112,36 @@ interface RelationsOptions {
 
 type Relations<R extends Record<never, Relation>> = (options: RelationsOptions) => R
 
-export const db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
+interface Signal {
+  depend: () => void
+  trigger: () => void
+}
+
+let db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
+
+export function getDb() {
+  return db
+}
+
+export function defineReactivityAdapter(signalFactory: () => Signal) {
+  db = createReactiveProxy(db, signalFactory())
+}
+
+function createReactiveProxy<T extends object>(target: T, signal: Signal): T {
+  return new Proxy(target, {
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver)
+      signal.depend()
+
+      return typeof value === 'object' && value !== null ? createReactiveProxy(value, signal) : value
+    },
+    set(target, prop, value, receiver) {
+      const result = Reflect.set(target, prop, value, receiver)
+      signal.trigger()
+      return result
+    },
+  })
+}
 
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
@@ -179,10 +208,10 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   }
 
   function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> | null {
-    const dbEntity = structuredClone(db[entity.name])!
-    const foundEntity = dbEntity[id] as T
+    const dbEntity = db[entity.name]!
+    const foundEntity = { ...dbEntity[id] } as T
 
-    if (!foundEntity) {
+    if (!Object.keys(foundEntity).length) {
       return null
     }
 
@@ -196,9 +225,9 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           throw new Error(`Relation ${refName} not found on entity ${entity.name}`)
         }
 
-        const refDb = structuredClone(db[relation.reference.entity.name])
+        const refDb = { ...db[relation.reference.entity.name] }
 
-        if (!refDb) {
+        if (!Object.keys(refDb).length) {
           throw new Error(`Database for entity ${relation.reference.entity.name} not found`)
         }
 
@@ -217,8 +246,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   }
 
   function query(): Query<T> {
-    const dbEntity = structuredClone(db[entity.name])!
-
     return {
       where: (field, operator, value) => {
         queryFilters.push(arr => arr.filter((item) => {
@@ -229,6 +256,8 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         return query()
       },
       get: () => {
+        // Access db to track dependency
+        const dbEntity = db[entity.name]!
         const result = queryFilters.reduce((acc, filter) => filter(acc), Object.values(dbEntity) as T[])
 
         // clear query filters
