@@ -213,7 +213,14 @@ describe('orWhere', () => {
         userQuery.query()
           .orWhere('name', '=', 'John')
           .get()
-      }).toThrow('orWhere must be called after where')
+      }).toThrow('Cannot use orWhere without where')
+
+      expect(() => {
+        userQuery.query()
+          .orWhere('name', '=', 'John')
+          .where('name', '=', 'Sarah')
+          .get()
+      }).not.toThrow()
     })
 
     it('multiple where and orWhere combinations', () => {
@@ -236,9 +243,9 @@ describe('orWhere', () => {
 
       // Test 1: Multiple where followed by orWhere
       const users1 = userQuery.query()
+        .orWhere('isAdmin', '=', true)
         .where('name', '=', 'John')
         .where('age', '>', 30)
-        .orWhere('isAdmin', '=', true)
         .get()
 
       expect(users1).toEqual([
@@ -249,8 +256,8 @@ describe('orWhere', () => {
 
       // Test 2: Multiple where and orWhere combinations
       const users2 = userQuery.query()
-        .where('name', '=', 'John')
         .orWhere('age', '>', 35)
+        .where('name', '=', 'John')
         .where('isAdmin', '=', false)
         .orWhere('id', '=', 3)
         .get()

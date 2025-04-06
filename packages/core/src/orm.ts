@@ -257,10 +257,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         return query()
       },
       orWhere: (field, operator, value) => {
-        if (whereFilters.length === 0) {
-          throw new Error('orWhere must be called after where')
-        }
-
         orWhereFilters.push(arr => arr.filter((item) => {
           const operatorFunction = getOperatorFunction<T>(operator)
           return operatorFunction(item[field], value)
@@ -271,6 +267,10 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
       get: () => {
         const dbEntity = db[entity.name]!
         let result = Object.values(dbEntity) as T[]
+
+        if (orWhereFilters.length > 0 && whereFilters.length === 0) {
+          throw new Error('Cannot use orWhere without where')
+        }
 
         if (whereFilters.length > 0) {
           result = whereFilters.reduce((acc, filter) => filter(acc), result)
