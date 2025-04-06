@@ -11,6 +11,7 @@
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
     "type-check": "nr -r type-check",
+    "build": "nr -r build",
     "build:core": "cd packages/core && pnpm build",
     "build:vue": "cd packages/vue && pnpm build",
     "publish:core": "sh scripts/publish.sh core",
