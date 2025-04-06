@@ -10,7 +10,7 @@ npm install @zodorm/vue
 
 ## Usage
 
-To use zodorm with Vue, you need to define a reactivity adapter. This will ensure that your Vue components react to changes in your zodorm queries.
+To use zodorm with Vue, you need to define a reactivity adapter, this will ensure that your Vue components react to changes in your zodorm queries. Call `useReactivityAdapter()` once at the highest level of your application (typically in your main.ts/js file) to properly initialize the reactivity system.
 
 ```typescript
 import { useReactivityAdapter } from '@zodorm/vue'
