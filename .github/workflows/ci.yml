@@ -27,7 +27,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
       - name: Type check
         run: pnpm type-check
@@ -57,7 +57,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
       - name: Build
         run: pnpm build
@@ -91,7 +91,7 @@ jobs:
   #         cache: pnpm
 
   #     - name: Install dependencies
-  #       run: pnpm install --no-frozen-lockfile
+  #       run: pnpm install
 
   #     - name: Download all artifacts
   #       uses: actions/download-artifact@v4
