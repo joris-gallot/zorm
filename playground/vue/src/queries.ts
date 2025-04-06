@@ -1,4 +1,4 @@
-import { defineQueryBuilder } from 'zorm'
+import { defineQueryBuilder } from '@zodorm/core'
 import { Post, User } from './entities.js'
 
 export const userQuery = defineQueryBuilder(User, ({ many }) => ({

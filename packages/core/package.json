@@ -1,5 +1,5 @@
 {
-  "name": "zorm",
+  "name": "@zodorm/core",
   "type": "module",
   "version": "0.0.7",
   "description": "A minimalist, type-safe ORM powered by Zod",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joris-gallot/zorm.git"
+    "url": "git+https://github.com/joris-gallot/zodorm.git"
   },
   "keywords": [
     "orm",

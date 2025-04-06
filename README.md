@@ -1,6 +1,6 @@
-# zorm
+# zodorm
 
-zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
+zodorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
 Currently, it is designed specifically for Vue but is planned to become framework-agnostic.
 
@@ -22,7 +22,7 @@ Currently, it is designed specifically for Vue but is planned to become framewor
 ### Define Entities
 ```ts
 import { z } from 'zod'
-import { defineEntity } from 'zorm'
+import { defineEntity } from 'zodorm'
 
 export const User = defineEntity(
   'user',
@@ -47,7 +47,7 @@ export const Post = defineEntity(
 
 ### Create a Query Builder from relations
 ```ts
-import { defineQueryBuilder } from 'zorm'
+import { defineQueryBuilder } from '@zodorm/core'
 import { Post, User } from './entities'
 
 export const userQuery = defineQueryBuilder(User, ({ many }) => ({

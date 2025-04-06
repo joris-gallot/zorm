@@ -1,5 +1,5 @@
+import { defineEntity } from '@zodorm/core'
 import { z } from 'zod'
-import { defineEntity } from 'zorm'
 
 export const User = defineEntity(
   'user',

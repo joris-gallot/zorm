@@ -18,10 +18,10 @@
     "@types/node": "catalog:",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",
+    "@zodorm/core": "workspace:*",
     "typescript": "catalog:",
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2",
-    "vue-tsc": "^2.2.8",
-    "zorm": "workspace:*"
+    "vue-tsc": "^2.2.8"
   }
 }

@@ -1,5 +1,5 @@
+import { defineReactivityAdapter } from '@zodorm/core'
 import { createApp, shallowRef, triggerRef } from 'vue'
-import { defineReactivityAdapter } from 'zorm'
 
 import App from './App.vue'
 import { postQuery, userQuery } from './queries.js'
@@ -15,6 +15,7 @@ defineReactivityAdapter(
         state.value
       },
       trigger: () => {
+        console.log('trigger')
         triggerRef(state)
       },
     }
