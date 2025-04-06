@@ -2,7 +2,7 @@
 
 zodorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
-Currently, it is designed specifically for Vue but is planned to become framework-agnostic.
+Currently it only handles reactivity through Vue integration (see [Vue integration example](packages/vue/src/index.ts)), but support for other frameworks will be added.
 
 ## Features
 - ✅  Type-safe schema definition and validation powered by Zod
@@ -87,7 +87,9 @@ const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 */
 ```
 
-## Vue Integration
+## Reactivity
+
+### Vue
 
 zodorm provides first-class support for Vue through the `@zodorm/vue` package. This integration enables reactive queries that automatically update your components when the data changes.
 
