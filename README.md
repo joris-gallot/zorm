@@ -60,7 +60,7 @@ export const userQuery = defineQueryBuilder(User, ({ many }) => ({
 
 const user = userQuery.query()
   .where('age', '>', 18)
-  .where('isAdmin', '=', false)
+  .orWhere('isAdmin', '=', true)
   .get()
 /*
 [{
