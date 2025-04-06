@@ -9,5 +9,5 @@ catalog:
   typescript: ^5.8.0
   unbuild: ^3.5.0
   vitest: ^3.1.1
-  vue: ^3.5.13
-  zod: ^3.24.2
+  vue: '>=3.2.25'
+  zod: '>=3.0.0'
