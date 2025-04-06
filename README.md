@@ -22,8 +22,8 @@ npm install @zodorm/core
 
 ### Define Entities
 ```ts
+import { defineEntity } from '@zodorm/core'
 import { z } from 'zod'
-import { defineEntity } from 'zodorm'
 
 export const User = defineEntity(
   'user',
