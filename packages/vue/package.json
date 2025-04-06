@@ -28,7 +28,10 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "unbuild"
+    "build": "unbuild",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
     "@zodorm/core": ">=0.0.7",
@@ -37,6 +40,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:",
-    "unbuild": "catalog:"
+    "unbuild": "catalog:",
+    "zod": "catalog:"
   }
 }

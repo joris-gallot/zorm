@@ -28,10 +28,10 @@ catalogs:
       specifier: ^3.1.1
       version: 3.1.1
     vue:
-      specifier: ^3.5.13
+      specifier: '>=3.2.25'
       version: 3.5.13
     zod:
-      specifier: ^3.24.2
+      specifier: '>=3.0.0'
       version: 3.24.2
 
 importers:
@@ -85,6 +85,9 @@ importers:
       unbuild:
         specifier: 'catalog:'
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
+      zod:
+        specifier: 'catalog:'
+        version: 3.24.2
 
   playground/vue:
     dependencies:
