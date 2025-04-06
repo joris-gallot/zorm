@@ -15,8 +15,9 @@ Currently, it is designed specifically for Vue but is planned to become framewor
 - 🛡️  Runtime validation of data through Zod schemas
 
 ## Installation
-(Currently not published)
-
+```sh
+npm install @zodorm/core
+```
 ## Usage
 
 ### Define Entities
