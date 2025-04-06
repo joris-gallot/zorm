@@ -5,7 +5,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@zodorm/core": ["../../packages/core/src/index.ts"]
+      "@zodorm/core": ["../../packages/core/src/index.ts"],
+      "@zodorm/vue": ["../../packages/vue/src/index.ts"]
     },
     "strict": true,
     "noUncheckedIndexedAccess": true,

@@ -70,10 +70,10 @@ importers:
   packages/vue:
     dependencies:
       '@zodorm/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: '>=0.0.7'
+        version: 0.0.8
       vue:
-        specifier: 'catalog:'
+        specifier: '>=3.0.0'
         version: 3.5.13(typescript@5.8.2)
     devDependencies:
       '@types/node':
@@ -116,6 +116,9 @@ importers:
       '@zodorm/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@zodorm/vue':
+        specifier: workspace:*
+        version: link:../../packages/vue
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -1326,6 +1329,9 @@ packages:
         optional: true
       vue:
         optional: true
+
+  '@zodorm/core@0.0.8':
+    resolution: {integrity: sha512-Jzq3NtkWe3lOuWdp03hkso5wZjVkT18SqPZrzu3lUQiHVJ8f58AklDfO724lSscuOCiwbHL4K+3EacCAyhvTeA==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -4359,6 +4365,10 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.2
       vue: 3.5.13(typescript@5.8.2)
+
+  '@zodorm/core@0.0.8':
+    dependencies:
+      zod: 3.24.2
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:
