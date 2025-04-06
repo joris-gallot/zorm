@@ -10,12 +10,13 @@
     "url": "git+https://github.com/joris-gallot/zodorm.git"
   },
   "keywords": [
-    "orm",
-    "schema",
     "typescript",
-    "types",
-    "zod",
-    "vue"
+    "orm",
+    "vue",
+    "schema-validation",
+    "type-inference",
+    "runtime-validation",
+    "zod"
   ],
   "exports": {
     ".": {
