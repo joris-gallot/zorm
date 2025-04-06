@@ -97,7 +97,7 @@ zodorm provides first-class support for Vue through the `@zodorm/vue` package. T
 npm install @zodorm/vue
 ```
 
-For detailed Vue integration instructions and examples, check out the [@zodorm/vue documentation](packages/vue/README.md).
+For detailed Vue integration instructions, check out the [@zodorm/vue documentation](packages/vue/README.md).
 
 ## License
 MIT
