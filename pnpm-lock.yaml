@@ -54,7 +54,7 @@ importers:
   packages/core:
     dependencies:
       zod:
-        specifier: '>=3.24.2'
+        specifier: 'catalog:'
         version: 3.24.2
     devDependencies:
       '@types/node':
@@ -73,7 +73,7 @@ importers:
         specifier: '>=0.0.7'
         version: 0.0.8
       vue:
-        specifier: '>=3.0.0'
+        specifier: 'catalog:'
         version: 3.5.13(typescript@5.8.2)
     devDependencies:
       '@types/node':
