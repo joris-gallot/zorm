@@ -1,7 +1,7 @@
 import { defineReactivityAdapter } from '@zodorm/core'
 import { shallowRef, triggerRef } from 'vue'
 
-export function defineVueReactivityAdapter() {
+export function useReactivityAdapter() {
   return defineReactivityAdapter(
     () => {
       const state = shallowRef(0)

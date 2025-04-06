@@ -13,10 +13,10 @@ npm install @zodorm/vue
 To use zodorm with Vue, you need to define a reactivity adapter. This will ensure that your Vue components react to changes in your zodorm queries.
 
 ```typescript
-import { defineVueReactivityAdapter } from '@zodorm/vue'
+import { useReactivityAdapter } from '@zodorm/vue'
 
 // Initialize the Vue reactivity adapter
-defineVueReactivityAdapter()
+useReactivityAdapter()
 
 // Use in your Vue components
 const users = userQuery.query().get() // Will be reactive!
