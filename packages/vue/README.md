@@ -19,7 +19,7 @@ import { useReactivityAdapter } from '@zodorm/vue'
 useReactivityAdapter()
 
 // Use in your Vue components
-const users = userQuery.query().get() // Will be reactive!
+const users = computed(() => userQuery.query().get()) // Will be reactive!
 ```
 
 ## License
