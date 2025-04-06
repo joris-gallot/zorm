@@ -1,7 +1,7 @@
 {
   "name": "@zodorm/vue",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Vue integration for zodorm",
   "author": "Joris Gallot",
   "license": "MIT",
