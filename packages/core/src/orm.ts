@@ -42,6 +42,7 @@ function getOperatorFunction<T extends ObjectWithId>(operator: QueryOperator) {
 
 interface Query<T extends ObjectWithId> {
   where: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T>
+  orWhere: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T>
   get: () => T[]
 }
 
@@ -168,8 +169,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   const relations = relationsFn?.({ one, many }) || {} as R
   const relationsNames = Object.keys(relations)
 
-  const queryFilters: Array<(arr: T[]) => T[]> = []
-
   function save(_entities: EntityWithOptionalRelations<T, R>[]) {
     for (const e of _entities) {
       db[entity.name]![e.id] = { id: e.id }
@@ -245,10 +244,24 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     return foundEntity as FindResult<T, R, O> | null
   }
 
+  const whereFilters: Array<(arr: T[]) => T[]> = []
+  const orWhereFilters: Array<(arr: T[]) => T[]> = []
+
   function query(): Query<T> {
     return {
       where: (field, operator, value) => {
-        queryFilters.push(arr => arr.filter((item) => {
+        whereFilters.push(arr => arr.filter((item) => {
+          const operatorFunction = getOperatorFunction<T>(operator)
+          return operatorFunction(item[field], value)
+        }))
+        return query()
+      },
+      orWhere: (field, operator, value) => {
+        if (whereFilters.length === 0) {
+          throw new Error('orWhere must be called after where')
+        }
+
+        orWhereFilters.push(arr => arr.filter((item) => {
           const operatorFunction = getOperatorFunction<T>(operator)
           return operatorFunction(item[field], value)
         }))
@@ -256,12 +269,21 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         return query()
       },
       get: () => {
-        // Access db to track dependency
         const dbEntity = db[entity.name]!
-        const result = queryFilters.reduce((acc, filter) => filter(acc), Object.values(dbEntity) as T[])
+        let result = Object.values(dbEntity) as T[]
 
-        // clear query filters
-        queryFilters.length = 0
+        if (whereFilters.length > 0) {
+          result = whereFilters.reduce((acc, filter) => filter(acc), result)
+        }
+
+        if (orWhereFilters.length > 0) {
+          const orResults = orWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
+          result = [...new Set([...result, ...orResults])]
+        }
+
+        // Clear filters
+        whereFilters.length = 0
+        orWhereFilters.length = 0
 
         return result
       },
