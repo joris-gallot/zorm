@@ -1,7 +1,7 @@
 {
   "name": "@zodorm/core",
   "type": "module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A minimalist, type-safe ORM powered by Zod",
   "author": "Joris Gallot",
   "license": "MIT",
@@ -32,8 +32,8 @@
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
-    "zod": "catalog:"
+  "peerDependencies": {
+    "zod": ">=3.24.2"
   },
   "devDependencies": {
     "@types/node": "catalog:",
