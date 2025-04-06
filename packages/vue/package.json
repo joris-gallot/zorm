@@ -1,7 +1,7 @@
 {
   "name": "@zodorm/vue",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Vue integration for zodorm",
   "author": "Joris Gallot",
   "license": "MIT",
@@ -29,9 +29,9 @@
   "scripts": {
     "build": "unbuild"
   },
-  "dependencies": {
-    "@zodorm/core": "workspace:*",
-    "vue": "catalog:"
+  "peerDependencies": {
+    "@zodorm/core": ">=0.0.7",
+    "vue": ">=3.0.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",
