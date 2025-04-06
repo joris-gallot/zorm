@@ -87,5 +87,15 @@ const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 */
 ```
 
+## Vue Integration
+
+zodorm provides first-class support for Vue through the `@zodorm/vue` package. This integration enables reactive queries that automatically update your components when the data changes.
+
+```sh
+npm install @zodorm/vue
+```
+
+For detailed Vue integration instructions and examples, check out the [@zodorm/vue documentation](packages/vue/README.md).
+
 ## License
 MIT

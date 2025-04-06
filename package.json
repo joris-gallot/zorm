@@ -8,11 +8,13 @@
   },
   "scripts": {
     "test": "vitest --run",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint": "eslint packages",
+    "lint:fix": "eslint --fix packages",
     "type-check": "nr -r type-check",
-    "build": "nr -r build",
-    "npm:publish": "sh scripts/publish.sh"
+    "build:core": "cd packages/core && pnpm build",
+    "build:vue": "cd packages/vue && pnpm build",
+    "publish:core": "sh scripts/publish.sh core",
+    "publish:vue": "sh scripts/publish.sh vue"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
