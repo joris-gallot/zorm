@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "vitest --run",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
     "type-check": "nr -r type-check",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@antfu/ni": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
     "vitest": "catalog:"
   }
