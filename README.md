@@ -28,9 +28,9 @@ export const User = defineEntity(
   'user',
   z.object({
     id: z.number(),
-    firstName: z.string(),
-    lastName: z.string(),
-    age: z.number().optional(),
+    email: z.string().email(),
+    age: z.number(),
+    username: z.string().optional(),
     isAdmin: z.boolean()
   })
 )
@@ -64,9 +64,10 @@ const users = userQuery.query()
 /*
 [{
   id: number
-  firstName: string
-  lastName: string
-  age?: number
+  email: string
+  age: number
+  username?: string
+  isAdmin: boolean
 }]
 */
 
@@ -78,9 +79,10 @@ const usersWithPosts = userQuery.query()
 /*
 [{
   id: number
-  firstName: string
-  lastName: string
-  age?: number
+  email: string
+  age: number
+  username?: string
+  isAdmin: boolean
   posts: Array<{
     id: number
     title: string
