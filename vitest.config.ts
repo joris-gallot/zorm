@@ -5,5 +5,9 @@ export default defineConfig({
     coverage: {
       include: ['packages/**/*.ts'],
     },
+    typecheck: {
+      enabled: true,
+      tsconfig: 'tsconfig.json',
+    },
   },
 })
