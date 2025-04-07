@@ -51,18 +51,19 @@ describe('where', () => {
     it('number', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
+        age: z.number().optional(),
       }))
 
       const userQuery = defineQueryBuilder(User)
 
-      userQuery.save([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
+      userQuery.save([{ id: 1, age: 10 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
       /* = operator */
       const users = userQuery.query()
         .where('id', '=', 1)
         .get()
 
-      expect(users).toEqual([{ id: 1 }])
+      expect(users).toEqual([{ id: 1, age: 10 }])
 
       /* != operator */
       const users2 = userQuery.query()
@@ -72,18 +73,22 @@ describe('where', () => {
       expect(users2).toEqual([{ id: 2 }, { id: 3 }, { id: 4 }])
 
       /* > operator */
-      const users3 = userQuery.query()
+      let users3 = userQuery.query()
         .where('id', '>', 2)
         .get()
 
       expect(users3).toEqual([{ id: 3 }, { id: 4 }])
+
+      users3 = userQuery.query().where('age', '>=', 10).get()
+
+      expect(users3).toEqual([{ id: 1, age: 10 }])
 
       /* < operator */
       const users4 = userQuery.query()
         .where('id', '<', 3)
         .get()
 
-      expect(users4).toEqual([{ id: 1 }, { id: 2 }])
+      expect(users4).toEqual([{ id: 1, age: 10 }, { id: 2 }])
 
       /* >= operator */
       const users5 = userQuery.query()
@@ -97,7 +102,7 @@ describe('where', () => {
         .where('id', '<=', 3)
         .get()
 
-      expect(users6).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }])
+      expect(users6).toEqual([{ id: 1, age: 10 }, { id: 2 }, { id: 3 }])
     })
 
     it('string', () => {
