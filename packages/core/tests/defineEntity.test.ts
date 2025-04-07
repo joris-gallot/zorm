@@ -1,4 +1,4 @@
-import { assertType, describe, it } from 'vitest'
+import { assertType, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { defineEntity } from '../src/orm'
 
@@ -42,13 +42,19 @@ describe('defineEntity', () => {
     // @ts-expect-error id is missing
     const _EntityWihoutId = defineEntity('entityWithoutId', z.object({ name: z.string() }))
 
-    // @ts-expect-error entity must have an id field
-    const _EntityWithNumber = defineEntity('entityWithNumber', z.number())
+    expect(() => {
+      // @ts-expect-error entity must have an id field
+      defineEntity('entityWithNumber', z.number())
+    }).toThrow()
 
-    // @ts-expect-error entity must have an id field
-    const _EntityWithString = defineEntity('entityWithString', z.string())
+    expect(() => {
+      // @ts-expect-error entity must have an id field
+      defineEntity('entityWithString', z.string())
+    }).toThrow()
 
-    // @ts-expect-error entity must have an id field
-    const _EntityWithBoolean = defineEntity('entityWithBoolean', z.boolean())
+    expect(() => {
+      // @ts-expect-error entity must have an id field
+      defineEntity('entityWithBoolean', z.boolean())
+    }).toThrow()
   })
 })
