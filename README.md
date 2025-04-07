@@ -12,7 +12,7 @@ Currently it only handles reactivity through Vue integration (see [Vue integrati
   - Inferred return types including nested relations
 - 🤝 Support for one-to-one and one-to-many relationships
 - 🚀 Eager loading of related entities
-- 🛡️ Runtime validation of data through Zod schemas
+- 🛡️ Runtime validation through Zod schemas
 - ⚡️ Reactivity support for Vue (other frameworks coming soon)
 
 ## Installation
