@@ -96,6 +96,67 @@ describe('findById', () => {
     assertType<Parameters<typeof _entityWithoutRelationsQuery.findById>[1]>({ with: [] })
   })
 
+  it('shoud work with string id', () => {
+    const User = defineEntity('user', z.object({
+      id: z.string(),
+      name: z.string(),
+    }))
+
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string(),
+      userId: z.string(),
+    }))
+
+    const userQuery = defineQueryBuilder(User, ({ many }) => ({
+      posts: many(Post, {
+        reference: Post.fields.userId,
+        field: User.fields.id,
+      }),
+    }))
+
+    const postQuery = defineQueryBuilder(Post)
+
+    userQuery.save([{
+      id: '1',
+      name: 'John Doe',
+    }])
+
+    postQuery.save([{
+      id: 1,
+      title: 'Post 1',
+      userId: '1',
+    }])
+
+    const user = userQuery.findById('1')
+
+    expect(user).toEqual({
+      id: '1',
+      name: 'John Doe',
+    })
+    assertType<{
+      id: string
+      name: string
+    } | null>(user)
+
+    const userWithPosts = userQuery.findById('1', { with: ['posts'] })
+
+    expect(userWithPosts).toEqual({
+      id: '1',
+      name: 'John Doe',
+      posts: [{ id: 1, title: 'Post 1', userId: '1' }],
+    })
+    assertType<{
+      id: string
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: string
+      }>
+    } | null>(userWithPosts)
+  })
+
   it('should find by id with relations', () => {
     const User = defineEntity('user', z.object({
       id: z.number(),
