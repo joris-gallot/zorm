@@ -11,7 +11,7 @@ zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to de
 - 🤝 Support for one-to-one and one-to-many relationships
 - 🚀 Eager loading of related entities
 - 🛡️ Runtime validation through Zod schemas
-- ⚡️ Reactivity support for Vue (other frameworks coming soon)
+- ⚡️ Reactivity support for Vue (other frameworks planned)
 
 ## Installation
 ```sh
@@ -57,7 +57,7 @@ export const userQuery = defineQueryBuilder(User, ({ many }) => ({
   }),
 }))
 
-const user = userQuery.query()
+const users = userQuery.query()
   .where('age', '>', 18)
   .orWhere('isAdmin', '=', true)
   .get()
