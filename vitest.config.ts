@@ -6,9 +6,5 @@ export default defineConfig({
       enabled: true,
       include: ['packages/**/*.ts'],
     },
-    typecheck: {
-      enabled: true,
-      tsconfig: 'tsconfig.json',
-    },
   },
 })

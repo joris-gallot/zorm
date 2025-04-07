@@ -16,6 +16,7 @@ describe('query', () => {
         where: () => query,
         orWhere: () => query,
         get: () => [],
+        with: () => query,
       },
     )
   })

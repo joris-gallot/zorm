@@ -64,6 +64,7 @@ describe('orWhere', () => {
         .get()
 
       expect(users).toEqual([{ id: 1 }, { id: 4 }])
+      assertType<Array<{ id: number }>>(users)
 
       /* != and < operators */
       const users2 = userQuery.query()
@@ -77,6 +78,7 @@ describe('orWhere', () => {
         { id: 4 },
         { id: 1 },
       ])
+      assertType<Array<{ id: number }>>(users2)
     })
 
     it('string', () => {
@@ -104,6 +106,7 @@ describe('orWhere', () => {
         { id: 1, name: 'John' },
         { id: 2, name: 'Sarah' },
       ])
+      assertType<Array<{ id: number, name: string }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -117,6 +120,7 @@ describe('orWhere', () => {
         { id: 4, name: 'Emma' },
         { id: 1, name: 'John' },
       ])
+      assertType<Array<{ id: number, name: string }>>(users2)
     })
 
     it('boolean', () => {
@@ -145,6 +149,7 @@ describe('orWhere', () => {
         { id: 3, isAdmin: true },
         { id: 2, isAdmin: false },
       ])
+      assertType<Array<{ id: number, isAdmin: boolean }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -157,6 +162,7 @@ describe('orWhere', () => {
         { id: 4, isAdmin: false },
         { id: 1, isAdmin: true },
       ])
+      assertType<Array<{ id: number, isAdmin: boolean }>>(users2)
     })
 
     it('null', () => {
@@ -186,6 +192,7 @@ describe('orWhere', () => {
         { id: 4, name: null },
         { id: 1, name: 'John' },
       ])
+      assertType<Array<{ id: number, name: string | null }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -199,6 +206,7 @@ describe('orWhere', () => {
         { id: 5, name: 'Paul' },
         { id: 2, name: null },
       ])
+      assertType<Array<{ id: number, name: string | null }>>(users2)
     })
 
     it('should throw error when orWhere is called before where', () => {
@@ -253,6 +261,7 @@ describe('orWhere', () => {
         { id: 1, name: 'John', age: 25, isAdmin: true },
         { id: 3, name: 'Paul', age: 35, isAdmin: true },
       ])
+      assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users1)
 
       // Test 2: Multiple where and orWhere combinations
       const users2 = userQuery.query()
@@ -267,6 +276,7 @@ describe('orWhere', () => {
         { id: 4, name: 'Emma', age: 40, isAdmin: false },
         { id: 3, name: 'Paul', age: 35, isAdmin: true },
       ])
+      assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users2)
 
       // Test 3: Complex combination with multiple conditions
       const users3 = userQuery.query()
@@ -282,6 +292,7 @@ describe('orWhere', () => {
         { id: 2, name: 'Sarah', age: 30, isAdmin: false },
         { id: 1, name: 'John', age: 25, isAdmin: true },
       ])
+      assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users3)
     })
   })
 })

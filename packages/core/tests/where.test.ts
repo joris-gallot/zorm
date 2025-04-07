@@ -64,6 +64,7 @@ describe('where', () => {
         .get()
 
       expect(users).toEqual([{ id: 1, age: 10 }])
+      assertType<Array<{ id: number, age?: number }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -71,6 +72,7 @@ describe('where', () => {
         .get()
 
       expect(users2).toEqual([{ id: 2 }, { id: 3 }, { id: 4 }])
+      assertType<Array<{ id: number, age?: number }>>(users2)
 
       /* > operator */
       let users3 = userQuery.query()
@@ -78,10 +80,12 @@ describe('where', () => {
         .get()
 
       expect(users3).toEqual([{ id: 3 }, { id: 4 }])
+      assertType<Array<{ id: number, age?: number }>>(users3)
 
       users3 = userQuery.query().where('age', '>=', 10).get()
 
       expect(users3).toEqual([{ id: 1, age: 10 }])
+      assertType<Array<{ id: number, age?: number }>>(users3)
 
       /* < operator */
       const users4 = userQuery.query()
@@ -89,6 +93,7 @@ describe('where', () => {
         .get()
 
       expect(users4).toEqual([{ id: 1, age: 10 }, { id: 2 }])
+      assertType<Array<{ id: number, age?: number }>>(users4)
 
       /* >= operator */
       const users5 = userQuery.query()
@@ -96,6 +101,7 @@ describe('where', () => {
         .get()
 
       expect(users5).toEqual([{ id: 2 }, { id: 3 }, { id: 4 }])
+      assertType<Array<{ id: number, age?: number }>>(users5)
 
       /* <= operator */
       const users6 = userQuery.query()
@@ -103,6 +109,7 @@ describe('where', () => {
         .get()
 
       expect(users6).toEqual([{ id: 1, age: 10 }, { id: 2 }, { id: 3 }])
+      assertType<Array<{ id: number, age?: number }>>(users6)
     })
 
     it('string', () => {
@@ -126,6 +133,7 @@ describe('where', () => {
         .get()
 
       expect(users).toEqual([{ id: 1, name: 'John' }])
+      assertType<Array<{ id: number, name: string }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -133,6 +141,7 @@ describe('where', () => {
         .get()
 
       expect(users2).toEqual([{ id: 2, name: 'Sarah' }, { id: 3, name: 'Paul' }, { id: 4, name: 'Emma' }])
+      assertType<Array<{ id: number, name: string }>>(users2)
     })
 
     it('boolean', () => {
@@ -156,6 +165,7 @@ describe('where', () => {
         .get()
 
       expect(users).toEqual([{ id: 1, isAdmin: true }, { id: 3, isAdmin: true }])
+      assertType<Array<{ id: number, isAdmin: boolean }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -163,6 +173,7 @@ describe('where', () => {
         .get()
 
       expect(users2).toEqual([{ id: 2, isAdmin: false }, { id: 4, isAdmin: false }])
+      assertType<Array<{ id: number, isAdmin: boolean }>>(users2)
     })
 
     it('null', () => {
@@ -187,6 +198,7 @@ describe('where', () => {
         .get()
 
       expect(users).toEqual([{ id: 2, name: null }, { id: 4, name: null }])
+      assertType<Array<{ id: number, name: string | null }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -194,6 +206,7 @@ describe('where', () => {
         .get()
 
       expect(users2).toEqual([{ id: 1, name: 'John' }, { id: 3, name: 'Zoe' }, { id: 5, name: 'Paul' }])
+      assertType<Array<{ id: number, name: string | null }>>(users2)
     })
 
     it('undefined', () => {
@@ -218,6 +231,7 @@ describe('where', () => {
         .get()
 
       expect(users).toEqual([{ id: 2, name: undefined }, { id: 4, name: undefined }])
+      assertType<Array<{ id: number, name?: string }>>(users)
 
       /* != operator */
       const users2 = userQuery.query()
@@ -225,6 +239,7 @@ describe('where', () => {
         .get()
 
       expect(users2).toEqual([{ id: 1, name: 'John' }, { id: 3, name: 'Doe' }, { id: 5, name: 'Paul' }])
+      assertType<Array<{ id: number, name?: string }>>(users2)
     })
   })
 })

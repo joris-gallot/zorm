@@ -40,10 +40,11 @@ function getOperatorFunction<T extends ObjectWithId>(operator: QueryOperator) {
   return operatorsMap[operator]
 }
 
-interface Query<T extends ObjectWithId> {
-  where: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T>
-  orWhere: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T>
-  get: () => T[]
+interface Query<T extends ObjectWithId, R extends Record<never, Relation>> {
+  where: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T, R>
+  orWhere: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T, R>
+  with: (relation: keyof R) => Query<T, R>
+  get: () => Array<FindResult<T, R, { with: (keyof R)[] }>>
 }
 
 interface Entity<S extends ZodSchemaWithId> {
@@ -55,7 +56,7 @@ interface Entity<S extends ZodSchemaWithId> {
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>> {
   findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
   save: (entities: EntityWithOptionalRelations<T, R>[]) => void
-  query: () => Query<T>
+  query: () => Query<T, R>
 }
 
 type RelationKind = 'one' | 'many'
@@ -158,6 +159,39 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
 
+interface LoadRelationsOptions<T extends ObjectWithId, R extends Record<never, Relation>> {
+  entity: T
+  relations: R
+  relationsToLoad: Array<keyof R>
+  entityName: string
+}
+
+function loadRelations<T extends ObjectWithId, R extends Record<never, Relation>>({
+  entity,
+  relations,
+  relationsToLoad,
+  entityName,
+}: LoadRelationsOptions<T, R>): T & Partial<RelationsToType<R>> {
+  const entityWithRelations = { ...entity } as T & Partial<RelationsToType<R>>
+
+  for (const relationName of relationsToLoad) {
+    const relation = relations[relationName] as Relation
+    if (!relation) {
+      throw new Error(`Relation ${String(relationName)} not found on entity ${entityName}`)
+    }
+
+    const refDb = { ...db[relation.reference.entity.name] }
+    const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
+
+    // @ts-expect-error can't valid the type between ObjectWithId and the relation type
+    entityWithRelations[relationName] = Object.values(refDb)[arrayFunc]((value: ObjectWithId) => {
+      return value[relation.reference.field.name as keyof ObjectWithId] === entity[relation.field.name as keyof ObjectWithId]
+    })
+  }
+
+  return entityWithRelations
+}
+
 export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(
   entity: E,
   relationsFn?: Relations<R>,
@@ -207,35 +241,24 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     }
 
     if (options?.with && options.with.length > 0) {
-      for (const _refName of options.with) {
-        const refName = String(_refName)
-        // @ts-expect-error refName is a string, but we can use it to index the object
-        const relation = relations[refName] as Relation
-
-        if (!relation) {
-          throw new Error(`Relation ${refName} not found on entity ${entity.name}`)
-        }
-
-        const refDb = { ...db[relation.reference.entity.name] }
-
-        // if relation is hasMany, use filter to get all related entities
-        // if relation is hasOne, use find to get the related entity
-        const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
-
-        // @ts-expect-error refName is a string, but we can use it to index the object
-        foundEntity[refName] = Object.values(refDb)[arrayFunc]((value: ObjectWithId) => {
-          return value[relation.reference.field.name as keyof ObjectWithId] === foundEntity[relation.field.name as keyof ObjectWithId]
-        })
-      }
+      return loadRelations({
+        entity: foundEntity,
+        relations,
+        relationsToLoad: options.with,
+        entityName: entity.name,
+      }) as FindResult<T, R, O>
     }
 
-    return foundEntity as FindResult<T, R, O> | null
+    return foundEntity as FindResult<T, R, O>
   }
 
   const whereFilters: Array<(arr: T[]) => T[]> = []
   const orWhereFilters: Array<(arr: T[]) => T[]> = []
+  const relationsToLoad: (keyof R)[] = []
 
-  function query(): Query<T> {
+  type QueryResult = FindResult<T, R, { with: (keyof R)[] }>
+
+  function query(): Query<T, R> {
     return {
       where: (field, operator, value) => {
         whereFilters.push(arr => arr.filter((item) => {
@@ -250,6 +273,14 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           return operatorFunction(item[field], value)
         }))
 
+        return query()
+      },
+      with: (relation) => {
+        if (!relationsNames.includes(relation as string)) {
+          throw new Error(`Relation ${String(relation)} not found on entity ${entity.name}`)
+        }
+
+        relationsToLoad.push(relation)
         return query()
       },
       get: () => {
@@ -269,11 +300,23 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           result = [...new Set([...result, ...orResults])]
         }
 
-        // Clear filters
+        if (relationsToLoad.length > 0) {
+          result = result.map((e) => {
+            const withRelations = loadRelations({
+              entity: e,
+              relations,
+              relationsToLoad,
+              entityName: entity.name,
+            })
+            return withRelations as QueryResult
+          })
+        }
+
+        relationsToLoad.length = 0
         whereFilters.length = 0
         orWhereFilters.length = 0
 
-        return result
+        return result as QueryResult[]
       },
     }
   }
