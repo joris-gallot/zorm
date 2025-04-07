@@ -1,4 +1,4 @@
-import { useReactivityAdapter } from '@zodorm/vue'
+import { useReactivityAdapter } from '@zorm-ts/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { postQuery, userQuery } from './queries.js'

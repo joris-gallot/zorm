@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@zodorm/core": ["../core/src/index.ts"]
+      "@zorm-ts/core": ["../core/src/index.ts"]
     },
     "strict": true,
     "noUncheckedIndexedAccess": true,

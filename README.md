@@ -1,6 +1,6 @@
-# zodorm
+# zorm
 
-zodorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
+zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
 Currently it only handles reactivity through Vue integration (see [Vue integration example](packages/vue/src/index.ts)), but support for other frameworks will be added.
 
@@ -16,13 +16,13 @@ Currently it only handles reactivity through Vue integration (see [Vue integrati
 
 ## Installation
 ```sh
-npm install @zodorm/core
+npm install @zorm-ts/core
 ```
 ## Usage
 
 ### Define Entities
 ```ts
-import { defineEntity } from '@zodorm/core'
+import { defineEntity } from '@zorm-ts/core'
 import { z } from 'zod'
 
 export const User = defineEntity(
@@ -48,7 +48,7 @@ export const Post = defineEntity(
 
 ### Create a Query Builder from relations
 ```ts
-import { defineQueryBuilder } from '@zodorm/core'
+import { defineQueryBuilder } from '@zorm-ts/core'
 import { Post, User } from './entities'
 
 export const userQuery = defineQueryBuilder(User, ({ many }) => ({
@@ -91,13 +91,13 @@ const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 
 ### Vue
 
-zodorm provides first-class support for Vue through the `@zodorm/vue` package. This integration enables reactive queries that automatically update your components when the data changes.
+zorm provides first-class support for Vue through the `@zorm-ts/vue` package. This integration enables reactive queries that automatically update your components when the data changes.
 
 ```sh
-npm install @zodorm/vue
+npm install @zorm-ts/vue
 ```
 
-For detailed Vue integration instructions, check out the [@zodorm/vue documentation](packages/vue/README.md).
+For detailed Vue integration instructions, check out the [@zorm-ts/vue documentation](packages/vue/README.md).
 
 ## License
 MIT

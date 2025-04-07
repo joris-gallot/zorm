@@ -1,4 +1,4 @@
-import { defineReactivityAdapter } from '@zodorm/core'
+import { defineReactivityAdapter } from '@zorm-ts/core'
 import { shallowRef, triggerRef } from 'vue'
 
 export function useReactivityAdapter() {

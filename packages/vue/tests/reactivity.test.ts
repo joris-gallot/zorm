@@ -1,4 +1,4 @@
-import { defineEntity, defineQueryBuilder } from '@zodorm/core'
+import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
 import { describe, expect, it } from 'vitest'
 import { computed } from 'vue'
 import { z } from 'zod'

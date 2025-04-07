@@ -1,13 +1,13 @@
 {
-  "name": "@zodorm/vue",
+  "name": "@zorm-ts/vue",
   "type": "module",
-  "version": "0.0.5",
-  "description": "Vue integration for zodorm",
+  "version": "0.0.1",
+  "description": "Vue integration for zorm",
   "author": "Joris Gallot",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joris-gallot/zodorm.git"
+    "url": "git+https://github.com/joris-gallot/zorm.git"
   },
   "keywords": [
     "typescript",
@@ -34,7 +34,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@zodorm/core": ">=0.0.7",
+    "@zorm-ts/core": ">=0.0.1",
     "vue": "catalog:"
   },
   "devDependencies": {

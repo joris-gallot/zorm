@@ -1,13 +1,13 @@
 {
-  "name": "@zodorm/core",
+  "name": "@zorm-ts/core",
   "type": "module",
-  "version": "0.0.12",
+  "version": "0.0.1",
   "description": "A minimalist, type-safe ORM powered by Zod",
   "author": "Joris Gallot",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joris-gallot/zodorm.git"
+    "url": "git+https://github.com/joris-gallot/zorm.git"
   },
   "keywords": [
     "typescript",
