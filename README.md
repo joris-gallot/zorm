@@ -70,9 +70,13 @@ const users = userQuery.query()
 }]
 */
 
-const userWithPosts = userQuery.findById(1, { with: ['posts'] })
+const usersWithPosts = userQuery.query()
+  .where('age', '>', 18)
+  .orWhere('isAdmin', '=', true)
+  .with('posts')
+  .get()
 /*
-{
+[{
   id: number
   firstName: string
   lastName: string
@@ -82,7 +86,7 @@ const userWithPosts = userQuery.findById(1, { with: ['posts'] })
     title: string
     userId: number
   }>
-}
+}]
 */
 ```
 
