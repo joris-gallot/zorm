@@ -346,6 +346,54 @@ describe('save', () => {
     })
   })
 
+  it('should not save entities with invalid data', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string().min(10),
+      userId: z.number(),
+    }))
+
+    const userQuery = defineQueryBuilder(User, ({ many }) => ({
+      posts: many(Post, {
+        reference: Post.fields.userId,
+        field: User.fields.id,
+      }),
+    }))
+
+    expect(() => userQuery.save([{
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error should not have test
+      test: 'ok',
+    }])).toThrow()
+
+    expect(() => userQuery.save([{
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error should not have post
+      post: {
+        id: 1,
+        title: 'short',
+        userId: 1,
+      },
+    }])).toThrow()
+
+    expect(() => userQuery.save([{
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error id is missing
+      posts: [{
+        title: 'short',
+        userId: 1,
+      }],
+    }])).toThrow()
+  })
+
   describe('parsing schema', () => {
     it('should parse schema', () => {
       const User = defineEntity('user', z.object({
