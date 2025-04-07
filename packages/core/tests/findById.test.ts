@@ -273,6 +273,30 @@ describe('findById', () => {
     } | null>(postWithUser)
   })
 
+  it('should throw if relation does not exist', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const userQuery = defineQueryBuilder(User)
+
+    userQuery.save([{
+      id: 1,
+      name: 'John Doe',
+    }])
+
+    expect(() =>
+      // @ts-expect-error relation does not exist
+      userQuery.findById(1, { with: ['posts'] }),
+    ).toThrow('Relation posts not found on entity user')
+
+    expect(() =>
+      // @ts-expect-error relation does not exist
+      userQuery.findById(1, { with: ['invalid', 'posts'] }),
+    ).toThrow('Relation invalid not found on entity user')
+  })
+
   it('should find by id with multiple relations', () => {
     const User = defineEntity('user', z.object({
       id: z.number(),

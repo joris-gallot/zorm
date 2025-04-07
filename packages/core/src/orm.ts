@@ -162,10 +162,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
   entity: E,
   relationsFn?: Relations<R>,
 ) {
-  if (!db[entity.name]) {
-    throw new Error(`Did you forget to call defineEntity for ${entity.name}?`)
-  }
-
   const relations = relationsFn?.({ one, many }) || {} as R
   const relationsNames = Object.keys(relations)
 
@@ -177,10 +173,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         if (relationsNames.includes(key)) {
           // @ts-expect-error key is a string, but we can use it to index the object
           const relation = relations[key] as Relation
-
-          if (!relation) {
-            throw new Error(`Relation ${key} not found on entity ${entity.name}`)
-          }
 
           const refEntityName = relation.reference.entity.name
           // @ts-expect-error key is a string, but we can use it to index the object
@@ -225,10 +217,6 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         }
 
         const refDb = { ...db[relation.reference.entity.name] }
-
-        if (!Object.keys(refDb).length) {
-          throw new Error(`Database for entity ${relation.reference.entity.name} not found`)
-        }
 
         // if relation is hasMany, use filter to get all related entities
         // if relation is hasOne, use find to get the related entity
