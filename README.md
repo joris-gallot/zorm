@@ -2,8 +2,6 @@
 
 zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to define and manipulate entities in a simple and type-safe way, with intuitive relation management.
 
-Currently it only handles reactivity through Vue integration (see [Vue integration example](packages/vue/src/index.ts)), but support for other frameworks will be added.
-
 ## Features
 - ✅ Type-safe schema definition and validation powered by Zod
 - 🔍 Fully typed query builder with:
@@ -89,6 +87,8 @@ const userWithPosts = userQuery.findById(1, { with: ['posts'] })
 ```
 
 ## Reactivity
+
+Currently it only handles reactivity through Vue integration (see [Vue integration example](packages/vue/src/index.ts)), but support for other frameworks will be added.
 
 ### Vue
 
