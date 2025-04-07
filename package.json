@@ -8,7 +8,6 @@
   },
   "scripts": {
     "test": "vitest --run",
-    "test:coverage": "vitest run --coverage",
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
     "type-check": "nr -r type-check",
