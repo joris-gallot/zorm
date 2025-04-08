@@ -52,7 +52,7 @@ describe('with', () => {
     }])
 
     const users = userQuery.query()
-      .where('name', '=', 'John Doe')
+      .where(user => user.name === 'John Doe')
       .with('posts')
       .get()
 
@@ -81,7 +81,7 @@ describe('with', () => {
     }>>(users)
 
     const posts = postQuery.query()
-      .where('title', '=', 'Post 1')
+      .where(post => post.title === 'Post 1')
       .with('user')
       .get()
 
@@ -176,7 +176,7 @@ describe('with', () => {
     }])
 
     const users = userQuery.query()
-      .where('name', '=', 'John Doe')
+      .where(user => user.name === 'John Doe')
       .with('posts')
       .with('settings')
       .get()

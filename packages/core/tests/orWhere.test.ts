@@ -14,29 +14,21 @@ describe('orWhere', () => {
     const userQuery = defineQueryBuilder(User)
 
     const _users = userQuery.query()
-      .where('name', '=', 'John')
-      .orWhere('id', '>', 10)
-      .orWhere('isAdmin', '=', true)
-      .orWhere('age', '=', null)
-      // @ts-expect-error invalid value
-      .orWhere('age', '!=', undefined)
-      .orWhere('isAdmin', '!=', undefined)
-      // @ts-expect-error invalid operator
-      .orWhere('isAdmin', 'is', true)
-      // @ts-expect-error invalid operator
-      .orWhere('isAdmin', '', true)
+      .where(user => user.name === 'John')
+      .orWhere(user => user.id > 10)
+      .orWhere(user => user.isAdmin === true)
+      .orWhere(user => user.age === null)
+      .orWhere(user => user.isAdmin !== undefined)
       // @ts-expect-error invalid field
-      .orWhere('foo', '=', 'bar')
+      .orWhere(user => user.foo === true)
       // @ts-expect-error invalid field
-      .orWhere('', '=', 'bar')
+      .orWhere(user => user.bar === 'bar')
       // @ts-expect-error invalid value
-      .orWhere('isAdmin', '!=', null)
+      .orWhere(user => user.isAdmin === 'true')
       // @ts-expect-error invalid value
-      .orWhere('isAdmin', '=', 'true')
+      .orWhere(user => user.name === 1)
       // @ts-expect-error invalid value
-      .orWhere('name', '=', 1)
-      // @ts-expect-error invalid value
-      .orWhere('id', '=', true)
+      .orWhere(user => user.id === true)
       .get()
 
     assertType<typeof _users>([{
@@ -59,8 +51,8 @@ describe('orWhere', () => {
 
       /* = and > operators */
       const users = userQuery.query()
-        .where('id', '=', 1)
-        .orWhere('id', '>', 3)
+        .where(user => user.id === 1)
+        .orWhere(user => user.id > 3)
         .get()
 
       expect(users).toEqual([{ id: 1 }, { id: 4 }])
@@ -68,8 +60,8 @@ describe('orWhere', () => {
 
       /* != and < operators */
       const users2 = userQuery.query()
-        .where('id', '!=', 1)
-        .orWhere('id', '<', 2)
+        .where(user => user.id !== 1)
+        .orWhere(user => user.id < 2)
         .get()
 
       expect(users2).toEqual([
@@ -98,8 +90,8 @@ describe('orWhere', () => {
 
       /* = operator */
       const users = userQuery.query()
-        .where('name', '=', 'John')
-        .orWhere('name', '=', 'Sarah')
+        .where(user => user.name === 'John')
+        .orWhere(user => user.name === 'Sarah')
         .get()
 
       expect(users).toEqual([
@@ -110,8 +102,8 @@ describe('orWhere', () => {
 
       /* != operator */
       const users2 = userQuery.query()
-        .where('name', '!=', 'John')
-        .orWhere('name', '!=', 'Sarah')
+        .where(user => user.name !== 'John')
+        .orWhere(user => user.name !== 'Sarah')
         .get()
 
       expect(users2).toEqual([
@@ -140,8 +132,8 @@ describe('orWhere', () => {
 
       /* = operator */
       const users = userQuery.query()
-        .where('isAdmin', '=', true)
-        .orWhere('id', '=', 2)
+        .where(user => user.isAdmin === true)
+        .orWhere(user => user.id === 2)
         .get()
 
       expect(users).toEqual([
@@ -153,8 +145,8 @@ describe('orWhere', () => {
 
       /* != operator */
       const users2 = userQuery.query()
-        .where('isAdmin', '!=', true)
-        .orWhere('id', '=', 1)
+        .where(user => user.isAdmin !== true)
+        .orWhere(user => user.id === 1)
         .get()
 
       expect(users2).toEqual([
@@ -183,8 +175,8 @@ describe('orWhere', () => {
 
       /* = operator */
       const users = userQuery.query()
-        .where('name', '=', null)
-        .orWhere('id', '=', 1)
+        .where(user => user.name === null)
+        .orWhere(user => user.id === 1)
         .get()
 
       expect(users).toEqual([
@@ -196,8 +188,8 @@ describe('orWhere', () => {
 
       /* != operator */
       const users2 = userQuery.query()
-        .where('name', '!=', null)
-        .orWhere('id', '=', 2)
+        .where(user => user.name !== null)
+        .orWhere(user => user.id === 2)
         .get()
 
       expect(users2).toEqual([
@@ -219,14 +211,14 @@ describe('orWhere', () => {
 
       expect(() => {
         userQuery.query()
-          .orWhere('name', '=', 'John')
+          .orWhere(user => user.name === 'John')
           .get()
       }).toThrow('Cannot use orWhere without where')
 
       expect(() => {
         userQuery.query()
-          .orWhere('name', '=', 'John')
-          .where('name', '=', 'Sarah')
+          .orWhere(user => user.name === 'John')
+          .where(user => user.name === 'Sarah')
           .get()
       }).not.toThrow()
     })
@@ -249,11 +241,10 @@ describe('orWhere', () => {
         { id: 5, name: 'John', age: 45, isAdmin: false },
       ])
 
-      // Test 1: Multiple where followed by orWhere
       const users1 = userQuery.query()
-        .orWhere('isAdmin', '=', true)
-        .where('name', '=', 'John')
-        .where('age', '>', 30)
+        .orWhere(user => user.isAdmin === true)
+        .where(user => user.name === 'John')
+        .where(user => user.age > 30)
         .get()
 
       expect(users1).toEqual([
@@ -263,12 +254,11 @@ describe('orWhere', () => {
       ])
       assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users1)
 
-      // Test 2: Multiple where and orWhere combinations
       const users2 = userQuery.query()
-        .orWhere('age', '>', 35)
-        .where('name', '=', 'John')
-        .where('isAdmin', '=', false)
-        .orWhere('id', '=', 3)
+        .orWhere(user => user.age > 35)
+        .where(user => user.name === 'John')
+        .where(user => user.isAdmin === false)
+        .orWhere(user => user.id === 3)
         .get()
 
       expect(users2).toEqual([
@@ -278,13 +268,12 @@ describe('orWhere', () => {
       ])
       assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users2)
 
-      // Test 3: Complex combination with multiple conditions
       const users3 = userQuery.query()
-        .where('name', '=', 'John')
-        .where('age', '>', 30)
-        .orWhere('name', '=', 'Sarah')
-        .where('isAdmin', '=', false)
-        .orWhere('id', '=', 1)
+        .where(user => user.name === 'John')
+        .where(user => user.age > 30)
+        .orWhere(user => user.name === 'Sarah')
+        .where(user => user.isAdmin === false)
+        .orWhere(user => user.id === 1)
         .get()
 
       expect(users3).toEqual([
@@ -293,102 +282,6 @@ describe('orWhere', () => {
         { id: 1, name: 'John', age: 25, isAdmin: true },
       ])
       assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users3)
-    })
-  })
-
-  describe('operator type restrictions', () => {
-    it('should validate operator types for primitives', () => {
-      const User = defineEntity('user', z.object({
-        id: z.number(),
-        name: z.string(),
-        age: z.number(),
-        isAdmin: z.boolean(),
-        nickname: z.string().nullable(),
-        bio: z.string().optional(),
-      }))
-
-      const userQuery = defineQueryBuilder(User)
-
-      // String operators
-      userQuery.query()
-        .where('name', '=', 'John')
-        .where('name', '!=', 'John')
-        // @ts-expect-error invalid operator for string
-        .where('name', '>', 'John')
-        // @ts-expect-error invalid operator for string
-        .where('name', '<', 'John')
-        // @ts-expect-error invalid operator for string
-        .where('name', '>=', 'John')
-        // @ts-expect-error invalid operator for string
-        .where('name', '<=', 'John')
-        .get()
-
-      // Number operators
-      userQuery.query()
-        .where('age', '=', 25)
-        .where('age', '!=', 25)
-        .where('age', '>', 25)
-        .where('age', '<', 25)
-        .where('age', '>=', 25)
-        .where('age', '<=', 25)
-        .get()
-
-      // Boolean operators
-      userQuery.query()
-        .where('isAdmin', '=', true)
-        .where('isAdmin', '!=', true)
-        // @ts-expect-error invalid operator for boolean
-        .where('isAdmin', '>', true)
-        // @ts-expect-error invalid operator for boolean
-        .where('isAdmin', '<', true)
-        // @ts-expect-error invalid operator for boolean
-        .where('isAdmin', '>=', true)
-        // @ts-expect-error invalid operator for boolean
-        .where('isAdmin', '<=', true)
-        .get()
-
-      // Null operators
-      userQuery.query()
-        .where('nickname', '=', null)
-        .where('nickname', '!=', null)
-        // @ts-expect-error invalid operator for null
-        .where('nickname', '>', null)
-        // @ts-expect-error invalid operator for null
-        .where('nickname', '<', null)
-        // @ts-expect-error invalid operator for null
-        .where('nickname', '>=', null)
-        // @ts-expect-error invalid operator for null
-        .where('nickname', '<=', null)
-        .get()
-
-      // Undefined operators
-      userQuery.query()
-        .where('bio', '=', undefined)
-        .where('bio', '!=', undefined)
-        // @ts-expect-error invalid operator for undefined
-        .where('bio', '>', undefined)
-        // @ts-expect-error invalid operator for undefined
-        .where('bio', '<', undefined)
-        // @ts-expect-error invalid operator for undefined
-        .where('bio', '>=', undefined)
-        // @ts-expect-error invalid operator for undefined
-        .where('bio', '<=', undefined)
-        .get()
-
-      // Same restrictions apply to orWhere
-      userQuery.query()
-        .where('name', '=', 'John')
-        .orWhere('age', '>', 25)
-        .orWhere('isAdmin', '=', true)
-        // @ts-expect-error invalid operator for boolean
-        .orWhere('isAdmin', '>', true)
-        .orWhere('nickname', '=', null)
-        // @ts-expect-error invalid operator for null
-        .orWhere('nickname', '>', null)
-        .orWhere('bio', '=', undefined)
-        // @ts-expect-error invalid operator for undefined
-        .orWhere('bio', '>', undefined)
-        .get()
     })
   })
 })

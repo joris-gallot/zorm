@@ -58,8 +58,8 @@ export const userQuery = defineQueryBuilder(User, ({ many }) => ({
 }))
 
 const users = userQuery.query()
-  .where('age', '>', 18)
-  .orWhere('isAdmin', '=', true)
+  .where(user => user.age > 18)
+  .orWhere(user => user.isAdmin)
   .get()
 /*
 [{
@@ -72,8 +72,8 @@ const users = userQuery.query()
 */
 
 const usersWithPosts = userQuery.query()
-  .where('age', '>', 18)
-  .orWhere('isAdmin', '=', true)
+  .where(user => user.age > 18)
+  .orWhere(user => user.isAdmin)
   .with('posts')
   .get()
 /*

@@ -24,38 +24,9 @@ type EntityWithOptionalRelations<T extends ObjectWithId, R extends Record<never,
 
 type FindResult<T, R extends Record<never, Relation>, O extends FindOptions<R>> = O extends { with: Array<infer U extends keyof R> } ? Simplify<T & RelationsToType<R, U>> : T
 
-type QueryOperator = '=' | '!=' | '>' | '<' | '>=' | '<='
-
-type OperatorFunction<T extends ObjectWithId, P extends keyof T = keyof T> = (a: T[P], b: T[P]) => boolean
-function getOperatorFunction<T extends ObjectWithId>(operator: QueryOperator) {
-  const operatorsMap: Record<QueryOperator, OperatorFunction<T>> = {
-    '=': (a, b) => a === b,
-    '!=': (a, b) => a !== b,
-    '>': (a, b) => a > b,
-    '<': (a, b) => a < b,
-    '>=': (a, b) => a >= b,
-    '<=': (a, b) => a <= b,
-  }
-
-  return operatorsMap[operator]
-}
-
-type StringQueryOperator = Extract<QueryOperator, '=' | '!='>
-type NumberQueryOperator = Extract<QueryOperator, '=' | '!=' | '>' | '<' | '>=' | '<='>
-type BooleanQueryOperator = Extract<QueryOperator, '=' | '!='>
-type NullQueryOperator = Extract<QueryOperator, '=' | '!='>
-type UndefinedQueryOperator = Extract<QueryOperator, '=' | '!='>
-
-type PrimitiveQueryOperator<Field> = Field extends string ?
-  StringQueryOperator : Field extends number ?
-    NumberQueryOperator : Field extends boolean ?
-      BooleanQueryOperator : Field extends null ?
-        NullQueryOperator : Field extends undefined ?
-          UndefinedQueryOperator : never
-
 interface Query<T extends ObjectWithId, R extends Record<never, Relation>> {
-  where: <F extends keyof T, FType extends T[F]>(field: F, operator: PrimitiveQueryOperator<FType>, value: FType) => Query<T, R>
-  orWhere: <F extends keyof T, FType extends T[F]>(field: F, operator: PrimitiveQueryOperator<FType>, value: FType) => Query<T, R>
+  where: (cb: (value: T) => boolean) => Query<T, R>
+  orWhere: (cb: (value: T) => boolean) => Query<T, R>
   with: (relation: keyof R) => Query<T, R>
   get: () => Array<FindResult<T, R, { with: (keyof R)[] }>>
 }
@@ -273,19 +244,12 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
   function query(): Query<T, R> {
     return {
-      where: (field, operator, value) => {
-        whereFilters.push(arr => arr.filter((item) => {
-          const operatorFunction = getOperatorFunction<T>(operator)
-          return operatorFunction(item[field], value)
-        }))
+      where: (cb) => {
+        whereFilters.push(arr => arr.filter(cb))
         return query()
       },
-      orWhere: (field, operator, value) => {
-        orWhereFilters.push(arr => arr.filter((item) => {
-          const operatorFunction = getOperatorFunction<T>(operator)
-          return operatorFunction(item[field], value)
-        }))
-
+      orWhere: (cb) => {
+        orWhereFilters.push(arr => arr.filter(cb))
         return query()
       },
       with: (relation) => {
