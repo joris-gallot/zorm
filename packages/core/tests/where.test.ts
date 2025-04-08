@@ -242,4 +242,85 @@ describe('where', () => {
       assertType<Array<{ id: number, name?: string }>>(users2)
     })
   })
+
+  describe('operator type restrictions', () => {
+    it('should validate operator types for primitives', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        name: z.string(),
+        age: z.number(),
+        isAdmin: z.boolean(),
+        nickname: z.string().nullable(),
+        bio: z.string().optional(),
+      }))
+
+      const userQuery = defineQueryBuilder(User)
+
+      // String operators
+      userQuery.query()
+        .where('name', '=', 'John')
+        .where('name', '!=', 'John')
+        // @ts-expect-error invalid operator for string
+        .where('name', '>', 'John')
+        // @ts-expect-error invalid operator for string
+        .where('name', '<', 'John')
+        // @ts-expect-error invalid operator for string
+        .where('name', '>=', 'John')
+        // @ts-expect-error invalid operator for string
+        .where('name', '<=', 'John')
+        .get()
+
+      // Number operators
+      userQuery.query()
+        .where('age', '=', 25)
+        .where('age', '!=', 25)
+        .where('age', '>', 25)
+        .where('age', '<', 25)
+        .where('age', '>=', 25)
+        .where('age', '<=', 25)
+        .get()
+
+      // Boolean operators
+      userQuery.query()
+        .where('isAdmin', '=', true)
+        .where('isAdmin', '!=', true)
+        // @ts-expect-error invalid operator for boolean
+        .where('isAdmin', '>', true)
+        // @ts-expect-error invalid operator for boolean
+        .where('isAdmin', '<', true)
+        // @ts-expect-error invalid operator for boolean
+        .where('isAdmin', '>=', true)
+        // @ts-expect-error invalid operator for boolean
+        .where('isAdmin', '<=', true)
+        .get()
+
+      // Null operators
+      userQuery.query()
+        .where('nickname', '=', null)
+        .where('nickname', '!=', null)
+        // @ts-expect-error invalid operator for null
+        .where('nickname', '>', null)
+        // @ts-expect-error invalid operator for null
+        .where('nickname', '<', null)
+        // @ts-expect-error invalid operator for null
+        .where('nickname', '>=', null)
+        // @ts-expect-error invalid operator for null
+        .where('nickname', '<=', null)
+        .get()
+
+      // Undefined operators
+      userQuery.query()
+        .where('bio', '=', undefined)
+        .where('bio', '!=', undefined)
+        // @ts-expect-error invalid operator for undefined
+        .where('bio', '>', undefined)
+        // @ts-expect-error invalid operator for undefined
+        .where('bio', '<', undefined)
+        // @ts-expect-error invalid operator for undefined
+        .where('bio', '>=', undefined)
+        // @ts-expect-error invalid operator for undefined
+        .where('bio', '<=', undefined)
+        .get()
+    })
+  })
 })

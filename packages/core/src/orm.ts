@@ -40,9 +40,22 @@ function getOperatorFunction<T extends ObjectWithId>(operator: QueryOperator) {
   return operatorsMap[operator]
 }
 
+type StringQueryOperator = Extract<QueryOperator, '=' | '!='>
+type NumberQueryOperator = Extract<QueryOperator, '=' | '!=' | '>' | '<' | '>=' | '<='>
+type BooleanQueryOperator = Extract<QueryOperator, '=' | '!='>
+type NullQueryOperator = Extract<QueryOperator, '=' | '!='>
+type UndefinedQueryOperator = Extract<QueryOperator, '=' | '!='>
+
+type PrimitiveQueryOperator<Field> = Field extends string ?
+  StringQueryOperator : Field extends number ?
+    NumberQueryOperator : Field extends boolean ?
+      BooleanQueryOperator : Field extends null ?
+        NullQueryOperator : Field extends undefined ?
+          UndefinedQueryOperator : never
+
 interface Query<T extends ObjectWithId, R extends Record<never, Relation>> {
-  where: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T, R>
-  orWhere: <F extends keyof T>(field: F, operator: QueryOperator, value: T[F]) => Query<T, R>
+  where: <F extends keyof T, FType extends T[F]>(field: F, operator: PrimitiveQueryOperator<FType>, value: FType) => Query<T, R>
+  orWhere: <F extends keyof T, FType extends T[F]>(field: F, operator: PrimitiveQueryOperator<FType>, value: FType) => Query<T, R>
   with: (relation: keyof R) => Query<T, R>
   get: () => Array<FindResult<T, R, { with: (keyof R)[] }>>
 }
