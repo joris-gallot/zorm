@@ -1,8 +1,10 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
+import type { OrderByCriteria, OrderByOrders } from './orderBy'
 import type { Simplify } from './types'
+import { orderBy } from './orderBy'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }, any, any> {}
-interface ObjectWithId { id: number | string }
+export interface ObjectWithId { id: number | string }
 
 type ShapeToFields<S extends ZodObject<{ id: ZodNumber | ZodString }, any, any>> = {
   [K in keyof S['shape']]: {
@@ -28,6 +30,7 @@ interface Query<T extends ObjectWithId, R extends Record<never, Relation>> {
   where: (cb: (value: T) => boolean) => Query<T, R>
   orWhere: (cb: (value: T) => boolean) => Query<T, R>
   with: (relation: keyof R) => Query<T, R>
+  orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<T, R>
   get: () => Array<FindResult<T, R, { with: (keyof R)[] }>>
 }
 
@@ -103,25 +106,28 @@ interface Signal {
   trigger: () => void
 }
 
-let db: Record<string, Record<ObjectWithId['id'], ObjectWithId>> = {}
+type Db = Record<string, Record<ObjectWithId['id'], ObjectWithId>>
+type ProxyValue<T extends object> = (string extends keyof T ? T[keyof T & string] : any) | (symbol extends keyof T ? T[keyof T & symbol] : any)
 
-export function getDb() {
+let db: Db = {}
+
+export function getDb(): Db {
   return db
 }
 
-export function defineReactivityAdapter(signalFactory: () => Signal) {
+export function defineReactivityAdapter(signalFactory: () => Signal): void {
   db = createReactiveProxy(db, signalFactory())
 }
 
 function createReactiveProxy<T extends object>(target: T, signal: Signal): T {
   return new Proxy(target, {
-    get(target, prop, receiver) {
+    get(target, prop, receiver): ProxyValue<T> {
       const value = Reflect.get(target, prop, receiver)
       signal.depend()
 
       return typeof value === 'object' && value !== null ? createReactiveProxy(value, signal) : value
     },
-    set(target, prop, value, receiver) {
+    set(target, prop, value, receiver): boolean {
       const result = Reflect.set(target, prop, value, receiver)
       signal.trigger()
       return result
@@ -129,7 +135,7 @@ function createReactiveProxy<T extends object>(target: T, signal: Signal): T {
   })
 }
 
-export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S) {
+export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S): Entity<S> {
   const fields = Object.entries(schema.shape).reduce((acc, [key, value]) => {
     acc[key as keyof S['shape']] = {
       zodType: value,
@@ -164,11 +170,13 @@ function loadRelations<T extends ObjectWithId, R extends Record<never, Relation>
       throw new Error(`Relation ${String(relationName)} not found on entity ${entityName}`)
     }
 
-    const refDb = { ...db[relation.reference.entity.name] }
+    const refEntityName = relation.reference.entity.name
+    const refDb = db[refEntityName]
+
     const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
 
     // @ts-expect-error can't valid the type between ObjectWithId and the relation type
-    entityWithRelations[relationName] = Object.values(refDb)[arrayFunc]((value: ObjectWithId) => {
+    entityWithRelations[relationName] = Object.values(refDb || {})[arrayFunc]((value: ObjectWithId) => {
       return value[relation.reference.field.name as keyof ObjectWithId] === entity[relation.field.name as keyof ObjectWithId]
     })
   }
@@ -179,11 +187,11 @@ function loadRelations<T extends ObjectWithId, R extends Record<never, Relation>
 export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(
   entity: E,
   relationsFn?: Relations<R>,
-) {
+): QueryBuilder<E, T, R> {
   const relations = relationsFn?.({ one, many }) || {} as R
   const relationsNames = Object.keys(relations)
 
-  function save(_entities: EntityWithOptionalRelations<T, R>[]) {
+  function save(_entities: EntityWithOptionalRelations<T, R>[]): void {
     for (const e of _entities) {
       db[entity.name]![e.id] = { id: e.id }
 
@@ -236,62 +244,78 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     return foundEntity as FindResult<T, R, O>
   }
 
-  const whereFilters: Array<(arr: T[]) => T[]> = []
-  const orWhereFilters: Array<(arr: T[]) => T[]> = []
-  const relationsToLoad: (keyof R)[] = []
+  const queryWhereFilters: Array<(arr: T[]) => T[]> = []
+  const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
+  const queryRelationsToLoad: (keyof R)[] = []
+  const queryOrderBy: { criteria: OrderByCriteria<T>, orders: OrderByOrders } = { criteria: [], orders: [] }
+
+  function resetQuery(): void {
+    queryWhereFilters.length = 0
+    queryOrWhereFilters.length = 0
+    queryRelationsToLoad.length = 0
+    queryOrderBy.criteria.length = 0
+    queryOrderBy.orders.length = 0
+  }
 
   type QueryResult = FindResult<T, R, { with: (keyof R)[] }>
 
   function query(): Query<T, R> {
     return {
-      where: (cb) => {
-        whereFilters.push(arr => arr.filter(cb))
+      where: (cb): Query<T, R> => {
+        queryWhereFilters.push(arr => arr.filter(cb))
         return query()
       },
-      orWhere: (cb) => {
-        orWhereFilters.push(arr => arr.filter(cb))
+      orWhere: (cb): Query<T, R> => {
+        queryOrWhereFilters.push(arr => arr.filter(cb))
         return query()
       },
-      with: (relation) => {
+      with: (relation): Query<T, R> => {
         if (!relationsNames.includes(relation as string)) {
           throw new Error(`Relation ${String(relation)} not found on entity ${entity.name}`)
         }
 
-        relationsToLoad.push(relation)
+        queryRelationsToLoad.push(relation)
         return query()
       },
-      get: () => {
+      orderBy: (criteria, orders): Query<T, R> => {
+        queryOrderBy.criteria = criteria
+        queryOrderBy.orders = orders
+        return query()
+      },
+      get: (): QueryResult[] => {
         const dbEntity = db[entity.name]!
         let result = Object.values(dbEntity) as T[]
 
-        if (orWhereFilters.length > 0 && whereFilters.length === 0) {
+        if (queryOrWhereFilters.length > 0 && queryWhereFilters.length === 0) {
           throw new Error('Cannot use orWhere without where')
         }
 
-        if (whereFilters.length > 0) {
-          result = whereFilters.reduce((acc, filter) => filter(acc), result)
+        if (queryWhereFilters.length > 0) {
+          result = queryWhereFilters.reduce((acc, filter) => filter(acc), result)
         }
 
-        if (orWhereFilters.length > 0) {
-          const orResults = orWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
+        if (queryOrWhereFilters.length > 0) {
+          const orResults = queryOrWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
           result = [...new Set([...result, ...orResults])]
         }
 
-        if (relationsToLoad.length > 0) {
+        if (queryOrderBy.criteria.length > 0) {
+          result = result.sort(orderBy(queryOrderBy))
+        }
+
+        if (queryRelationsToLoad.length > 0) {
           result = result.map((e) => {
             const withRelations = loadRelations({
               entity: e,
               relations,
-              relationsToLoad,
+              relationsToLoad: queryRelationsToLoad,
               entityName: entity.name,
             })
             return withRelations as QueryResult
           })
         }
 
-        relationsToLoad.length = 0
-        whereFilters.length = 0
-        orWhereFilters.length = 0
+        resetQuery()
 
         return result as QueryResult[]
       },
@@ -302,5 +326,5 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
     findById,
     save,
     query,
-  } satisfies QueryBuilder<E, T, R>
+  }
 }
