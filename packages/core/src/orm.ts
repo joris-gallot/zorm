@@ -41,7 +41,7 @@ interface Entity<S extends ZodSchemaWithId> {
 }
 
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>> {
-  findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
+  findById: <O extends FindOptions<R>>(id: T['id'], options?: O) => FindResult<T, R, O> | null
   save: (entities: EntityWithOptionalRelations<T, R>[]) => void
   query: () => Query<T, R>
 }

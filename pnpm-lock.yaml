@@ -76,8 +76,8 @@ importers:
   packages/vue:
     dependencies:
       '@zorm-ts/core':
-        specifier: '>=0.0.1'
-        version: 0.0.1(zod@3.24.2)
+        specifier: workspace:>=0.0.3
+        version: link:../core
       vue:
         specifier: 'catalog:'
         version: 3.5.13(typescript@5.8.2)
@@ -1360,11 +1360,6 @@ packages:
         optional: true
       vue:
         optional: true
-
-  '@zorm-ts/core@0.0.1':
-    resolution: {integrity: sha512-RSJXL4IHsp+MOVShIuvuJ7+1Y9Vn2haRVP5znrxNUrohkhRatCHUaGcMlTlPatui+lzY/Zv/fIb1DLQ/9I84RQ==}
-    peerDependencies:
-      zod: '>=3.0.0'
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -4533,10 +4528,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.2
       vue: 3.5.13(typescript@5.8.2)
-
-  '@zorm-ts/core@0.0.1(zod@3.24.2)':
-    dependencies:
-      zod: 3.24.2
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:
