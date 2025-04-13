@@ -76,7 +76,7 @@ importers:
   packages/vue:
     dependencies:
       '@zorm-ts/core':
-        specifier: workspace:>=0.0.3
+        specifier: workspace:*
         version: link:../core
       vue:
         specifier: 'catalog:'
