@@ -1,6 +1,8 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
+import type { Database } from './database'
 import type { OrderByCriteria, OrderByOrders } from './orderBy'
 import type { Simplify } from './types'
+import { DefaultDatabase } from './database'
 import { orderBy } from './orderBy'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }, any, any> {}
@@ -41,7 +43,7 @@ interface Entity<S extends ZodSchemaWithId> {
 }
 
 interface QueryBuilder<E extends Entity<any>, T extends z.infer<E['zodSchema']>, R extends Record<string, Relation>> {
-  findById: (id: T['id'], options?: FindOptions<R>) => FindResult<T, R, FindOptions<R>> | null
+  findById: <O extends FindOptions<R>>(id: T['id'], options?: O) => FindResult<T, R, O> | null
   save: (entities: EntityWithOptionalRelations<T, R>[]) => void
   query: () => Query<T, R>
 }
@@ -106,13 +108,16 @@ interface Signal {
   trigger: () => void
 }
 
-type Db = Record<string, Record<ObjectWithId['id'], ObjectWithId>>
 type ProxyValue<T extends object> = (string extends keyof T ? T[keyof T & string] : any) | (symbol extends keyof T ? T[keyof T & symbol] : any)
 
-let db: Db = {}
+let db: Database = new DefaultDatabase()
 
-export function getDb(): Db {
+export function getDb(): Database {
   return db
+}
+
+export function defineReactivityDatabase(database: Database): void {
+  db = database
 }
 
 export function defineReactivityAdapter(signalFactory: () => Signal): void {
@@ -144,7 +149,7 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
     return acc
   }, {} as ShapeToFields<S>)
 
-  db[name] = {}
+  db.registerEntity(name)
 
   return { name, fields, zodSchema: schema } satisfies Entity<S>
 }
@@ -171,12 +176,12 @@ function loadRelations<T extends ObjectWithId, R extends Record<never, Relation>
     }
 
     const refEntityName = relation.reference.entity.name
-    const refDb = db[refEntityName]
+    const refDb = db.getAll(refEntityName)
 
     const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
 
     // @ts-expect-error can't valid the type between ObjectWithId and the relation type
-    entityWithRelations[relationName] = Object.values(refDb || {})[arrayFunc]((value: ObjectWithId) => {
+    entityWithRelations[relationName] = refDb[arrayFunc]((value: ObjectWithId) => {
       return value[relation.reference.field.name as keyof ObjectWithId] === entity[relation.field.name as keyof ObjectWithId]
     })
   }
@@ -193,7 +198,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
 
   function save(_entities: EntityWithOptionalRelations<T, R>[]): void {
     for (const e of _entities) {
-      db[entity.name]![e.id] = { id: e.id }
+      db.setEntity(entity.name, { id: e.id })
 
       for (const key of Object.keys(e)) {
         if (relationsNames.includes(key)) {
@@ -207,28 +212,27 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
           // Handle array relations (many)
           if (Array.isArray(relationObject)) {
             for (const refEntity of relationObject) {
-              db[refEntityName]![refEntity.id] = relation.reference.entity.zodSchema.parse(refEntity)
+              db.setEntity(refEntityName, relation.reference.entity.zodSchema.parse(refEntity))
             }
           }
           // Handle single relations (one)
           else {
-            db[refEntityName]![relationObject.id] = relation.reference.entity.zodSchema.parse(relationObject)
+            db.setEntity(refEntityName, relation.reference.entity.zodSchema.parse(relationObject))
           }
         }
         // else handle regular properties
         else {
           const k = key as keyof ShapeToFields<ZodSchemaWithId>
-          db[entity.name]![e.id]![k] = entity.fields[k].zodType.parse(e[k])
+          db.setEntityKey(entity.name, e.id, k, entity.fields[k].zodType.parse(e[k]))
         }
       }
     }
   }
 
   function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> | null {
-    const dbEntity = db[entity.name]!
-    const foundEntity = { ...dbEntity[id] } as T
+    const foundEntity = db.getEntity(entity.name, id) as T
 
-    if (!Object.keys(foundEntity).length) {
+    if (!foundEntity) {
       return null
     }
 
@@ -283,8 +287,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         return query()
       },
       get: (): QueryResult[] => {
-        const dbEntity = db[entity.name]!
-        let result = Object.values(dbEntity) as T[]
+        let result = db.getAll(entity.name) as T[]
 
         if (queryOrWhereFilters.length > 0 && queryWhereFilters.length === 0) {
           throw new Error('Cannot use orWhere without where')
@@ -295,7 +298,7 @@ export function defineQueryBuilder<E extends Entity<ZodSchemaWithId>, T extends 
         }
 
         if (queryOrWhereFilters.length > 0) {
-          const orResults = queryOrWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
+          const orResults = queryOrWhereFilters.flatMap(filter => filter(db.getAll(entity.name) as T[]))
           result = [...new Set([...result, ...orResults])]
         }
 

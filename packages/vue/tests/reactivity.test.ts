@@ -48,7 +48,7 @@ describe('reactivity', () => {
 
     userQuery.save([{ id: 1, age: 10 }, { id: 2, age: 20 }, { id: 3, age: 30 }])
 
-    const users = computed(() => userQuery.query().where('age', '>', 10).get())
+    const users = computed(() => userQuery.query().where(u => u.age > 10).get())
 
     expect(users.value).toEqual([{ id: 2, age: 20 }, { id: 3, age: 30 }])
 

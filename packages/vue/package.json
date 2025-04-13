@@ -34,7 +34,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@zorm-ts/core": ">=0.0.1",
+    "@zorm-ts/core": "workspace:*",
     "vue": "catalog:"
   },
   "devDependencies": {
