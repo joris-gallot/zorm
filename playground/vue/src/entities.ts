@@ -17,5 +17,14 @@ export const Post = defineEntity(
     id: z.number(),
     title: z.string().max(10),
     userId: z.number(),
+    imageId: z.number(),
+  }),
+)
+
+export const Image = defineEntity(
+  'image',
+  z.object({
+    id: z.number(),
+    url: z.string().optional(),
   }),
 )

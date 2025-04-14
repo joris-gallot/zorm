@@ -19,40 +19,42 @@ describe('defineQueryBuilder', () => {
       isPublished: z.boolean(),
     }))
 
-    const _userQuery = defineQueryBuilder(User, ({ many }) => ({
-      posts: many(Post, {
-        // @ts-expect-error must be a string or number
-        field: User.fields.isAdmin,
-        // @ts-expect-error must be a string or number
-        reference: Post.fields.publishedAt,
-      }),
+    defineQueryBuilder([User, Post], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          // @ts-expect-error must be a string or number
+          field: User.fields.isAdmin,
+          // @ts-expect-error must be a string or number
+          reference: Post.fields.publishedAt,
+        }),
+      },
+      post: {
+        user: one(User, {
+          // @ts-expect-error must be a string or number
+          field: Post.fields.isPublished,
+          // @ts-expect-error must be a string or number and not optional
+          reference: User.fields.age,
+        }),
+      },
     }))
 
-    const _userQuery2 = defineQueryBuilder(User, ({ one }) => ({
-      posts: one(Post, {
-        // @ts-expect-error must be a string or number and not optional
-        field: User.fields.age,
-        // @ts-expect-error must be a string or number
-        reference: Post.fields.isPublished,
-      }),
-    }))
-
-    const _postQuery = defineQueryBuilder(Post, ({ one }) => ({
-      user: one(User, {
-        // @ts-expect-error must be a string or number
-        field: Post.fields.isPublished,
-        // @ts-expect-error must be a string or number and not optional
-        reference: User.fields.age,
-      }),
-    }))
-
-    const _postQuery2 = defineQueryBuilder(Post, ({ one }) => ({
-      user: one(User, {
-        // @ts-expect-error must be a string or number
-        field: Post.fields.isPublished,
-        // @ts-expect-error must be a string or number
-        reference: User.fields.isAdmin,
-      }),
+    defineQueryBuilder([User, Post], ({ one }) => ({
+      user: {
+        posts: one(Post, {
+          // @ts-expect-error must be a string or number and not optional
+          field: User.fields.age,
+          // @ts-expect-error must be a string or number
+          reference: Post.fields.isPublished,
+        }),
+      },
+      post: {
+        user: one(User, {
+          // @ts-expect-error must be a string or number
+          field: Post.fields.isPublished,
+          // @ts-expect-error must be a string or number
+          reference: User.fields.isAdmin,
+        }),
+      }
     }))
   })
 })

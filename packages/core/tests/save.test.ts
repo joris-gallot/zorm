@@ -22,6 +22,7 @@ describe('save', () => {
       id: z.number(),
       title: z.string(),
       userId: z.number(),
+      imageId: z.number(),
     }))
 
     const Settings = defineEntity('settings', z.object({
@@ -31,52 +32,67 @@ describe('save', () => {
       isAdmin: z.boolean(),
     }))
 
-    const _userQuery = defineQueryBuilder(User, ({ many, one }) => ({
-      posts: many(Post, {
-        reference: Post.fields.userId,
-        field: User.fields.id,
-      }),
-      settings: one(Settings, {
-        reference: Settings.fields.userId,
-        field: User.fields.id,
-      }),
+    const Image = defineEntity('image', z.object({
+      id: z.number(),
+      url: z.string(),
     }))
 
-    const _postQuery = defineQueryBuilder(Post, ({ one }) => ({
-      user: one(User, {
-        reference: User.fields.id,
-        field: Post.fields.userId,
-      }),
-    }))
-
-    const _settingsQuery = defineQueryBuilder(Settings, ({ one }) => ({
-      user: one(User, {
-        reference: User.fields.id,
-        field: Settings.fields.userId,
-      }),
+    const _queryBuilder = defineQueryBuilder([User, Post, Settings], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+        settings: one(Settings, {
+          reference: Settings.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+        image: one(Image, {
+          reference: Image.fields.id,
+          field: Post.fields.imageId,
+        }),
+      },
+      settings: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Settings.fields.userId,
+        }),
+      },
     }))
 
     /* user */
-    assertType<Parameters<typeof _userQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
       id: 1,
       name: 'John Doe',
     }])
-    assertType<Parameters<typeof _userQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
       id: 1,
       name: 'John Doe',
       posts: [{
         id: 1,
         title: 'Post 1',
         userId: 1,
+        imageId: 1,
       }],
     }])
-    assertType<Parameters<typeof _userQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
       id: 1,
       name: 'John Doe',
       posts: [{
         id: 1,
         title: 'Post 1',
         userId: 1,
+        imageId: 1,
+        image: {
+          id: 1,
+          url: 'https://example.com/image.jpg',
+        },
       }],
       settings: {
         id: 1,
@@ -85,7 +101,7 @@ describe('save', () => {
         isAdmin: true,
       },
     }])
-    assertType<Parameters<typeof _userQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error invalid object should be a post
@@ -93,27 +109,41 @@ describe('save', () => {
       // @ts-expect-error invalid object should be a settings
       settings: [{}],
     }])
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        imageId: 1,
+        // @ts-expect-error invalid object should be a post
+        image: {},
+      }],
+    }])
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _userQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
       name: 'John Doe',
     }])
 
     /* post */
-    assertType<Parameters<typeof _postQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
       id: 1,
       title: 'Post 1',
       userId: 1,
+      imageId: 1,
     }])
-    assertType<Parameters<typeof _postQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
       id: 1,
       title: 'Post 1',
       userId: 1,
+      imageId: 1,
       user: {
         id: 1,
         name: 'John Doe',
       },
     }])
-    assertType<Parameters<typeof _postQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -121,24 +151,24 @@ describe('save', () => {
       user: [{}],
     }])
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _postQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
       title: 'Post 1',
       userId: 1,
     }])
     // @ts-expect-error missing userId
-    assertType<Parameters<typeof _postQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
       id: 1,
       title: 'Post 1',
     }])
 
     /* settings */
-    assertType<Parameters<typeof _settingsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
       id: 1,
       name: 'Admin',
       userId: 1,
       isAdmin: true,
     }])
-    assertType<Parameters<typeof _settingsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
       id: 1,
       name: 'Admin',
       userId: 1,
@@ -148,14 +178,14 @@ describe('save', () => {
         name: 'John Doe',
       },
     }])
-    assertType<Parameters<typeof _settingsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
       id: 1,
       name: 'Admin',
       // @ts-expect-error invalid object should be a user
       user: [{}],
     }])
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _settingsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
       name: 'Admin',
     }])
 
@@ -164,21 +194,21 @@ describe('save', () => {
       name: z.string(),
     }))
 
-    const _entityWithoutRelationsQuery = defineQueryBuilder(entityWithoutRelations)
+    const _queryBuilderWithoutRelations = defineQueryBuilder([entityWithoutRelations])
 
-    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
       id: 1,
       name: 'John Doe',
     }])
 
-    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       foo: [],
     }])
 
-    assertType<Parameters<typeof _entityWithoutRelationsQuery.save>[0]>([{
+    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
@@ -204,16 +234,24 @@ describe('save', () => {
 
     expect(db).toEqual({ user: {}, post: {} })
 
-    const userQuery = defineQueryBuilder(User, ({ many }) => ({
-      posts: many(Post, {
-        reference: Post.fields.userId,
-        field: User.fields.id,
-      }),
+    const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+      },
     }))
 
-    expect(userQuery.findById(1)).toEqual(null)
+    expect(queryBuilder.user.findById(1)).toEqual(null)
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }])
@@ -225,7 +263,7 @@ describe('save', () => {
       post: {},
     })
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }, {
@@ -241,7 +279,7 @@ describe('save', () => {
       post: {},
     })
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 2,
       name: 'Jane Doe 2',
     }])
@@ -254,7 +292,7 @@ describe('save', () => {
       post: {},
     })
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 3,
       name: 'John Doe 2',
       posts: [{
@@ -275,14 +313,7 @@ describe('save', () => {
       },
     })
 
-    const postQuery = defineQueryBuilder(Post, ({ one }) => ({
-      user: one(User, {
-        reference: User.fields.id,
-        field: Post.fields.userId,
-      }),
-    }))
-
-    postQuery.save([{
+    queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -300,7 +331,7 @@ describe('save', () => {
       },
     })
 
-    postQuery.save([{
+    queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -322,7 +353,7 @@ describe('save', () => {
       },
     })
 
-    postQuery.save([{
+    queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -358,21 +389,23 @@ describe('save', () => {
       userId: z.number(),
     }))
 
-    const userQuery = defineQueryBuilder(User, ({ many }) => ({
-      posts: many(Post, {
-        reference: Post.fields.userId,
-        field: User.fields.id,
-      }),
+    const queryBuilder = defineQueryBuilder([User, Post], ({ many }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
     }))
 
-    expect(() => userQuery.save([{
+    expect(() => queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have test
       test: 'ok',
     }])).toThrow()
 
-    expect(() => userQuery.save([{
+    expect(() => queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have post
@@ -383,7 +416,7 @@ describe('save', () => {
       },
     }])).toThrow()
 
-    expect(() => userQuery.save([{
+    expect(() => queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error id is missing
@@ -401,14 +434,14 @@ describe('save', () => {
         email: z.string().email(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      expect(() => userQuery.save([{
+      expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'not an email',
       }])).toThrow('Invalid email')
 
-      expect(() => userQuery.save([{
+      expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'test@test.com',
       }])).not.toThrow()
@@ -426,14 +459,16 @@ describe('save', () => {
         userId: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User, ({ many }) => ({
-        posts: many(Post, {
-          reference: Post.fields.userId,
-          field: User.fields.id,
-        }),
+      const queryBuilder = defineQueryBuilder([User, Post], ({ many }) => ({
+        user: {
+          posts: many(Post, {
+            reference: Post.fields.userId,
+            field: User.fields.id,
+          }),
+        }
       }))
 
-      expect(() => userQuery.save([{
+      expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'test@test.com',
         posts: [{
@@ -443,7 +478,7 @@ describe('save', () => {
         }],
       }])).toThrow('String must contain at least 10 character(s)')
 
-      expect(() => userQuery.save([{
+      expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'not an email',
         posts: [{
@@ -466,26 +501,28 @@ describe('save', () => {
         userId: z.number(),
       }))
 
-      const postQuery = defineQueryBuilder(Post, ({ one }) => ({
-        user: one(User, {
-          reference: User.fields.id,
-          field: Post.fields.userId,
-        }),
+      const queryBuilder = defineQueryBuilder([User, Post], ({ one }) => ({
+        post: {
+          user: one(User, {
+            reference: User.fields.id,
+            field: Post.fields.userId,
+          }),
+        },
       }))
 
-      expect(() => postQuery.save([{
+      expect(() => queryBuilder.post.save([{
         id: 1,
         title: 'short',
         userId: 1,
       }])).toThrow('String must contain at least 10 character(s)')
 
-      expect(() => postQuery.save([{
+      expect(() => queryBuilder.post.save([{
         id: 1,
         title: 'long enough',
         userId: 1,
       }])).not.toThrow()
 
-      expect(() => postQuery.save([{
+      expect(() => queryBuilder.post.save([{
         id: 1,
         title: 'long enough',
         userId: 1,

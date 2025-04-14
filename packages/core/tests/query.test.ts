@@ -9,7 +9,7 @@ describe('query', () => {
       name: z.string(),
     }))
 
-    const query = defineQueryBuilder(User).query()
+    const query = defineQueryBuilder([User]).user.query()
 
     assertType<typeof query>(
       {
@@ -25,11 +25,11 @@ describe('query', () => {
   it('should return all users', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
-    const userQuery = defineQueryBuilder(User)
+    const queryBuilder = defineQueryBuilder([User])
 
-    userQuery.save([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }])
+    queryBuilder.user.save([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }])
 
-    const users = userQuery.query().get()
+    const users = queryBuilder.user.query().get()
     expect(users).toEqual([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }])
   })
 })

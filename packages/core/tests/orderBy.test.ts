@@ -11,9 +11,9 @@ describe('orderBy', () => {
       isAdmin: z.boolean(),
     }))
 
-    const userQuery = defineQueryBuilder(User)
+    const queryBuilder = defineQueryBuilder([User])
 
-    const _users = userQuery.query()
+    const _users = queryBuilder.user.query()
       .orderBy([obj => obj.name, obj => obj.age], ['asc', 'desc'])
       // @ts-expect-error invalid field
       .orderBy([obj => obj.foo], ['asc'])
@@ -39,16 +39,16 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'John', age: 25 },
         { id: 3, name: 'Alice', age: 20 },
         { id: 4, name: 'Bob', age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name, obj => obj.age], ['asc', 'desc'])
         .get()
 
@@ -73,16 +73,16 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'John', age: 25 },
         { id: 3, name: 'Alice', age: 20 },
         { id: 4, name: 'Bob', age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age, obj => obj.name], ['asc', 'desc'])
         .get()
 
@@ -108,15 +108,15 @@ describe('orderBy', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Alice' },
         { id: 3, name: 'Bob' },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name], ['asc'])
         .get()
 
@@ -138,15 +138,15 @@ describe('orderBy', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Alice' },
         { id: 3, name: 'Bob' },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name], ['desc'])
         .get()
 
@@ -168,15 +168,15 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: 25 },
         { id: 3, age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .get()
 
@@ -198,15 +198,15 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: 25 },
         { id: 3, age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['desc'])
         .get()
 
@@ -237,28 +237,28 @@ describe('orderBy', () => {
         userId: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User, ({ many }) => ({
-        posts: many(Post, {
-          reference: Post.fields.userId,
-          field: User.fields.id,
-        }),
+      const queryBuilder = defineQueryBuilder([User, Post], ({ many }) => ({
+        user: {
+          posts: many(Post, {
+            reference: Post.fields.userId,
+            field: User.fields.id,
+          }),
+        },
       }))
 
-      const postQuery = defineQueryBuilder(Post)
-
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'Alice', age: 25 },
         { id: 3, name: 'Bob', age: 35 },
       ])
 
-      postQuery.save([
+      queryBuilder.post.save([
         { id: 1, title: 'Post 1', userId: 1 },
         { id: 2, title: 'Post 2', userId: 1 },
         { id: 3, title: 'Post 3', userId: 2 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .with('posts')
         .get()
@@ -309,14 +309,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: undefined },
         { id: 2, age: undefined },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .get()
 
@@ -332,14 +332,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: undefined },
         { id: 2, age: undefined },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['desc'])
         .get()
 
@@ -355,14 +355,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: undefined },
         { id: 2, age: 30 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .get()
 
@@ -378,14 +378,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: undefined },
         { id: 2, age: 30 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['desc'])
         .get()
 
@@ -401,14 +401,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: undefined },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .get()
 
@@ -424,14 +424,14 @@ describe('orderBy', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: undefined },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['desc'])
         .get()
 
@@ -447,14 +447,14 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: 30 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
         .get()
 
@@ -470,14 +470,14 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, age: 30 },
         { id: 2, age: 30 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['desc'])
         .get()
 
@@ -496,15 +496,15 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'John', age: 25 },
         { id: 3, name: 'Alice', age: 20 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name, obj => obj.age], ['asc'])
         .get()
 
@@ -521,15 +521,15 @@ describe('orderBy', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Alice' },
         { id: 3, name: 'Bob' },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name], ['asc', 'desc'])
         .get()
 
@@ -546,15 +546,15 @@ describe('orderBy', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Alice' },
         { id: 3, name: 'Bob' },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name], [undefined as any])
         .get()
 
@@ -572,15 +572,15 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'Alice', age: 25 },
         { id: 3, name: 'Bob', age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy([obj => obj.name.length], ['asc'])
         .get()
 
@@ -598,15 +598,15 @@ describe('orderBy', () => {
         age: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 30 },
         { id: 2, name: 'Alice', age: 25 },
         { id: 3, name: 'Bob', age: 35 },
       ])
 
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .orderBy(['name'], ['asc'])
         .get()
 

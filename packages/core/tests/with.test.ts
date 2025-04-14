@@ -3,6 +3,70 @@ import { z } from 'zod'
 import { defineEntity, defineQueryBuilder } from '../src/orm'
 
 describe('with', () => {
+  it('should valid types', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const queryBuilder = defineQueryBuilder([User])
+
+    const _usersWithPosts = queryBuilder.user.query()
+      // @ts-expect-error not relations defined
+      .with({ posts: true })
+      .get()
+
+    assertType<Array<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+      }>
+    }>>(_usersWithPosts)
+
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string(),
+      userId: z.number(),
+    }))
+
+    const queryBuilder2 = defineQueryBuilder([User, Post], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+      },
+    }))
+
+    const _users = queryBuilder2.user.query()
+      .with({ posts: true })
+      .with({ posts: { user: true } })
+      // @ts-expect-error should be a boolean
+      .with({ posts: 'true' })
+      // @ts-expect-error should be a boolean
+      .with({ posts: { user: 1 } })
+      .get()
+
+    assertType<Array<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+      }>
+    }>>(_users)
+  })
+
   it('should load relations', () => {
     const User = defineEntity('user', z.object({
       id: z.number(),
@@ -15,21 +79,22 @@ describe('with', () => {
       userId: z.number(),
     }))
 
-    const userQuery = defineQueryBuilder(User, ({ many }) => ({
-      posts: many(Post, {
-        reference: Post.fields.userId,
-        field: User.fields.id,
-      }),
+    const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+      },
     }))
 
-    const postQuery = defineQueryBuilder(Post, ({ one }) => ({
-      user: one(User, {
-        reference: User.fields.id,
-        field: Post.fields.userId,
-      }),
-    }))
-
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }, {
@@ -37,7 +102,7 @@ describe('with', () => {
       name: 'Jane Doe',
     }])
 
-    postQuery.save([{
+    queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -51,9 +116,9 @@ describe('with', () => {
       userId: 1,
     }])
 
-    const users = userQuery.query()
+    const users = queryBuilder.user.query()
+      .with({ posts: true })
       .where(user => user.name === 'John Doe')
-      .with('posts')
       .get()
 
     expect(users).toEqual([{
@@ -80,9 +145,9 @@ describe('with', () => {
       }>
     }>>(users)
 
-    const posts = postQuery.query()
+    const posts = queryBuilder.post.query()
       .where(post => post.title === 'Post 1')
-      .with('user')
+      .with({ user: true })
       .get()
 
     expect(posts).toEqual([{
@@ -112,16 +177,16 @@ describe('with', () => {
       name: z.string(),
     }))
 
-    const userQuery = defineQueryBuilder(User)
+    const queryBuilder = defineQueryBuilder([User])
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }])
 
     expect(() =>
       // @ts-expect-error relation does not exist
-      userQuery.query().with('posts'),
+      queryBuilder.user.query().with({ posts: true }),
     ).toThrow('Relation posts not found on entity user')
   })
 
@@ -144,41 +209,52 @@ describe('with', () => {
       isAdmin: z.boolean(),
     }))
 
-    const userQuery = defineQueryBuilder(User, ({ many, one }) => ({
-      posts: many(Post, {
-        reference: Post.fields.userId,
-        field: User.fields.id,
-      }),
-      settings: one(Settings, {
-        reference: Settings.fields.userId,
-        field: User.fields.id,
-      }),
+    const queryBuilder = defineQueryBuilder([User, Post, Settings], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+        settings: one(Settings, {
+          reference: Settings.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+      },
+      settings: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Settings.fields.userId,
+        }),
+      },
     }))
 
-    userQuery.save([{
+    queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }])
 
-    const postQuery = defineQueryBuilder(Post)
-    postQuery.save([{
+    queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
     }])
 
-    const settingsQuery = defineQueryBuilder(Settings)
-    settingsQuery.save([{
+    queryBuilder.settings.save([{
       id: 1,
       name: 'Admin',
       userId: 1,
       isAdmin: true,
     }])
 
-    const users = userQuery.query()
+    const users = queryBuilder.user.query()
       .where(user => user.name === 'John Doe')
-      .with('posts')
-      .with('settings')
+      .with({ posts: true, settings: true })
       .get()
 
     expect(users).toEqual([{
