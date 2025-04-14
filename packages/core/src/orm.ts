@@ -238,6 +238,79 @@ type GlobalQueryBuilder<E extends Array<Entity<string, ZodSchemaWithId>>, N exte
   [K in N]: QueryBuilder<Extract<E[number], { name: K }>, R>
 }
 
+function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends z.infer<E['zodSchema']>>(entity: E, relations: R): QueryBuilder<E, R, T> {
+  function parseAndSaveEntity<E extends Entity<any, any>>(
+    { entity, data, relations }: {
+      entity: E
+      data: ObjectWithId
+      relations: Relations<any>
+    },
+  ): void {
+    const myRelations = relations[entity.name] || {}
+    const relationsNames = Object.keys(myRelations)
+
+    db[entity.name]![data.id] = { id: data.id }
+
+    for (const key of Object.keys(data)) {
+      if (relationsNames.includes(key)) {
+        const relation = myRelations[key] as Relation
+
+        // @ts-expect-error key is a string, but we can use it to index the object
+        const relationObject = data[key]! as ObjectWithId | ObjectWithId[]
+
+        // Handle array relations (many)
+        if (Array.isArray(relationObject)) {
+          for (const refEntity of relationObject) {
+            parseAndSaveEntity({ entity: relation.reference.entity, data: refEntity, relations })
+          }
+        }
+        // Handle single relations (one)
+        else {
+          parseAndSaveEntity({ entity: relation.reference.entity, data: relationObject, relations })
+        }
+      }
+      // else handle regular properties
+      else {
+        const k = key as keyof ShapeToFields<ZodSchemaWithId>
+
+        if (!entity.fields[k]) {
+          throw new Error(`Field ${k} not found on entity ${entity.name}`)
+        }
+
+        db[entity.name]![data.id]![k] = entity.fields[k].zodType.parse(data[k])
+      }
+    }
+  }
+
+  function save(entities: EntityWithOptionalRelations<E, R>[]): void {
+    for (const e of entities) {
+      parseAndSaveEntity({ entity, data: e, relations })
+    }
+  }
+
+  function findById<O extends FindByIdOptions<E, R>>(id: T['id'], options?: O): FindByIdResult<E, R, T, O> | null {
+    const dbEntity = db[entity.name]!
+    const foundEntity = { ...dbEntity[id] } as T
+
+    if (!Object.keys(foundEntity).length) {
+      return null
+    }
+
+    if (options?.with && Object.keys(options.with).length > 0) {
+      return loadRelations({
+        entity: foundEntity,
+        relations,
+        relationsToLoad: Object.keys(options.with),
+        entityName: entity.name,
+      }) as FindByIdResult<E, R, T, O>
+    }
+
+    return foundEntity as FindByIdResult<E, R, T, O>
+  }
+
+  return { save, findById }
+}
+
 export function defineQueryBuilder<
   E extends Array<Entity<string, ZodSchemaWithId>>,
   N extends E[number]['name'],
@@ -245,150 +318,8 @@ export function defineQueryBuilder<
 >(entities: E, relationsFn?: RelationsFn<N, R>): GlobalQueryBuilder<E, N, R> {
   const relations = relationsFn?.({ one, many }) || {} as R
 
-  return {}
+  return entities.reduce((acc, entity) => {
+    acc[entity.name] = defineEntityQueryBuilder(entity, relations)
+    return acc
+  }, {} as GlobalQueryBuilder<E, N, R>)
 }
-
-// export function _defineQueryBuilder<E extends Entity<string, ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(
-//   entity: E,
-//   relationsFn?: RelationsFn<R>,
-// ): QueryBuilder<E, T, R> {
-//   const relations = relationsFn?.({ one, many }) || {} as R
-//   const relationsNames = Object.keys(relations)
-
-//   function save(_entities: EntityWithOptionalRelations<T, R>[]): void {
-//     for (const e of _entities) {
-//       db[entity.name]![e.id] = { id: e.id }
-
-//       for (const key of Object.keys(e)) {
-//         if (relationsNames.includes(key)) {
-//           // @ts-expect-error key is a string, but we can use it to index the object
-//           const relation = relations[key] as Relation
-
-//           const refEntityName = relation.reference.entity.name
-//           // @ts-expect-error key is a string, but we can use it to index the object
-//           const relationObject = e[key]! as ObjectWithId | ObjectWithId[]
-
-//           // Handle array relations (many)
-//           if (Array.isArray(relationObject)) {
-//             for (const refEntity of relationObject) {
-//               db[refEntityName]![refEntity.id] = relation.reference.entity.zodSchema.parse(refEntity)
-//             }
-//           }
-//           // Handle single relations (one)
-//           else {
-//             db[refEntityName]![relationObject.id] = relation.reference.entity.zodSchema.parse(relationObject)
-//           }
-//         }
-//         // else handle regular properties
-//         else {
-//           const k = key as keyof ShapeToFields<ZodSchemaWithId>
-//           db[entity.name]![e.id]![k] = entity.fields[k].zodType.parse(e[k])
-//         }
-//       }
-//     }
-//   }
-
-//   function findById<O extends FindOptions<R>>(id: T['id'], options?: O): FindResult<T, R, O> | null {
-//     const dbEntity = db[entity.name]!
-//     const foundEntity = { ...dbEntity[id] } as T
-
-//     if (!Object.keys(foundEntity).length) {
-//       return null
-//     }
-
-//     if (options?.with && options.with.length > 0) {
-//       return loadRelations({
-//         entity: foundEntity,
-//         relations,
-//         relationsToLoad: options.with,
-//         entityName: entity.name,
-//       }) as FindResult<T, R, O>
-//     }
-
-//     return foundEntity as FindResult<T, R, O>
-//   }
-
-//   const queryWhereFilters: Array<(arr: T[]) => T[]> = []
-//   const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
-//   const queryRelationsToLoad: (keyof R)[] = []
-//   const queryOrderBy: { criteria: OrderByCriteria<T>, orders: OrderByOrders } = { criteria: [], orders: [] }
-
-//   function resetQuery(): void {
-//     queryWhereFilters.length = 0
-//     queryOrWhereFilters.length = 0
-//     queryRelationsToLoad.length = 0
-//     queryOrderBy.criteria.length = 0
-//     queryOrderBy.orders.length = 0
-//   }
-
-//   type QueryResult = FindResult<T, R, { with: (keyof R)[] }>
-
-//   function query(): Query<T, R> {
-//     return {
-//       where: (cb): Query<T, R> => {
-//         queryWhereFilters.push(arr => arr.filter(cb))
-//         return query()
-//       },
-//       orWhere: (cb): Query<T, R> => {
-//         queryOrWhereFilters.push(arr => arr.filter(cb))
-//         return query()
-//       },
-//       with: (relation): Query<T, R> => {
-//         if (!relationsNames.includes(relation as string)) {
-//           throw new Error(`Relation ${String(relation)} not found on entity ${entity.name}`)
-//         }
-
-//         queryRelationsToLoad.push(relation)
-//         return query()
-//       },
-//       orderBy: (criteria, orders): Query<T, R> => {
-//         queryOrderBy.criteria = criteria
-//         queryOrderBy.orders = orders
-//         return query()
-//       },
-//       get: (): QueryResult[] => {
-//         const dbEntity = db[entity.name]!
-//         let result = Object.values(dbEntity) as T[]
-
-//         if (queryOrWhereFilters.length > 0 && queryWhereFilters.length === 0) {
-//           throw new Error('Cannot use orWhere without where')
-//         }
-
-//         if (queryWhereFilters.length > 0) {
-//           result = queryWhereFilters.reduce((acc, filter) => filter(acc), result)
-//         }
-
-//         if (queryOrWhereFilters.length > 0) {
-//           const orResults = queryOrWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
-//           result = [...new Set([...result, ...orResults])]
-//         }
-
-//         if (queryOrderBy.criteria.length > 0) {
-//           result = result.sort(orderBy(queryOrderBy))
-//         }
-
-//         if (queryRelationsToLoad.length > 0) {
-//           result = result.map((e) => {
-//             const withRelations = loadRelations({
-//               entity: e,
-//               relations,
-//               relationsToLoad: queryRelationsToLoad,
-//               entityName: entity.name,
-//             })
-//             return withRelations as QueryResult
-//           })
-//         }
-
-//         resetQuery()
-
-//         return result as QueryResult[]
-//       },
-//     }
-//   }
-
-//   return {
-//     findById,
-//     save,
-//     query,
-//   }
-// }

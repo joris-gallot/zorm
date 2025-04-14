@@ -532,5 +532,203 @@ describe('save', () => {
         },
       }])).toThrow('Invalid email')
     })
+
+    it('should parse schema with deep relations - many', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        email: z.string().email(),
+      }))
+
+      const Post = defineEntity('post', z.object({
+        id: z.number(),
+        title: z.string().min(10),
+        userId: z.number(),
+      }))
+
+      const Comment = defineEntity('comment', z.object({
+        id: z.number(),
+        content: z.string().max(10),
+        postId: z.number(),
+      }))
+
+      const queryBuilder = defineQueryBuilder([User, Post, Comment], ({ many }) => ({
+        user: {
+          posts: many(Post, {
+            reference: Post.fields.userId,
+            field: User.fields.id,
+          }),
+        },
+        post: {
+          comments: many(Comment, {
+            reference: Comment.fields.postId,
+            field: Post.fields.id,
+          }),
+        },
+      }))
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'invalid email',
+      }])).toThrow('Invalid email')
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'test@test.com',
+      }])).not.toThrow()
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'test@test.com',
+        posts: [{
+          id: 1,
+          title: 'short',
+          userId: 1,
+        }],
+      }])).toThrow('String must contain at least 10 character(s)')
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'test@test.com',
+        posts: [{
+          id: 1,
+          title: 'long enough',
+          userId: 1,
+        }],
+      }])).not.toThrow()
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'test@test.com',
+        posts: [{
+          id: 1,
+          title: 'long enough',
+          userId: 1,
+          comments: [{
+            id: 1,
+            content: 'long text content that should be too long',
+            postId: 1,
+          }, {
+            id: 2,
+            content: 'content',
+            postId: 1,
+          }],
+        }],
+      }])).toThrow('String must contain at most 10 character(s)')
+
+      expect(() => queryBuilder.user.save([{
+        id: 1,
+        email: 'test@test.com',
+        posts: [{
+          id: 1,
+          title: 'long enough',
+          userId: 1,
+          comments: [{
+            id: 1,
+            content: 'short',
+            postId: 1,
+          }, {
+            id: 2,
+            content: 'content',
+            postId: 1,
+          }],
+        }],
+      }])).not.toThrow()
+    })
+
+    it('should parse schema with deep relations - one', () => {
+      const User = defineEntity('user', z.object({
+        id: z.number(),
+        email: z.string().email(),
+      }))
+
+      const Post = defineEntity('post', z.object({
+        id: z.number(),
+        title: z.string().min(10),
+        userId: z.number(),
+      }))
+
+      const Comment = defineEntity('comment', z.object({
+        id: z.number(),
+        content: z.string().max(10),
+        postId: z.number(),
+      }))
+
+      const queryBuilder = defineQueryBuilder([User, Post, Comment], ({ one }) => ({
+        post: {
+          user: one(User, {
+            reference: User.fields.id,
+            field: Post.fields.userId,
+          }),
+        },
+        user: {
+          comment: one(Comment, {
+            reference: Comment.fields.postId,
+            field: Post.fields.id,
+          }),
+        },
+      }))
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'short',
+        userId: 1,
+      }])).toThrow('String must contain at least 10 character(s)')
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'long enough',
+        userId: 1,
+      }])).not.toThrow()
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'long enough',
+        userId: 1,
+        user: {
+          id: 1,
+          email: 'not an email',
+        },
+      }])).toThrow('Invalid email')
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'long enough',
+        userId: 1,
+        user: {
+          id: 1,
+          email: 'test@test.com',
+        },
+      }])).not.toThrow()
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'long enough',
+        userId: 1,
+        user: {
+          id: 1,
+          email: 'test@test.com',
+          comment: {
+            id: 1,
+            content: 'long text content that should be too long',
+            postId: 1,
+          },
+        },
+      }])).toThrow()
+
+      expect(() => queryBuilder.post.save([{
+        id: 1,
+        title: 'long enough',
+        userId: 1,
+        user: {
+          id: 1,
+          email: 'test@test.com',
+          comment: {
+            id: 1,
+            content: 'short',
+            postId: 1,
+          },
+        },
+      }])).not.toThrow()
+    })
   })
 })
