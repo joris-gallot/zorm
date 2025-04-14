@@ -202,12 +202,12 @@ type TypeOfRelations<
       : never
 }
 
-interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
-  where: (cb: (value: T) => boolean) => Query<E, R, T>
-  orWhere: (cb: (value: T) => boolean) => Query<E, R, T>
-  orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T>
-  with: <W extends WithRelationsOption<E, R>>(relations: W) => Query<E, R, Prettify<T & TypeOfRelations<E, R, W>>>
-  get: () => Array<T>
+interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, Result = T> {
+  where: (cb: (value: T) => boolean) => Query<E, R, T, Result>
+  orWhere: (cb: (value: T) => boolean) => Query<E, R, T, Result>
+  orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, Result>
+  with: <W extends WithRelationsOption<E, R>>(relations: W) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
+  get: () => Array<Result>
 }
 
 type RelationsFn<Names extends string, R extends Relations<Names>> = (options: RelationsOptions) => R

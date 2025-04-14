@@ -48,12 +48,12 @@ describe('with', () => {
     }))
 
     const _users = queryBuilder2.user.query()
-      .with({ posts: true })
       .with({ posts: { user: true } })
       // @ts-expect-error should be a boolean
       .with({ posts: 'true' })
       // @ts-expect-error should be a boolean
       .with({ posts: { user: 1 } })
+      .with({ posts: true })
       .get()
 
     assertType<Array<{
