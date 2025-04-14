@@ -288,5 +288,70 @@ describe('with', () => {
         isAdmin: boolean
       }
     }>>(users)
+
+    const users2 = queryBuilder.user.query()
+      .where(user => user.name === 'John Doe')
+      .with({ posts: true })
+      .with({ settings: true })
+      .get()
+
+    expect(users2).toEqual([{
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+      }],
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+      },
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+      }>
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+      }
+    }>>(users2)
+
+    const users3 = queryBuilder.user.query()
+      .where(user => user.name === 'John Doe')
+      .with({ settings: true })
+      .get()
+
+    expect(users3).toEqual([{
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+      },
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+      }
+    }>>(users3)
   })
 })
