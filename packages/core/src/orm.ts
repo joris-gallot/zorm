@@ -159,7 +159,7 @@ function loadRelations<T extends ObjectWithId, R extends Record<never, Relation>
 
 type Relations<Names extends string> = Partial<Record<Names, Record<string, Relation>>>
 
-type WithRelationsOption<E extends Entity<any, any>, R extends Relations<any>> = {
+type WithRelationsOption<E extends Entity<any, any>, R extends Relations<any>> = keyof R[E['name']] extends never ? never : {
   [K in keyof R[E['name']]]?: boolean | (R[E['name']][K] extends Relation<any, infer RE> ? WithRelationsOption<RE, R> : never)
 }
 
@@ -209,16 +209,21 @@ interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<a
 
 type RelationsFn<Names extends string, R extends Relations<Names>> = (options: RelationsOptions) => R
 
-type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> = {
+type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> = keyof R[E['name']] extends never ? never : {
   [K in keyof R[E['name']]]: R[E['name']][K] extends Relation<any, infer RE> ?
     DeepEntityRelationsOption<RE, R>
     : never
 }
 
+type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> =
+  keyof R[E['name']] extends never ?
+    T
+    : T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>
+
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
   findById: <O extends { with?: WithRelationsOption<E, R> }>(id: T['id'], options?: O) => O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with'], true>> | null : T | null
-  save: (entities: Array<Prettify<T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>>>) => void
+  save: (entities: Array<Prettify<EntityWithOptionalRelations<E, R, T>>>) => void
 }
 
 type GlobalQueryBuilder<E extends Array<Entity<string, ZodSchemaWithId>>, N extends E[number]['name'], R extends Relations<N>> = {
@@ -231,9 +236,8 @@ export function defineQueryBuilder<
   R extends Relations<N>,
 >(entities: E, relationsFn?: RelationsFn<N, R>): GlobalQueryBuilder<E, N, R> {
   const relations = relationsFn?.({ one, many }) || {} as R
-  const relationsNames = Object.keys(relations) as N[]
 
-  return { }
+  return {}
 }
 
 // export function _defineQueryBuilder<E extends Entity<string, ZodSchemaWithId>, T extends z.infer<E['zodSchema']>, R extends Record<never, Relation>>(

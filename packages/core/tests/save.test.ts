@@ -465,7 +465,7 @@ describe('save', () => {
             reference: Post.fields.userId,
             field: User.fields.id,
           }),
-        }
+        },
       }))
 
       expect(() => queryBuilder.user.save([{

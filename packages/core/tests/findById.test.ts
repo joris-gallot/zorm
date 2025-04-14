@@ -94,6 +94,7 @@ describe('findById', () => {
 
     // @ts-expect-error invalid relation name
     assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[1]>({ with: { foo: true } })
+    // @ts-expect-error invalid with option
     assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[1]>({ with: {} })
   })
 
@@ -170,11 +171,17 @@ describe('findById', () => {
       userId: z.number(),
     }))
 
-    const queryBuilder = defineQueryBuilder([User, Post], ({ many }) => ({
+    const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
       user: {
         posts: many(Post, {
           reference: Post.fields.userId,
           field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
         }),
       },
     }))
@@ -289,7 +296,7 @@ describe('findById', () => {
 
     expect(() =>
       // @ts-expect-error relation does not exist
-      queryBuilder.user.findById(1, { with: { invalid: true, posts: true } }),
+      queryBuilder.user.findById(1, { with: { invalid: true, posts: { user: true } } }),
     ).toThrow('Relation invalid not found on entity user')
   })
 
