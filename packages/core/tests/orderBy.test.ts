@@ -260,7 +260,7 @@ describe('orderBy', () => {
 
       const users = queryBuilder.user.query()
         .orderBy([obj => obj.age], ['asc'])
-        .with('posts')
+        .with({ posts: true })
         .get()
 
       expect(users).toEqual([
