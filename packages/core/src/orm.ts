@@ -223,9 +223,14 @@ type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R ex
     T
     : T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>
 
+interface FindByIdOptions<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> { with?: WithRelationsOption<E, R> }
+
+type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId, O extends FindByIdOptions<E, R>> =
+  O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with'], true>> : T
+
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
-  findById: <O extends { with?: WithRelationsOption<E, R> }>(id: T['id'], options?: O) => O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with'], true>> | null : T | null
+  findById: <O extends FindByIdOptions<E, R>>(id: T['id'], options?: O) => FindByIdResult<E, R, T, O> | null
   save: (entities: Array<Prettify<EntityWithOptionalRelations<E, R, T>>>) => void
 }
 
