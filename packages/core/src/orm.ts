@@ -243,7 +243,7 @@ export type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>,
 interface FindByIdOptions<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> { with?: WithRelationsOption<E, R> }
 
 type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId, O extends FindByIdOptions<E, R>> =
-  O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with'], true>> : T
+  O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with']>> : T
 
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
