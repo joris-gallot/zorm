@@ -22,7 +22,13 @@ describe('findById', () => {
       isAdmin: z.boolean(),
     }))
 
-    const _queryBuilder = defineQueryBuilder([User, Post, Settings], ({ many, one }) => ({
+    const Comment = defineEntity('comment', z.object({
+      id: z.number(),
+      content: z.string(),
+      postId: z.number(),
+    }))
+
+    const _queryBuilder = defineQueryBuilder([User, Post, Settings, Comment], ({ many, one }) => ({
       user: {
         posts: many(Post, {
           reference: Post.fields.userId,
@@ -38,44 +44,54 @@ describe('findById', () => {
           reference: User.fields.id,
           field: Post.fields.userId,
         }),
+        comments: many(Comment, {
+          reference: Comment.fields.postId,
+          field: Post.fields.id,
+        }),
       },
     }))
 
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>(1)
+    _queryBuilder.user.findById(1)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>('1')
+    _queryBuilder.user.findById('1')
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>({})
+    _queryBuilder.user.findById({})
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>(null)
+    _queryBuilder.user.findById(null)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>(undefined)
+    _queryBuilder.user.findById(undefined)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>(true)
+    _queryBuilder.user.findById(true)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.user.findById>[0]>([])
+    _queryBuilder.user.findById([])
 
-    assertType<Parameters<typeof _queryBuilder.user.findById>[1]>({ with: { posts: true } })
+    _queryBuilder.user.findById(1, { with: { posts: true } })
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _queryBuilder.user.findById>[1]>({ with: { invalid: true } })
+    _queryBuilder.user.findById(1, { with: { invalid: true } })
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _queryBuilder.user.findById>[1]>({ with: { posts: true, invalid: true } })
+    _queryBuilder.user.findById(1, { with: { posts: true, invalid: true } })
+    // @ts-expect-error invalid relation name
+    _queryBuilder.user.findById(1, { with: { posts: { comments: true, invalid: true } } })
+    // @ts-expect-error invalid relation name
+    _queryBuilder.user.findById(1, { with: { posts: { comments: {} } } })
+    _queryBuilder.user.findById(1, { with: { posts: { comments: true } } })
 
-    assertType<Parameters<typeof _queryBuilder.post.findById>[0]>(1)
-    // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.post.findById>[0]>('1')
-    // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.post.findById>[0]>(null)
-    // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.post.findById>[0]>(undefined)
-    // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilder.post.findById>[0]>(true)
+    _queryBuilder.post.findById(1)
 
-    assertType<Parameters<typeof _queryBuilder.post.findById>[1]>({ with: { user: true } })
+    // @ts-expect-error invalid type should be number
+    _queryBuilder.post.findById('1')
+    // @ts-expect-error invalid type should be number
+    _queryBuilder.post.findById(null)
+    // @ts-expect-error invalid type should be number
+    _queryBuilder.post.findById(undefined)
+    // @ts-expect-error invalid type should be number
+    _queryBuilder.post.findById(true)
+
+    _queryBuilder.post.findById(1, { with: { user: true } })
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _queryBuilder.post.findById>[1]>({ with: { user: true, invalid: true } })
+    _queryBuilder.post.findById(1, { with: { user: true, invalid: true } })
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _queryBuilder.post.findById>[1]>({ with: { invalid: true } })
+    _queryBuilder.post.findById(1, { with: { invalid: true } })
 
     const entityWithoutRelations = defineEntity('entityWithoutRelations', z.object({
       id: z.number(),
@@ -84,18 +100,56 @@ describe('findById', () => {
 
     const _queryBuilderWithoutRelations = defineQueryBuilder([entityWithoutRelations])
 
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[0]>(1)
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById(1)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[0]>('1')
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById('1')
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[0]>(null)
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById(null)
     // @ts-expect-error invalid type should be number
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[0]>(undefined)
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById(undefined)
 
     // @ts-expect-error invalid relation name
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[1]>({ with: { foo: true } })
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById(1, { with: { foo: true } })
     // @ts-expect-error invalid with option
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.findById>[1]>({ with: {} })
+    _queryBuilderWithoutRelations.entityWithoutRelations.findById(1, { with: {} })
+
+    const user = _queryBuilder.user.findById(1, {
+      with: {
+        posts: {
+          comments: true,
+        },
+      },
+    })
+
+    expect(user).toEqual({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        comments: [{
+          id: 1,
+          content: 'Comment 1',
+          postId: 1,
+        }],
+      }],
+    })
+
+    assertType<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+        comments: Array<{
+          id: number
+          content: string
+          postId: number
+        }>
+      }>
+    } | null>(user)
   })
 
   it('shoud work with string id', () => {
@@ -445,5 +499,137 @@ describe('findById', () => {
         isAdmin: boolean
       }
     } | null>(userWithSettings)
+  })
+
+  it('should find by id with deep relations', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string(),
+      userId: z.number(),
+    }))
+
+    const Comment = defineEntity('comment', z.object({
+      id: z.number(),
+      content: z.string(),
+      postId: z.number(),
+    }))
+
+    const queryBuilder = defineQueryBuilder([User, Post, Comment], ({ many }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        comments: many(Comment, {
+          reference: Comment.fields.postId,
+          field: Post.fields.id,
+        }),
+      },
+    }))
+
+    queryBuilder.user.save([{
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        comments: [{
+          id: 1,
+          content: 'Comment 1',
+          postId: 1,
+        }, {
+          id: 2,
+          content: 'Comment 2',
+          postId: 1,
+        }],
+      }, {
+        id: 2,
+        title: 'Post 2',
+        userId: 1,
+        comments: [{
+          id: 3,
+          content: 'Comment 3',
+          postId: 2,
+        }],
+      }],
+    }])
+
+    const user = queryBuilder.user.findById(1)
+
+    expect(user).toEqual({
+      id: 1,
+      name: 'John Doe',
+    })
+
+    assertType<{
+      id: number
+      name: string
+    } | null>(user)
+
+    const userWithPosts = queryBuilder.user.findById(1, { with: { posts: true } })
+
+    expect(userWithPosts).toEqual({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+      }],
+    })
+
+    assertType<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+      }>
+    } | null>(userWithPosts)
+
+    const userWithPostsAndComments = queryBuilder.user.findById(1, { with: { posts: { comments: true } } })
+
+    expect(userWithPostsAndComments).toEqual({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        comments: [{
+          id: 1,
+          content: 'Comment 1',
+          postId: 1,
+        }, {
+          id: 2,
+          content: 'Comment 2',
+          postId: 1,
+        }],
+      }],
+    })
+
+    assertType<{
+      id: number
+      name: string
+      posts: Array<{
+        id: number
+        title: string
+        userId: number
+        comments: Array<{
+          id: number
+          content: string
+          postId: number
+        }>
+      }>
+    } | null>(userWithPostsAndComments)
   })
 })

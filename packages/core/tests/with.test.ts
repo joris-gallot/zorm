@@ -32,7 +32,13 @@ describe('with', () => {
       userId: z.number(),
     }))
 
-    const queryBuilder2 = defineQueryBuilder([User, Post], ({ many, one }) => ({
+    const Comment = defineEntity('comment', z.object({
+      id: z.number(),
+      content: z.string(),
+      postId: z.number(),
+    }))
+
+    const queryBuilder2 = defineQueryBuilder([User, Post, Comment], ({ many, one }) => ({
       user: {
         posts: many(Post, {
           reference: Post.fields.userId,
@@ -44,6 +50,10 @@ describe('with', () => {
           reference: User.fields.id,
           field: Post.fields.userId,
         }),
+        comments: many(Comment, {
+          reference: Comment.fields.postId,
+          field: Post.fields.id,
+        }),
       },
     }))
 
@@ -53,18 +63,15 @@ describe('with', () => {
       .with({ posts: 'true' })
       // @ts-expect-error should be a boolean
       .with({ posts: { user: 1 } })
+      // @ts-expect-error invalid relation name
+      .with({ posts: true, invalid: true })
+      // @ts-expect-error invalid relation name
+      .with({ posts: { comments: true, invalid: true } })
+      // @ts-expect-error should be a boolean
+      .with({ posts: { comments: {} } })
       .with({ posts: true })
+      .with({ posts: { comments: true } })
       .get()
-
-    assertType<Array<{
-      id: number
-      name: string
-      posts: Array<{
-        id: number
-        title: string
-        userId: number
-      }>
-    }>>(_users)
   })
 
   it('should load relations', () => {

@@ -1,4 +1,4 @@
-import { assertType, beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { defineEntity, defineQueryBuilder, getDb } from '../src/orm'
 
@@ -67,11 +67,12 @@ describe('save', () => {
     }))
 
     /* user */
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+    _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
     }])
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+
+    _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -81,7 +82,8 @@ describe('save', () => {
         imageId: 1,
       }],
     }])
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+
+    _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -101,7 +103,8 @@ describe('save', () => {
         isAdmin: true,
       },
     }])
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+
+    _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error invalid object should be a post
@@ -109,7 +112,8 @@ describe('save', () => {
       // @ts-expect-error invalid object should be a settings
       settings: [{}],
     }])
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+
+    _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -117,23 +121,25 @@ describe('save', () => {
         title: 'Post 1',
         userId: 1,
         imageId: 1,
-        // @ts-expect-error invalid object should be a post
+        // @ts-expect-error invalid object should be an image
         image: {},
       }],
     }])
+
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _queryBuilder.user.save>[0]>([{
+    _queryBuilder.user.save([{
       name: 'John Doe',
     }])
 
     /* post */
-    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
+    _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
       imageId: 1,
     }])
-    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
+
+    _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
@@ -143,32 +149,36 @@ describe('save', () => {
         name: 'John Doe',
       },
     }])
-    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
+
+    _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
       // @ts-expect-error invalid object should be a user
       user: [{}],
     }])
+
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
+    _queryBuilder.post.save([{
       title: 'Post 1',
       userId: 1,
     }])
+
     // @ts-expect-error missing userId
-    assertType<Parameters<typeof _queryBuilder.post.save>[0]>([{
+    _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
     }])
 
     /* settings */
-    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
+    _queryBuilder.settings.save([{
       id: 1,
       name: 'Admin',
       userId: 1,
       isAdmin: true,
     }])
-    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
+
+    _queryBuilder.settings.save([{
       id: 1,
       name: 'Admin',
       userId: 1,
@@ -178,14 +188,16 @@ describe('save', () => {
         name: 'John Doe',
       },
     }])
-    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
+
+    _queryBuilder.settings.save([{
       id: 1,
       name: 'Admin',
       // @ts-expect-error invalid object should be a user
       user: [{}],
     }])
+
     // @ts-expect-error missing id
-    assertType<Parameters<typeof _queryBuilder.settings.save>[0]>([{
+    _queryBuilder.settings.save([{
       name: 'Admin',
     }])
 
@@ -196,19 +208,19 @@ describe('save', () => {
 
     const _queryBuilderWithoutRelations = defineQueryBuilder([entityWithoutRelations])
 
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
+    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
     }])
 
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
+    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       foo: [],
     }])
 
-    assertType<Parameters<typeof _queryBuilderWithoutRelations.entityWithoutRelations.save>[0]>([{
+    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
