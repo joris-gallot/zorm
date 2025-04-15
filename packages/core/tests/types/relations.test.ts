@@ -60,26 +60,26 @@ describe('relations typing', () => {
       }
     }
 
-    type OptionalRelations = WithRelationsOption<UserEntity, Relations>
+    type UserWithRelationsOption = WithRelationsOption<UserEntity, Relations>
 
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: true,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: false,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: undefined,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 'true',
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 1,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: {
         user: true,
@@ -280,48 +280,48 @@ describe('relations typing', () => {
       }
     }
 
-    type OptionalRelations = WithRelationsOption<UserEntity, Relations>
+    type UserWithRelationsOption = WithRelationsOption<UserEntity, Relations>
 
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: true,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: false,
     })
-    assertType<OptionalRelations>({
-      posts: undefined,
-    })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: true,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: false,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: undefined,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
+      posts: undefined,
+    })
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 'true',
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 1,
     })
 
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         // @ts-expect-error should be a boolean or undefined
         comments: {},
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: true,
         // @ts-expect-error foo is not a relation
@@ -613,48 +613,62 @@ describe('relations typing', () => {
       }
     }
 
-    type OptionalRelations = WithRelationsOption<UserEntity, Relations>
+    type UserWithRelationsOption = WithRelationsOption<UserEntity, Relations>
 
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: true,
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: false,
     })
-    assertType<OptionalRelations>({
-      posts: undefined,
-    })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: true,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: false,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: undefined,
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
+      posts: undefined,
+    })
+    assertType<UserWithRelationsOption>({
+      posts: {
+        // @ts-expect-error can't be a recursive relation
+        user: true,
+      },
+    })
+    assertType<UserWithRelationsOption>({
+      posts: {
+        // @ts-expect-error can't be a recursive relation
+        user: {
+          posts: true,
+        },
+      },
+    })
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 'true',
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 1,
     })
 
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         // @ts-expect-error should be a boolean or undefined
         comments: {},
       },
     })
-    assertType<OptionalRelations>({
+    assertType<UserWithRelationsOption>({
       posts: {
         comments: true,
         // @ts-expect-error foo is not a relation

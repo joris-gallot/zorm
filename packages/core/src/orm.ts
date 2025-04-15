@@ -169,9 +169,19 @@ function loadRelations<T extends ObjectWithId, R extends Relations<any>>({
 
 type Relations<Names extends string> = Partial<Record<Names, Record<string, Relation>>>
 
-export type WithRelationsOption<E extends AnyEntity, R extends Relations<any>> = keyof R[E['name']] extends never ? never : {
-  [K in keyof R[E['name']]]?: boolean | (R[E['name']][K] extends Relation<any, infer RE> ? WithRelationsOption<RE, R> : never)
-}
+export type WithRelationsOption<
+  E extends AnyEntity,
+  R extends Relations<any>,
+  N extends string[] = [],
+> = keyof R[E['name']] extends never
+  ? never
+  : {
+      [K in keyof R[E['name']] as K extends N[number] ? never : K]?:
+        | boolean
+        | (R[E['name']][K] extends Relation<any, infer RE>
+          ? WithRelationsOption<RE, R, [...N, E['name']]>
+          : never)
+    }
 
 type GetNestedRelationType<
   E extends AnyEntity,

@@ -58,6 +58,7 @@ describe('with', () => {
     }))
 
     const _users = queryBuilder2.user.query()
+      // @ts-expect-error can't use a recursive relation
       .with({ posts: { user: true } })
       // @ts-expect-error should be a boolean
       .with({ posts: 'true' })
