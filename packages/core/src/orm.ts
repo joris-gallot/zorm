@@ -215,7 +215,6 @@ export type TypeOfRelations<
 
 interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, Result = T> {
   where: (cb: (value: T) => boolean) => Query<E, R, T, Result>
-  orWhere: (cb: (value: T) => boolean) => Query<E, R, T, Result>
   orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, Result>
   with: <W extends WithRelationsOption<E, R>>(relations: ExactDeep<W, WithRelationsOption<E, R>>) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
   get: () => Array<Result>
@@ -310,7 +309,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
     }
   }
 
-  function findById<O extends FindByIdOptions<E, R>>(id: T['id'], options?: O): FindByIdResult<E, R, T, O> | null {
+  function findById<O extends FindByIdOptions<E, R>>(id: T['id'], options?: ExactDeep<O, FindByIdOptions<E, R>>): FindByIdResult<E, R, T, O> | null {
     const dbEntity = db[entity.name]!
     const entityData = { ...dbEntity[id] } as T
 
@@ -331,13 +330,28 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
     return entityData as FindByIdResult<E, R, T, O>
   }
 
+  const queryWhereFilters: Array<(arr: T[]) => T[]> = []
+
   function query(): Query<E, R, T> {
     return {
-      where: () => query(),
-      orWhere: () => query(),
+      where: (cb): Query<E, R, T> => {
+        queryWhereFilters.push(arr => arr.filter(cb))
+        return query()
+      },
       orderBy: () => query(),
       with: () => query(),
-      get: () => [],
+      get: (): T[] => {
+        const dbEntity = db[entity.name]!
+        let result = Object.values(dbEntity) as T[]
+
+        if (queryWhereFilters.length > 0) {
+          result = queryWhereFilters.reduce((acc, filter) => filter(acc), result)
+        }
+
+        queryWhereFilters.length = 0
+
+        return result
+      },
     }
   }
 
