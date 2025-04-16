@@ -1,6 +1,6 @@
 /* eslint-disable ts/consistent-type-definitions */
 import type { ZodNumber, ZodObject, ZodString } from 'zod'
-import type { DeepEntityRelationsOption, EntityWithOptionalRelations, TypeOfRelations, WithRelationsOption } from '../../src/orm'
+import type { DeepEntityRelationsOption, EntityWithOptionalRelations, GetRelationEntitiesName, TypeOfRelations, WithRelationsOption } from '../../src/orm'
 import { assertType, describe, it } from 'vitest'
 
 describe('relations typing', () => {
@@ -617,6 +617,26 @@ describe('relations typing', () => {
       }
     }
 
+    type UserRelationEntitiesName = GetRelationEntitiesName<UserEntity, Relations>
+
+    // @ts-expect-error should be entity name
+    assertType<UserRelationEntitiesName>('posts')
+    assertType<UserRelationEntitiesName>('post')
+
+    type PostRelationEntitiesName = GetRelationEntitiesName<PostEntity, Relations>
+
+    assertType<PostRelationEntitiesName>('user')
+    // @ts-expect-error should be entity name
+    assertType<PostRelationEntitiesName>('users')
+    assertType<PostRelationEntitiesName>('comment')
+    // @ts-expect-error should be entity name
+    assertType<PostRelationEntitiesName>('comments')
+
+    type CommentRelationEntitiesName = GetRelationEntitiesName<CommentEntity, Relations>
+
+    // @ts-expect-error should be entity name
+    assertType<CommentRelationEntitiesName>('whatever')
+
     type UserWithRelationsOption = WithRelationsOption<UserEntity, Relations>
 
     assertType<UserWithRelationsOption>({
@@ -862,6 +882,11 @@ describe('relations typing', () => {
     type AllPostRelationsEnabled = DeepEntityRelationsOption<PostEntity, Relations>
 
     assertType<AllPostRelationsEnabled>({
+      user: true,
+      comments: true,
+    })
+    assertType<AllPostRelationsEnabled>({
+      // @ts-expect-error should be a boolean
       user: {
         posts: {
           comments: true,
@@ -870,15 +895,15 @@ describe('relations typing', () => {
       comments: true,
     })
     assertType<AllPostRelationsEnabled>({
+      // @ts-expect-error foo is not a relation
       user: {
-        // @ts-expect-error foo is not a relation
         foo: true,
       },
       // @ts-expect-error should be a boolean
       comments: {},
     })
+    // @ts-expect-error should an object with comments
     assertType<AllPostRelationsEnabled>({
-      // @ts-expect-error should an object with comments
       user: true,
     })
     assertType<AllPostRelationsEnabled>({
@@ -898,8 +923,8 @@ describe('relations typing', () => {
       user: 1,
     })
     assertType<AllPostRelationsEnabled>({
+      // @ts-expect-error foo is not a relation
       user: {
-        // @ts-expect-error foo is not a relation
         posts: false,
       },
     })

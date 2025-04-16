@@ -227,16 +227,25 @@ interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<a
 
 type RelationsFn<N extends string, R extends Relations<N>> = (options: RelationsOptions) => R
 
+export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> =
+  R[E['name']] extends Record<string, Relation> ?
+    R[E['name']][keyof R[E['name']]] extends Relation<any, infer RE extends AnyEntity> ?
+      RE['name']
+      : never
+    : never
+
 /**
  * - E is the entity type
  * - R is the global relations type
  * - N is an array of entity names used to avoid infinite recursion with relations references
  */
-export type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = []> = keyof R[E['name']] extends never ? never : {
+export type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = [E['name']]> = keyof R[E['name']] extends never ? never : {
   [K in keyof R[E['name']] as K extends N[number] ? never : K]: R[E['name']][K] extends Relation<any, infer RE extends AnyEntity> ?
     keyof R[RE['name']] extends never ?
       true
-      : DeepEntityRelationsOption<RE, R, [...N, E['name']]>
+      : Exclude<GetRelationEntitiesName<RE, R>, N[number]> extends never ?
+        true
+        : DeepEntityRelationsOption<RE, R, [...N, RE['name']]>
     : never
 }
 
