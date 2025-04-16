@@ -245,6 +245,20 @@ describe('relations typing', () => {
       }
     }
 
+    interface SettingsEntity {
+      name: 'settings'
+      zodSchema: ZodObject<{
+        id: ZodNumber
+        name: ZodString
+      }>
+      fields: {
+        id: {
+          zodType: ZodNumber
+          name: 'id'
+        }
+      }
+    }
+
     type Relations = {
       user: {
         posts: {
@@ -261,8 +275,36 @@ describe('relations typing', () => {
             }
           }
         }
+        settings: {
+          kind: 'one'
+          field: {
+            zodType: ZodNumber
+            name: 'id'
+          }
+          reference: {
+            entity: SettingsEntity
+            field: {
+              zodType: ZodNumber
+              name: 'id'
+            }
+          }
+        }
       }
       post: {
+        user: {
+          kind: 'one'
+          field: {
+            zodType: ZodNumber
+            name: 'id'
+          }
+          reference: {
+            entity: UserEntity
+            field: {
+              zodType: ZodNumber
+              name: 'id'
+            }
+          }
+        }
         comments: {
           kind: 'many'
           field: {
@@ -271,6 +313,22 @@ describe('relations typing', () => {
           }
           reference: {
             entity: CommentEntity
+            field: {
+              zodType: ZodNumber
+              name: 'id'
+            }
+          }
+        }
+      }
+      settings: {
+        user: {
+          kind: 'one'
+          field: {
+            zodType: ZodNumber
+            name: 'id'
+          }
+          reference: {
+            entity: UserEntity
             field: {
               zodType: ZodNumber
               name: 'id'
@@ -339,6 +397,15 @@ describe('relations typing', () => {
       posts: {
         comments: true,
       },
+      settings: true,
+    })
+
+    assertType<AllRelationsEnabled>({
+      posts: {
+        comments: true,
+      },
+      // @ts-expect-error setting is not a relation
+      setting: true,
     })
     assertType<AllRelationsEnabled>({
       posts: {
@@ -350,6 +417,7 @@ describe('relations typing', () => {
     assertType<AllRelationsEnabled>({
       // @ts-expect-error should an object with comments
       posts: true,
+      settings: true,
     })
     assertType<AllRelationsEnabled>({
       // @ts-expect-error should be true
@@ -394,6 +462,15 @@ describe('relations typing', () => {
 
     assertType<UserWithRelations>({
       posts: [],
+      settings: {
+        id: 1,
+        name: 'settings 1',
+      },
+    })
+    assertType<UserWithRelations>({
+      posts: [],
+      // @ts-expect-error should be a valid settings
+      settings: {},
     })
     assertType<UserWithRelations>({
       // @ts-expect-error should be an array of posts
@@ -420,6 +497,10 @@ describe('relations typing', () => {
         name: 'post 1',
         comments: [],
       }],
+      settings: {
+        id: 1,
+        name: 'settings 1',
+      },
     })
     assertType<UserWithRelations>({
       posts: [{
@@ -430,6 +511,10 @@ describe('relations typing', () => {
           content: 'comment 1',
         }],
       }],
+      settings: {
+        id: 1,
+        name: 'settings 1',
+      },
     })
     assertType<UserWithRelations>({
       posts: [{
@@ -510,6 +595,220 @@ describe('relations typing', () => {
           },
         ],
       }],
+    })
+
+    type PostAllRelationsEnabled = DeepEntityRelationsOption<PostEntity, Relations>
+
+    assertType<PostAllRelationsEnabled>({
+      user: {
+        posts: {
+          comments: true,
+        },
+        settings: true,
+      },
+      comments: true,
+    })
+    assertType<PostAllRelationsEnabled>({
+      // @ts-expect-error should be an object
+      user: true,
+    })
+    assertType<PostAllRelationsEnabled>({
+      user: {
+        // @ts-expect-error should be an object
+        posts: true,
+      },
+    })
+
+    type PostRelationsObject = TypeOfRelations<PostEntity, Relations, PostAllRelationsEnabled>
+
+    assertType<PostRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        posts: [],
+        settings: {
+          id: 1,
+          name: 'settings 1',
+        },
+      },
+      comments: [{
+        id: 1,
+        content: 'comment 1',
+      }],
+    })
+    assertType<PostRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        posts: [],
+        // @ts-expect-error should be a valid settings
+        settings: {},
+      },
+      comments: [],
+    })
+    assertType<PostRelationsObject>({
+      // @ts-expect-error should be a valid user
+      user: {
+        id: 1,
+        name: 'user 1',
+      },
+      // @ts-expect-error should be an array of comments
+      comments: [{}],
+    })
+    assertType<PostRelationsObject>({
+      // @ts-expect-error should be a valid user
+      user: {},
+    })
+    assertType<PostRelationsObject>({
+      // @ts-expect-error should be a valid user
+      user: 1,
+    })
+
+    type PostWithOptionalRelations = EntityWithOptionalRelations<PostEntity, Relations>
+
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      user: {
+        id: 1,
+        name: 'user 1',
+      },
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      comments: [{
+        id: 1,
+        content: 'comment 1',
+      }],
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      user: {
+        id: 1,
+        name: 'user 1',
+      },
+      comments: [{
+        id: 1,
+        content: 'comment 1',
+      }],
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      // @ts-expect-error should be a valid user
+      user: {
+        id: 1,
+      },
+      comments: [
+        // @ts-expect-error should be a valid comment
+        {
+          content: 'comment 1',
+        },
+      ],
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      // @ts-expect-error should be a valid user
+      user: 1,
+      // @ts-expect-error should be an array of comments
+      comments: [{}],
+    })
+
+    type SettingsAllRelationsEnabled = DeepEntityRelationsOption<SettingsEntity, Relations>
+
+    assertType<SettingsAllRelationsEnabled>({
+      user: {
+        posts: {
+          comments: true,
+        },
+      },
+    })
+    assertType<SettingsAllRelationsEnabled>({
+      // @ts-expect-error should be an object
+      user: true,
+    })
+    assertType<SettingsAllRelationsEnabled>({
+      user: {
+        // @ts-expect-error should be an object
+        posts: true,
+      },
+    })
+
+    type SettingsRelationsObject = TypeOfRelations<SettingsEntity, Relations, SettingsAllRelationsEnabled>
+
+    assertType<SettingsRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        posts: [
+          {
+            id: 1,
+            name: 'post 1',
+            comments: [
+              {
+                id: 1,
+                content: 'comment 1',
+              },
+            ],
+          },
+        ],
+      },
+    })
+    assertType<SettingsRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        // @ts-expect-error should be an array of posts
+        posts: {},
+      },
+    })
+    assertType<SettingsRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        posts: [{
+          id: 1,
+          name: 'post 1',
+          // @ts-expect-error should be an array of comments
+          comments: {},
+        }],
+      },
+    })
+    assertType<SettingsRelationsObject>({
+      // @ts-expect-error should be a valid user
+      user: {},
+    })
+    assertType<SettingsRelationsObject>({
+      // @ts-expect-error should be a valid user
+      user: 1,
+    })
+
+    type SettingsWithOptionalRelations = EntityWithOptionalRelations<SettingsEntity, Relations>
+
+    assertType<SettingsWithOptionalRelations>({
+      id: 1,
+      name: 'settings 1',
+    })
+    assertType<SettingsWithOptionalRelations>({
+      id: 1,
+      name: 'settings 1',
+      user: {
+        id: 1,
+        name: 'user 1',
+      },
+    })
+    assertType<SettingsWithOptionalRelations>({
+      id: 1,
+      name: 'settings 1',
+      // @ts-expect-error should be a valid user
+      user: 1,
     })
   })
 

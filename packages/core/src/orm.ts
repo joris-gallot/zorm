@@ -200,21 +200,17 @@ export type TypeOfRelations<
   W extends WithRelationsOption<E, R>,
   P extends boolean = false,
 > = {
-  [K in keyof W]: W[K] extends true ?
-    K extends keyof R[E['name']] ?
-      R[E['name']][K] extends Relation<infer RK, infer RE> ?
+  [K in keyof W]: K extends keyof R[E['name']] ?
+    R[E['name']][K] extends Relation<infer RK, infer RE> ?
+      W[K] extends true ?
         RK extends 'many' ? Array<z.infer<RE['zodSchema']>> : z.infer<RE['zodSchema']>
-        : never
-      : never
-    : W[K] extends WithRelationsOption<any, R> ?
-      K extends keyof R[E['name']] ?
-        R[E['name']][K] extends Relation<infer RK, infer RE> ?
+        : W[K] extends WithRelationsOption<RE, R> ?
           RK extends 'many' ?
             Array<GetNestedRelationType<RE, R, W[K], P>>
             : GetNestedRelationType<RE, R, W[K], P>
           : never
-        : never
       : never
+    : never
 }
 
 interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, Result = T> {
