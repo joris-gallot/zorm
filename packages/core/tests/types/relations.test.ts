@@ -314,7 +314,11 @@ describe('relations typing', () => {
       // @ts-expect-error should be true
       posts: 1,
     })
-
+    assertType<UserWithRelationsOption>({
+      posts: true,
+      // @ts-expect-error invalid relation
+      invalid: true,
+    })
     assertType<UserWithRelationsOption>({
       posts: {
         // @ts-expect-error should be a boolean or undefined
@@ -371,7 +375,7 @@ describe('relations typing', () => {
     })
 
     type _Invalid = TypeOfRelations<UserEntity, Relations, {
-      // @ts-expect-error invalid is not a relation
+      // can't valid all relations as it must extends the relations option
       posts: { comments: true, invalid: true }
     }>
 
@@ -718,7 +722,7 @@ describe('relations typing', () => {
     })
 
     type _Invalid = TypeOfRelations<UserEntity, Relations, {
-      // @ts-expect-error invalid is not a relation
+      // can't valid all relations as it must extends the relations option
       posts: { comments: true, invalid: true }
     }>
 

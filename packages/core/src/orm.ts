@@ -1,6 +1,6 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
 import type { OrderByCriteria, OrderByOrders } from './orderBy'
-import type { Prettify } from './types'
+import type { ExactDeep, Prettify } from './types'
 import { orderBy } from './orderBy'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }> {}
@@ -186,7 +186,7 @@ export type WithRelationsOption<
 type GetNestedRelationType<
   E extends AnyEntity,
   R extends Relations<any>,
-  O extends WithRelationsOption<any, R>,
+  O extends WithRelationsOption<E, R>,
   P extends boolean,
 > = Prettify<z.infer<E['zodSchema']> & (
   P extends true
@@ -221,7 +221,7 @@ interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<a
   where: (cb: (value: T) => boolean) => Query<E, R, T, Result>
   orWhere: (cb: (value: T) => boolean) => Query<E, R, T, Result>
   orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, Result>
-  with: <W extends WithRelationsOption<E, R>>(relations: W) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
+  with: <W extends WithRelationsOption<E, R>>(relations: ExactDeep<W, WithRelationsOption<E, R>>) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
   get: () => Array<Result>
 }
 
@@ -247,7 +247,7 @@ type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relatio
 
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
-  findById: <O extends FindByIdOptions<E, R>>(id: T['id'], options?: O) => FindByIdResult<E, R, T, O> | null
+  findById: <O extends FindByIdOptions<E, R>>(id: T['id'], options?: ExactDeep<O, FindByIdOptions<E, R>>) => FindByIdResult<E, R, T, O> | null
   save: (entities: Array<EntityWithOptionalRelations<E, R, T>>) => void
 }
 

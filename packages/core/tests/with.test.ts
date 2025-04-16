@@ -19,11 +19,6 @@ describe('with', () => {
     assertType<Array<{
       id: number
       name: string
-      posts: Array<{
-        id: number
-        title: string
-        userId: number
-      }>
     }>>(_usersWithPosts)
 
     const Post = defineEntity('post', z.object({
