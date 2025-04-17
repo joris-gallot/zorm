@@ -359,6 +359,15 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
   const queryWhereFilters: Array<(arr: T[]) => T[]> = []
   const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
 
+  const queryOrderBy: { criteria: OrderByCriteria<T>, orders: OrderByOrders } = { criteria: [], orders: [] }
+
+  function resetQuery(): void {
+    queryWhereFilters.length = 0
+    queryOrWhereFilters.length = 0
+    queryOrderBy.criteria.length = 0
+    queryOrderBy.orders.length = 0
+  }
+
   function query(): Query<E, R, T> {
     return {
       where: (cb): Query<E, R, T> => {
@@ -369,7 +378,11 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         queryOrWhereFilters.push(arr => arr.filter(cb))
         return query()
       },
-      orderBy: () => query(),
+      orderBy: (criteria, orders): Query<E, R, T> => {
+        queryOrderBy.criteria = criteria
+        queryOrderBy.orders = orders
+        return query()
+      },
       with: () => query(),
       get: (): T[] => {
         const dbEntity = db[entity.name]!
@@ -388,8 +401,11 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
           result = [...new Set([...result, ...orResults])]
         }
 
-        queryWhereFilters.length = 0
-        queryOrWhereFilters.length = 0
+        if (queryOrderBy.criteria.length > 0) {
+          result = result.sort(orderBy(queryOrderBy))
+        }
+
+        resetQuery()
 
         return result
       },
