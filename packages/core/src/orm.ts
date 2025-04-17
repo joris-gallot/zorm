@@ -405,7 +405,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         }
 
         if (queryRelationsToLoad.length > 0) {
-          const relationsToLoad = queryRelationsToLoad.reduce((acc, relation) => ({ ...acc, ...relation }), {})
+          const relationsToLoad = queryRelationsToLoad.reduce((acc, relation) => ({ ...acc, ...relation }), {} as WithRelationsOption<E, R>)
 
           result = result.map(d => loadRelations({
             entityData: d,
