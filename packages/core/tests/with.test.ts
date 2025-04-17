@@ -189,7 +189,7 @@ describe('with', () => {
 
     expect(() =>
       // @ts-expect-error relation does not exist
-      queryBuilder.user.query().with({ posts: true }),
+      queryBuilder.user.query().with({ posts: true }).get(),
     ).toThrow('Relation posts not found on entity user')
   })
 
