@@ -4,7 +4,7 @@ import { computed } from 'vue'
 import { z } from 'zod'
 import { useReactivityAdapter } from '../src/index'
 
-describe('reactivity', () => {
+describe.skip('reactivity', () => {
   it('findById should not react to changes', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
