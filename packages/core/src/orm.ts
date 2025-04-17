@@ -13,14 +13,6 @@ type ShapeToFields<S extends ZodObject<{ id: ZodNumber | ZodString }>> = {
   }
 }
 
-// TODO: remove this type
-type _TypeOfRelations<R extends Record<never, Relation>, T extends keyof R = keyof R> =
-    {
-      [K in T]: R[K] extends Relation<infer K extends RelationKind, infer E extends AnyEntity> ?
-        K extends 'many' ? Array<z.infer<E['zodSchema']>> : z.infer<E['zodSchema']>
-        : never
-    }
-
 interface Entity<N extends string, S extends ZodSchemaWithId> {
   zodSchema: S
   name: N
@@ -130,24 +122,23 @@ export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId
     T
     : Prettify<T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>>
 
-interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, T extends z.infer<E['zodSchema']>> {
+interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, RL extends WithRelationsOption<E, R>, T extends z.infer<E['zodSchema']>> {
   entityData: T
   relations: R
-  relationsToLoad: WithRelationsOption<E, R>[]
+  relationsToLoad: RL
   entityName: string
 }
 
-function loadRelations<E extends AnyEntity, R extends Relations<any>, T extends z.infer<E['zodSchema']> = z.infer<E['zodSchema']>>({
+function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends WithRelationsOption<E, R>, T extends z.infer<E['zodSchema']> = z.infer<E['zodSchema']>>({
   entityData,
   relations,
   relationsToLoad,
   entityName,
-}: LoadRelationsOptions<E, R, T>): T & Partial<_TypeOfRelations<R>> {
-  const entityWithRelations = { ...entityData } as T & Partial<_TypeOfRelations<R>>
+}: LoadRelationsOptions<E, R, RL, T>): Prettify<T & TypeOfRelations<E, R, RL>> {
+  const entityWithRelations = { ...entityData } as Prettify<T & TypeOfRelations<E, R, RL>>
   const myRelations = relations[entityName] || {}
 
-  for (const [relationName, relationValue] of Object.entries(relationsToLoad)) {
-    // relationValue can be either undefined, boolean or an object
+  for (const [relationName, relationValue] of Object.entries(relationsToLoad) as Array<[string, boolean | undefined | Record<string, boolean>]>) {
     if (!relationValue) {
       continue
     }
@@ -170,20 +161,23 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, T extends 
 
     if (typeof relationValue === 'object') {
       if (relation.kind === 'many') {
-        entityWithRelations[relationName] = entityWithRelations[relationName].map((value) => {
+        // @ts-expect-error can't valid the type between ObjectWithId and the relation type
+        entityWithRelations[relationName] = entityWithRelations[relationName].map((value: T) => {
           return loadRelations({
             entityData: value,
             relations,
-            relationsToLoad: relationValue,
+            relationsToLoad: relationValue as WithRelationsOption<E, R>,
             entityName: refEntityName,
           })
         })
       }
       else {
+        // @ts-expect-error can't valid the type between ObjectWithId and the relation type
         entityWithRelations[relationName] = loadRelations({
+          // @ts-expect-error can't valid the type between ObjectWithId and the relation type
           entityData: entityWithRelations[relationName],
           relations,
-          relationsToLoad: relationValue,
+          relationsToLoad: relationValue as WithRelationsOption<E, R>,
           entityName: refEntityName,
         })
       }
@@ -348,7 +342,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
       return loadRelations({
         entityData,
         relations,
-        relationsToLoad: options.with,
+        relationsToLoad: options.with as WithRelationsOption<E, R>,
         entityName: entity.name,
       }) as FindByIdResult<E, R, T, O>
     }
@@ -423,6 +417,7 @@ export function defineQueryBuilder<
   const relations = relationsFn?.({ one, many }) || {} as R
 
   return entities.reduce((acc, entity) => {
+    // @ts-expect-error can't valid the type between Entity and the key of the global query builder
     acc[entity.name] = defineEntityQueryBuilder(entity, relations)
     return acc
   }, {} as GlobalQueryBuilder<E, N, R>)

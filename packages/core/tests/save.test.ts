@@ -213,19 +213,19 @@ describe('save', () => {
       name: 'John Doe',
     }])
 
-    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
+    expect(() => _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       foo: [],
-    }])
+    }])).toThrow()
 
-    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
+    expect(() => _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       bar: {},
-    }])
+    }])).toThrow()
   })
 
   it('should save entities', () => {
