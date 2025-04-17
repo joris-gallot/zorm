@@ -342,11 +342,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
       with: () => query(),
       get: (): T[] => {
         const dbEntity = db[entity.name]!
-        let result = Object.values(dbEntity) as T[]
-
-        if (queryWhereFilters.length > 0) {
-          result = queryWhereFilters.reduce((acc, filter) => filter(acc), result)
-        }
+        const result = queryWhereFilters.reduce((acc, filter) => filter(acc), Object.values(dbEntity) as T[])
 
         queryWhereFilters.length = 0
 
