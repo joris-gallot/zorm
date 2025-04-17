@@ -241,6 +241,7 @@ export type TypeOfRelations<
 
 interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, Result = T> {
   where: (cb: (value: T) => boolean) => Query<E, R, T, Result>
+  orWhere: (cb: (value: T) => boolean) => Query<E, R, T, Result>
   orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, Result>
   with: <W extends WithRelationsOption<E, R>>(relations: ExactDeep<W, WithRelationsOption<E, R>>) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
   get: () => Array<Result>
@@ -356,6 +357,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
   }
 
   const queryWhereFilters: Array<(arr: T[]) => T[]> = []
+  const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
 
   function query(): Query<E, R, T> {
     return {
@@ -363,13 +365,31 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         queryWhereFilters.push(arr => arr.filter(cb))
         return query()
       },
+      orWhere: (cb): Query<E, R, T> => {
+        queryOrWhereFilters.push(arr => arr.filter(cb))
+        return query()
+      },
       orderBy: () => query(),
       with: () => query(),
       get: (): T[] => {
         const dbEntity = db[entity.name]!
-        const result = queryWhereFilters.reduce((acc, filter) => filter(acc), Object.values(dbEntity) as T[])
+        let result = Object.values(dbEntity) as T[]
+
+        if (queryOrWhereFilters.length > 0 && queryWhereFilters.length === 0) {
+          throw new Error('Cannot use orWhere without where')
+        }
+
+        if (queryWhereFilters.length > 0) {
+          result = queryWhereFilters.reduce((acc, filter) => filter(acc), result)
+        }
+
+        if (queryOrWhereFilters.length > 0) {
+          const orResults = queryOrWhereFilters.flatMap(filter => filter(Object.values(dbEntity) as T[]))
+          result = [...new Set([...result, ...orResults])]
+        }
 
         queryWhereFilters.length = 0
+        queryOrWhereFilters.length = 0
 
         return result
       },
