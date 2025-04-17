@@ -357,4 +357,135 @@ describe('with', () => {
       }
     }>>(users3)
   })
+
+  it('should work with deeply nested relations', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const Settings = defineEntity('settings', z.object({
+      id: z.number(),
+      name: z.string(),
+      userId: z.number(),
+      isAdmin: z.boolean(),
+    }))
+
+    const Preferences = defineEntity('preferences', z.object({
+      id: z.number(),
+      name: z.string(),
+      settingsId: z.number(),
+      isDarkMode: z.boolean(),
+    }))
+
+    const Notification = defineEntity('notification', z.object({
+      id: z.number(),
+      name: z.string(),
+      preferencesId: z.number(),
+      isRead: z.boolean(),
+    }))
+
+    const queryBuilder = defineQueryBuilder([User, Settings, Preferences, Notification], ({ one, many }) => ({
+      user: {
+        settings: one(Settings, {
+          reference: Settings.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      settings: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Settings.fields.userId,
+        }),
+        preferences: one(Preferences, {
+          reference: Preferences.fields.settingsId,
+          field: Settings.fields.id,
+        }),
+      },
+      preferences: {
+        settings: one(Settings, {
+          reference: Settings.fields.id,
+          field: Preferences.fields.settingsId,
+        }),
+        notifications: many(Notification, {
+          reference: Notification.fields.preferencesId,
+          field: Preferences.fields.id,
+        }),
+      },
+    }))
+
+    queryBuilder.user.save([{
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+        preferences: {
+          id: 1,
+          name: 'Dark Mode',
+          settingsId: 1,
+          isDarkMode: true,
+        },
+      },
+    }])
+
+    queryBuilder.notification.save([{
+      id: 1,
+      name: 'Notification 1',
+      preferencesId: 1,
+      isRead: false,
+    }])
+
+    const users = queryBuilder.user.query()
+      .with({ settings: { preferences: { notifications: true } } })
+      .get()
+
+    expect(users).toEqual([{
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+        preferences: {
+          id: 1,
+          name: 'Dark Mode',
+          settingsId: 1,
+          isDarkMode: true,
+          notifications: [{
+            id: 1,
+            name: 'Notification 1',
+            preferencesId: 1,
+            isRead: false,
+          }],
+        },
+      },
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+        preferences: {
+          id: number
+          name: string
+          settingsId: number
+          isDarkMode: boolean
+          notifications: Array<{
+            id: number
+            name: string
+            preferencesId: number
+            isRead: boolean
+          }>
+        }
+      }
+    }>>(users)
+  })
 })

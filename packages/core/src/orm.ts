@@ -126,17 +126,17 @@ interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, RL
   entityData: T
   relations: R
   relationsToLoad: RL
-  entityName: string
+  entity: E
 }
 
 function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends WithRelationsOption<E, R>, T extends z.infer<E['zodSchema']> = z.infer<E['zodSchema']>>({
   entityData,
   relations,
   relationsToLoad,
-  entityName,
+  entity,
 }: LoadRelationsOptions<E, R, RL, T>): Prettify<T & TypeOfRelations<E, R, RL>> {
   const entityWithRelations = { ...entityData } as Prettify<T & TypeOfRelations<E, R, RL>>
-  const myRelations = relations[entityName] || {}
+  const myRelations = relations[entity.name] || {}
 
   for (const [relationName, relationValue] of Object.entries(relationsToLoad) as Array<[string, boolean | undefined | Record<string, boolean>]>) {
     if (!relationValue) {
@@ -146,11 +146,11 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
     const relation = myRelations[relationName] as Relation
 
     if (!relation) {
-      throw new Error(`Relation ${String(relationName)} not found on entity ${entityName}`)
+      throw new Error(`Relation ${String(relationName)} not found on entity ${entity.name}`)
     }
 
-    const refEntityName = relation.reference.entity.name
-    const refDb = db[refEntityName]
+    const refEntity = relation.reference.entity
+    const refDb = db[refEntity.name]
 
     const arrayFunc: 'filter' | 'find' = relation.kind === 'many' ? 'filter' : 'find'
 
@@ -167,7 +167,7 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
             entityData: value,
             relations,
             relationsToLoad: relationValue as WithRelationsOption<E, R>,
-            entityName: refEntityName,
+            entity: refEntity,
           })
         })
       }
@@ -178,7 +178,7 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
           entityData: entityWithRelations[relationName],
           relations,
           relationsToLoad: relationValue as WithRelationsOption<E, R>,
-          entityName: refEntityName,
+          entity: refEntity,
         })
       }
     }
@@ -343,7 +343,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         entityData,
         relations,
         relationsToLoad: options.with as WithRelationsOption<E, R>,
-        entityName: entity.name,
+        entity,
       }) as FindByIdResult<E, R, T, O>
     }
 
@@ -352,6 +352,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
 
   const queryWhereFilters: Array<(arr: T[]) => T[]> = []
   const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
+  const queryRelationsToLoad: Array<WithRelationsOption<E, R>> = []
 
   const queryOrderBy: { criteria: OrderByCriteria<T>, orders: OrderByOrders } = { criteria: [], orders: [] }
 
@@ -360,6 +361,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
     queryOrWhereFilters.length = 0
     queryOrderBy.criteria.length = 0
     queryOrderBy.orders.length = 0
+    queryRelationsToLoad.length = 0
   }
 
   function query(): Query<E, R, T> {
@@ -377,7 +379,10 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         queryOrderBy.orders = orders
         return query()
       },
-      with: () => query(),
+      with: (relation): Query<E, R, T> => {
+        queryRelationsToLoad.push(relation as WithRelationsOption<E, R>)
+        return query()
+      },
       get: (): T[] => {
         const dbEntity = db[entity.name]!
         let result = Object.values(dbEntity) as T[]
@@ -397,6 +402,17 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
 
         if (queryOrderBy.criteria.length > 0) {
           result = result.sort(orderBy(queryOrderBy))
+        }
+
+        if (queryRelationsToLoad.length > 0) {
+          const relationsToLoad = queryRelationsToLoad.reduce((acc, relation) => ({ ...acc, ...relation }), {})
+
+          result = result.map(d => loadRelations({
+            entityData: d,
+            relations,
+            relationsToLoad,
+            entity,
+          }))
         }
 
         resetQuery()
