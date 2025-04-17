@@ -130,23 +130,28 @@ export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId
     T
     : Prettify<T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>>
 
-interface LoadRelationsOptions<T extends ObjectWithId, R extends Relations<any>> {
+interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, T extends z.infer<E['zodSchema']>> {
   entityData: T
   relations: R
-  relationsToLoad: string[]
+  relationsToLoad: WithRelationsOption<E, R>[]
   entityName: string
 }
 
-function loadRelations<T extends ObjectWithId, R extends Relations<any>>({
+function loadRelations<E extends AnyEntity, R extends Relations<any>, T extends z.infer<E['zodSchema']> = z.infer<E['zodSchema']>>({
   entityData,
   relations,
   relationsToLoad,
   entityName,
-}: LoadRelationsOptions<T, R>): T & Partial<_TypeOfRelations<R>> {
+}: LoadRelationsOptions<E, R, T>): T & Partial<_TypeOfRelations<R>> {
   const entityWithRelations = { ...entityData } as T & Partial<_TypeOfRelations<R>>
   const myRelations = relations[entityName] || {}
 
-  for (const relationName of relationsToLoad) {
+  for (const [relationName, relationValue] of Object.entries(relationsToLoad)) {
+    // relationValue can be either undefined, boolean or an object
+    if (!relationValue) {
+      continue
+    }
+
     const relation = myRelations[relationName] as Relation
 
     if (!relation) {
@@ -162,6 +167,27 @@ function loadRelations<T extends ObjectWithId, R extends Relations<any>>({
     entityWithRelations[relationName] = Object.values(refDb || {})[arrayFunc]((value: ObjectWithId) => {
       return value[relation.reference.field.name as keyof ObjectWithId] === entityData[relation.field.name as keyof ObjectWithId]
     })
+
+    if (typeof relationValue === 'object') {
+      if (relation.kind === 'many') {
+        entityWithRelations[relationName] = entityWithRelations[relationName].map((value) => {
+          return loadRelations({
+            entityData: value,
+            relations,
+            relationsToLoad: relationValue,
+            entityName: refEntityName,
+          })
+        })
+      }
+      else {
+        entityWithRelations[relationName] = loadRelations({
+          entityData: entityWithRelations[relationName],
+          relations,
+          relationsToLoad: relationValue,
+          entityName: refEntityName,
+        })
+      }
+    }
   }
 
   return entityWithRelations
@@ -321,8 +347,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
       return loadRelations({
         entityData,
         relations,
-        // TODO: get deep relations
-        relationsToLoad: Object.keys(options.with),
+        relationsToLoad: options.with,
         entityName: entity.name,
       }) as FindByIdResult<E, R, T, O>
     }

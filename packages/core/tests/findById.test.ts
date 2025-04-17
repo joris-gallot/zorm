@@ -121,20 +121,7 @@ describe('findById', () => {
       },
     })
 
-    expect(user).toEqual({
-      id: 1,
-      name: 'John Doe',
-      posts: [{
-        id: 1,
-        title: 'Post 1',
-        userId: 1,
-        comments: [{
-          id: 1,
-          content: 'Comment 1',
-          postId: 1,
-        }],
-      }],
-    })
+    expect(user).toEqual(null)
 
     assertType<{
       id: number
@@ -501,7 +488,7 @@ describe('findById', () => {
     } | null>(userWithSettings)
   })
 
-  it('should find by id with deep relations', () => {
+  it('should find by id with deep relations - many', () => {
     const User = defineEntity('user', z.object({
       id: z.number(),
       name: z.string(),
@@ -583,6 +570,10 @@ describe('findById', () => {
         id: 1,
         title: 'Post 1',
         userId: 1,
+      }, {
+        id: 2,
+        title: 'Post 2',
+        userId: 1,
       }],
     })
 
@@ -605,15 +596,29 @@ describe('findById', () => {
         id: 1,
         title: 'Post 1',
         userId: 1,
-        comments: [{
-          id: 1,
-          content: 'Comment 1',
-          postId: 1,
-        }, {
-          id: 2,
-          content: 'Comment 2',
-          postId: 1,
-        }],
+        comments: [
+          {
+            id: 1,
+            content: 'Comment 1',
+            postId: 1,
+          },
+          {
+            id: 2,
+            content: 'Comment 2',
+            postId: 1,
+          },
+        ],
+      }, {
+        id: 2,
+        title: 'Post 2',
+        userId: 1,
+        comments: [
+          {
+            id: 3,
+            content: 'Comment 3',
+            postId: 2,
+          },
+        ],
       }],
     })
 
@@ -631,5 +636,170 @@ describe('findById', () => {
         }>
       }>
     } | null>(userWithPostsAndComments)
+  })
+
+  it('should find by id with deep relations - one', () => {
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const Avatar = defineEntity('avatar', z.object({
+      id: z.number(),
+      url: z.string(),
+      userId: z.number(),
+    }))
+
+    const Settings = defineEntity('settings', z.object({
+      id: z.number(),
+      name: z.string(),
+      userId: z.number(),
+      isAdmin: z.boolean(),
+    }))
+
+    const Preferences = defineEntity('preferences', z.object({
+      id: z.number(),
+      name: z.string(),
+      settingsId: z.number(),
+    }))
+
+    const queryBuilder = defineQueryBuilder([User, Avatar, Settings, Preferences], ({ one }) => ({
+      user: {
+        avatar: one(Avatar, {
+          reference: Avatar.fields.userId,
+          field: User.fields.id,
+        }),
+        settings: one(Settings, {
+          reference: Settings.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      settings: {
+        preferences: one(Preferences, {
+          reference: Preferences.fields.settingsId,
+          field: Settings.fields.id,
+        }),
+      },
+      preferences: {
+        settings: one(Settings, {
+          reference: Settings.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      avatar: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Avatar.fields.userId,
+        }),
+      },
+    }))
+
+    queryBuilder.user.save([{
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+        preferences: {
+          id: 1,
+          name: 'Preferences',
+          settingsId: 1,
+        },
+      },
+      avatar: {
+        id: 1,
+        url: 'https://example.com/avatar.png',
+        userId: 1,
+      },
+    }])
+
+    const user = queryBuilder.user.findById(1)
+
+    expect(user).toEqual({
+      id: 1,
+      name: 'John Doe',
+    })
+
+    assertType<{
+      id: number
+      name: string
+    } | null>(user)
+
+    const userWithAvatar = queryBuilder.user.findById(1, { with: { avatar: true } })
+
+    expect(userWithAvatar).toEqual({
+      id: 1,
+      name: 'John Doe',
+      avatar: {
+        id: 1,
+        url: 'https://example.com/avatar.png',
+        userId: 1,
+      },
+    })
+
+    assertType<{
+      id: number
+      name: string
+      avatar: {
+        id: number
+        url: string
+        userId: number
+      }
+    } | null>(userWithAvatar)
+
+    const userWithSettings = queryBuilder.user.findById(1, { with: { settings: true } })
+
+    expect(userWithSettings).toEqual({
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+      },
+    })
+
+    assertType<{
+      id: number
+      name: string
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+      }
+    } | null>(userWithSettings)
+
+    const userWithPreferences = queryBuilder.user.findById(1, { with: { settings: { preferences: true } } })
+
+    expect(userWithPreferences).toEqual({
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+        preferences: {
+          id: 1,
+          name: 'Preferences',
+          settingsId: 1,
+        },
+      },
+    })
+
+    assertType<{
+      id: number
+      name: string
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+      }
+    } | null>(userWithPreferences)
   })
 })
