@@ -210,8 +210,8 @@ type GetNestedRelationType<
   P extends boolean,
 > = Prettify<z.infer<E['zodSchema']> & (
   P extends true
-    ? Partial<TypeOfRelations<E, R, O>>
-    : TypeOfRelations<E, R, O>
+    ? Partial<TypeOfRelations<E, R, O, P>>
+    : TypeOfRelations<E, R, O, P>
 )>
 
 export type TypeOfRelations<
