@@ -4,7 +4,7 @@ import { computed } from 'vue'
 import { z } from 'zod'
 import { useReactivityAdapter } from '../src/index'
 
-describe.skip('reactivity', () => {
+describe('reactivity', () => {
   it('findById should not react to changes', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
@@ -128,15 +128,16 @@ describe.skip('reactivity', () => {
         age: 20,
         posts: [{ id: 1, name: 'Post 1', userId: 2 }, { id: 2, name: 'Post 2', userId: 2 }],
       },
-      { id: 3, age: 30 },
+      { id: 3, age: 30, posts: [] },
     ])
 
+    userQuery.save([{ id: 1, age: 11 }])
     postQuery.save([{ id: 1, name: 'Post 3', userId: 2 }])
 
     expect(users.value).toEqual([
-      { id: 1, age: 11 },
+      { id: 1, age: 11, posts: [] },
       { id: 2, age: 20, posts: [{ id: 1, name: 'Post 3', userId: 2 }, { id: 2, name: 'Post 2', userId: 2 }] },
-      { id: 3, age: 30 },
+      { id: 3, age: 30, posts: [] },
     ])
   })
 })
