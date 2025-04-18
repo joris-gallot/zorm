@@ -119,12 +119,12 @@ describe('with', () => {
       userId: 1,
     }])
 
-    const users = queryBuilder.user.query()
+    const usersWithPosts = queryBuilder.user.query()
       .with({ posts: true })
       .where(user => user.name === 'John Doe')
       .get()
 
-    expect(users).toEqual([{
+    expect(usersWithPosts).toEqual([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -146,7 +146,39 @@ describe('with', () => {
         title: string
         userId: number
       }>
-    }>>(users)
+    }>>(usersWithPosts)
+
+    const usersWithFalsePosts = queryBuilder.user.query().with({ posts: false }).get()
+
+    expect(usersWithFalsePosts).toEqual([{
+      id: 1,
+      name: 'John Doe',
+    }, {
+      id: 2,
+      name: 'Jane Doe',
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+    }>>(usersWithFalsePosts)
+
+    const usersWithUndefinedPosts = queryBuilder.user.query()
+      .with({ posts: undefined })
+      .get()
+
+    expect(usersWithUndefinedPosts).toEqual([{
+      id: 1,
+      name: 'John Doe',
+    }, {
+      id: 2,
+      name: 'Jane Doe',
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+    }>>(usersWithUndefinedPosts)
 
     const posts = queryBuilder.post.query()
       .where(post => post.title === 'Post 1')
@@ -255,12 +287,12 @@ describe('with', () => {
       isAdmin: true,
     }])
 
-    const users = queryBuilder.user.query()
+    const usersWithPostsAndSettings = queryBuilder.user.query()
       .where(user => user.name === 'John Doe')
       .with({ posts: true, settings: true })
       .get()
 
-    expect(users).toEqual([{
+    expect(usersWithPostsAndSettings).toEqual([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -290,7 +322,7 @@ describe('with', () => {
         userId: number
         isAdmin: boolean
       }
-    }>>(users)
+    }>>(usersWithPostsAndSettings)
 
     const users2 = queryBuilder.user.query()
       .where(user => user.name === 'John Doe')
@@ -438,11 +470,11 @@ describe('with', () => {
       isRead: false,
     }])
 
-    const users = queryBuilder.user.query()
+    const usersWithSettingsPreferencesNotifications = queryBuilder.user.query()
       .with({ settings: { preferences: { notifications: true } } })
       .get()
 
-    expect(users).toEqual([{
+    expect(usersWithSettingsPreferencesNotifications).toEqual([{
       id: 1,
       name: 'John Doe',
       settings: {
@@ -486,6 +518,44 @@ describe('with', () => {
           }>
         }
       }
-    }>>(users)
+    }>>(usersWithSettingsPreferencesNotifications)
+
+    const usersWithFalseSettingsPreferencesNotifications = queryBuilder.user.query()
+      .with({ settings: { preferences: { notifications: false } } })
+      .get()
+
+    expect(usersWithFalseSettingsPreferencesNotifications).toEqual([{
+      id: 1,
+      name: 'John Doe',
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+        preferences: {
+          id: 1,
+          name: 'Dark Mode',
+          settingsId: 1,
+          isDarkMode: true,
+        },
+      },
+    }])
+
+    assertType<Array<{
+      id: number
+      name: string
+      settings: {
+        id: number
+        name: string
+        userId: number
+        isAdmin: boolean
+        preferences: {
+          id: number
+          name: string
+          settingsId: number
+          isDarkMode: boolean
+        }
+      }
+    }>>(usersWithFalseSettingsPreferencesNotifications)
   })
 })
