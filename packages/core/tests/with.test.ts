@@ -470,11 +470,11 @@ describe('with', () => {
       isRead: false,
     }])
 
-    const usersWithSettingsPreferencesNotifications = queryBuilder.user.query()
+    const usersWithNestedRelations = queryBuilder.user.query()
       .with({ settings: { preferences: { notifications: true } } })
       .get()
 
-    expect(usersWithSettingsPreferencesNotifications).toEqual([{
+    expect(usersWithNestedRelations).toEqual([{
       id: 1,
       name: 'John Doe',
       settings: {
@@ -518,13 +518,13 @@ describe('with', () => {
           }>
         }
       }
-    }>>(usersWithSettingsPreferencesNotifications)
+    }>>(usersWithNestedRelations)
 
-    const usersWithFalseSettingsPreferencesNotifications = queryBuilder.user.query()
+    const usersWithFalseNotifications = queryBuilder.user.query()
       .with({ settings: { preferences: { notifications: false } } })
       .get()
 
-    expect(usersWithFalseSettingsPreferencesNotifications).toEqual([{
+    expect(usersWithFalseNotifications).toEqual([{
       id: 1,
       name: 'John Doe',
       settings: {
@@ -556,6 +556,6 @@ describe('with', () => {
           isDarkMode: boolean
         }
       }
-    }>>(usersWithFalseSettingsPreferencesNotifications)
+    }>>(usersWithFalseNotifications)
   })
 })
