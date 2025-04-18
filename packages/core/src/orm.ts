@@ -379,6 +379,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         queryOrderBy.orders = orders
         return query()
       },
+      // @ts-expect-error can't valid the return type as it should add the relations type to the query result
       with: (relation): Query<E, R, T> => {
         queryRelationsToLoad.push(relation as WithRelationsOption<E, R>)
         return query()
