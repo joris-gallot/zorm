@@ -7,7 +7,6 @@ const db = getDb() as DefaultDatabase
 
 describe('save', () => {
   beforeEach(() => {
-    // Reset db before each test
     db.reset()
   })
 
