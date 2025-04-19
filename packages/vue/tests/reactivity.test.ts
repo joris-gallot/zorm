@@ -1,4 +1,4 @@
-import { defineEntity, defineQueryBuilder, getDb } from '@zorm-ts/core'
+import { DefaultDatabase, defineEntity, defineQueryBuilder, getDb } from '@zorm-ts/core'
 import { describe, expect, it } from 'vitest'
 import { computed } from 'vue'
 import { z } from 'zod'
@@ -22,6 +22,8 @@ describe('reactivity', () => {
   })
 
   it('should update db instance', () => {
+    expect(getDb()).toBeInstanceOf(DefaultDatabase)
+
     useReactiveDatabase()
 
     expect(getDb()).toBeInstanceOf(VueDatabase)
