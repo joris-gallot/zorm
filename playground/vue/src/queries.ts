@@ -1,7 +1,7 @@
 import { defineQueryBuilder } from '@zorm-ts/core'
 import { Image, Post, User } from './entities.js'
 
-const queryBuilder = defineQueryBuilder([User, Post, Image], ({ one, many }) => ({
+const { user, post } = defineQueryBuilder([User, Post, Image], ({ one, many }) => ({
   user: {
     posts: many(Post, {
       reference: Post.fields.userId,
@@ -20,16 +20,5 @@ const queryBuilder = defineQueryBuilder([User, Post, Image], ({ one, many }) => 
   },
 }))
 
-const users = queryBuilder.user.query().with({
-  posts: {
-    image: true,
-  },
-}).get()
-
-const a = queryBuilder.post.query().with({
-  user: {
-    posts: {
-      image: true,
-    },
-  },
-}).get()
+export const userQuery = user
+export const postQuery = post

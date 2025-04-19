@@ -19,7 +19,6 @@
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",
     "@zorm-ts/core": "workspace:*",
-    "@zorm-ts/core": "workspace:*",
     "typescript": "catalog:",
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2",

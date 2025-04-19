@@ -4,11 +4,11 @@ import { postQuery, userQuery } from './queries.js'
 
 const userId = 1
 const users = computed(() => userQuery.query().where(user => (user.age || 0) > 10).get())
-const userWithPosts = computed(() => userQuery.findById(userId, { with: ['posts'] }))
+const userWithPosts = computed(() => userQuery.findById(userId, { with: { posts: true } }))
 
 const postId = 1
 const post = computed(() => postQuery.findById(postId))
-const postWithUser = computed(() => postQuery.findById(postId, { with: ['user'] }))
+const postWithUser = computed(() => postQuery.findById(postId, { with: { user: true } }))
 
 function updateUser() {
   userQuery.save([{
