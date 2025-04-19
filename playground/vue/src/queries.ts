@@ -1,7 +1,7 @@
 import { defineQueryBuilder } from '@zorm-ts/core'
-import { Image, Post, User } from './entities.js'
+import { Comment, Post, User } from './entities.js'
 
-const { user, post } = defineQueryBuilder([User, Post, Image], ({ one, many }) => ({
+export const queryBuilder = defineQueryBuilder([User, Post, Comment], ({ many }) => ({
   user: {
     posts: many(Post, {
       reference: Post.fields.userId,
@@ -9,16 +9,24 @@ const { user, post } = defineQueryBuilder([User, Post, Image], ({ one, many }) =
     }),
   },
   post: {
-    user: one(User, {
-      reference: User.fields.id,
-      field: Post.fields.userId,
-    }),
-    image: one(Image, {
-      reference: Post.fields.imageId,
-      field: Image.fields.id,
+    comments: many(Comment, {
+      reference: Comment.fields.postId,
+      field: Post.fields.id,
     }),
   },
 }))
 
-export const userQuery = user
-export const postQuery = post
+const users = queryBuilder.user.query()
+  .where(user => user.email.endsWith('@foo.com'))
+  .orWhere(user => user.email === 'admin@bar.com')
+  .get()
+
+const usersWithPosts = queryBuilder.user.query()
+  .where(user => user.email.endsWith('@foo.com'))
+  .orWhere(user => user.email === 'admin@bar.com')
+  .with({
+    posts: {
+      comments: true,
+    },
+  })
+  .get()

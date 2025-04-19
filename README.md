@@ -5,7 +5,6 @@ zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to de
 ## Features
 - ✅ Type-safe schema definition and validation powered by Zod
 - 🔍 Fully typed query builder with:
-  - Type-safe field names and operators in where clauses
   - Autocomplete for relation names in eager loading
   - Inferred return types including nested relations
 - 🤝 Support for one-to-one and one-to-many relationships
@@ -43,52 +42,77 @@ export const Post = defineEntity(
     userId: z.number(),
   })
 )
+
+export const Comment = defineEntity(
+  'comment',
+  z.object({
+    id: z.number(),
+    content: z.string(),
+    postId: z.number(),
+  })
+)
 ```
 
-### Create a Query Builder from relations
+### Create a Query Builder
 ```ts
 import { defineQueryBuilder } from '@zorm-ts/core'
-import { Post, User } from './entities'
+import { Comment, Post, User } from './entities'
 
-export const userQuery = defineQueryBuilder(User, ({ many }) => ({
-  posts: many(Post, {
-    reference: Post.fields.userId,
-    field: User.fields.id,
-  }),
+const { user: userQuery } = defineQueryBuilder([User, Post, Comment], ({ many }) => ({
+  user: {
+    posts: many(Post, {
+      reference: Post.fields.userId,
+      field: User.fields.id,
+    }),
+  },
+  post: {
+    comments: many(Comment, {
+      reference: Comment.fields.postId,
+      field: Post.fields.id,
+    }),
+  },
 }))
 
 const users = userQuery.query()
-  .where(user => user.age > 18)
-  .orWhere(user => user.isAdmin)
+  .where(user => user.email.endsWith('@foo.com'))
+  .orWhere(user => user.email === 'admin@bar.com')
   .get()
 /*
-[{
-  id: number
-  email: string
-  age: number
-  username?: string
-  isAdmin: boolean
-}]
+{
+  id: number;
+  name: string;
+  email: string;
+  age?: number | undefined;
+}[]
 */
 
 const usersWithPosts = userQuery.query()
-  .where(user => user.age > 18)
-  .orWhere(user => user.isAdmin)
-  .with('posts')
+  .where(user => user.email.endsWith('@foo.com'))
+  .orWhere(user => user.email === 'admin@bar.com')
+  .with({
+    posts: {
+      comments: true,
+    },
+  })
   .get()
 /*
-[{
-  id: number
-  email: string
-  age: number
-  username?: string
-  isAdmin: boolean
-  posts: Array<{
-    id: number
-    title: string
-    userId: number
-  }>
-}]
+{
+  id: number;
+  name: string;
+  email: string;
+  age?: number | undefined;
+  posts: {
+    id: number;
+    title: string;
+    userId: number;
+    imageId: number;
+    comments: {
+      id: number;
+      content: string;
+      postId: number;
+    }[];
+  }[];
+}[]
 */
 ```
 

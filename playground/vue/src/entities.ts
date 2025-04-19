@@ -28,3 +28,12 @@ export const Image = defineEntity(
     url: z.string().optional(),
   }),
 )
+
+export const Comment = defineEntity(
+  'comment',
+  z.object({
+    id: z.number(),
+    content: z.string(),
+    postId: z.number(),
+  }),
+)
