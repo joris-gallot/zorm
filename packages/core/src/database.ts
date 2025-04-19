@@ -1,6 +1,6 @@
 import type { ObjectWithId } from './orm'
 
-export interface Database {
+export interface ZormDatabase {
   registerEntity: (name: string) => void
   getAll: (entity: string) => ObjectWithId[]
   getEntity: (entity: string, id: ObjectWithId['id']) => ObjectWithId | null
@@ -8,7 +8,7 @@ export interface Database {
   setEntityKey: (entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown) => void
 }
 
-export class DefaultDatabase implements Database {
+export class DefaultDatabase implements ZormDatabase {
   #db: Record<string, Record<string, ObjectWithId>>
 
   constructor() {
@@ -20,11 +20,8 @@ export class DefaultDatabase implements Database {
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    const values = this.#db[entity]
-
-    if (!values) {
-      throw new Error(`Entity ${entity} not found`)
-    }
+    // entity is guaranteed to exist when getAll is called
+    const values = this.#db[entity]!
 
     return Object.values(values)
   }

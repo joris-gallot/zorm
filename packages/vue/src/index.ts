@@ -1,9 +1,9 @@
-import type { Database, ObjectWithId } from '@zorm-ts/core'
+import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 import type { Ref } from 'vue'
 import { defineReactivityDatabase } from '@zorm-ts/core'
 import { ref } from 'vue'
 
-class VueDatabase implements Database {
+export class VueDatabase implements ZormDatabase {
   #db: Ref<Record<string, Record<string, ObjectWithId>>>
 
   constructor() {
@@ -15,11 +15,8 @@ class VueDatabase implements Database {
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    const values = this.#db.value[entity]
-
-    if (!values) {
-      throw new Error(`Entity ${entity} not found`)
-    }
+    // entity is guaranteed to exist when getAll is called
+    const values = this.#db.value[entity]!
 
     return Object.values(values)
   }

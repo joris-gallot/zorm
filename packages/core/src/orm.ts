@@ -1,5 +1,5 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
-import type { Database } from './database'
+import type { ZormDatabase } from './database'
 import type { OrderByCriteria, OrderByOrders } from './orderBy'
 import type { ExactDeep, Prettify } from './types'
 import { DefaultDatabase } from './database'
@@ -71,13 +71,13 @@ interface RelationsOptions {
   many: typeof many
 }
 
-let db: Database = new DefaultDatabase()
+let db: ZormDatabase = new DefaultDatabase()
 
-export function getDb(): Database {
+export function getDb(): ZormDatabase {
   return db
 }
 
-export function defineReactivityDatabase(database: Database): void {
+export function defineReactivityDatabase(database: ZormDatabase): void {
   db = database
 }
 

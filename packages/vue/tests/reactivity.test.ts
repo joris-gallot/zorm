@@ -1,8 +1,8 @@
-import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
+import { defineEntity, defineQueryBuilder, getDb } from '@zorm-ts/core'
 import { describe, expect, it } from 'vitest'
 import { computed } from 'vue'
 import { z } from 'zod'
-import { useReactiveDatabase } from '../src/index'
+import { useReactiveDatabase, VueDatabase } from '../src/index'
 
 describe('reactivity', () => {
   it('findById should not react to changes', () => {
@@ -21,9 +21,13 @@ describe('reactivity', () => {
     expect(user.value).toEqual({ id: 1, name: 'John' })
   })
 
-  it('findById should react to changes', () => {
+  it('should update db instance', () => {
     useReactiveDatabase()
 
+    expect(getDb()).toBeInstanceOf(VueDatabase)
+  })
+
+  it('findById should react to changes', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
     const { user: userQuery } = defineQueryBuilder([User])
@@ -37,6 +41,10 @@ describe('reactivity', () => {
     userQuery.save([{ id: 1, name: 'Jane' }])
 
     expect(user.value).toEqual({ id: 1, name: 'Jane' })
+
+    const nullUser = computed(() => userQuery.findById(2))
+
+    expect(nullUser.value).toBeNull()
   })
 
   it('findById should react to changes with relations', () => {
