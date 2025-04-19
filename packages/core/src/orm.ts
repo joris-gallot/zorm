@@ -117,10 +117,18 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema }
 }
 
+export type ActualRelations<E extends AnyEntity, R extends Relations<any>> = {
+  [K in keyof R[E['name']]]: R[E['name']][K] extends Relation<'one', infer RE>
+    ? EntityWithOptionalRelations<RE, R>
+    : R[E['name']][K] extends Relation<'many', infer RE>
+      ? Array<EntityWithOptionalRelations<RE, R>>
+      : never
+}
+
 export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> =
-  keyof R[E['name']] extends never ?
-    T
-    : Prettify<T & Partial<TypeOfRelations<E, R, DeepEntityRelationsOption<E, R>, true>>>
+  keyof R[E['name']] extends never
+    ? T
+    : Prettify<T & Partial<ActualRelations<E, R>>>
 
 interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, RL extends WithRelationsOption<E, R>, T extends z.infer<E['zodSchema']>> {
   entityData: T
@@ -249,21 +257,6 @@ export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R
       RE['name']
       : never
     : never
-
-/**
- * - E is the entity type
- * - R is the global relations type
- * - N is an array of entity names used to avoid infinite recursion with relations references
- */
-export type DeepEntityRelationsOption<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = [E['name']]> = keyof R[E['name']] extends never ? never : {
-  [K in keyof R[E['name']] as K extends N[number] ? never : K]: R[E['name']][K] extends Relation<any, infer RE extends AnyEntity> ?
-    keyof R[RE['name']] extends never ?
-      true
-      : Exclude<GetRelationEntitiesName<RE, R>, N[number]> extends never ?
-        true
-        : DeepEntityRelationsOption<RE, R, [...N, RE['name']]>
-    : never
-}
 
 interface FindByIdOptions<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> { with?: WithRelationsOption<E, R> }
 
