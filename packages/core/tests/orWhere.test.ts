@@ -11,9 +11,9 @@ describe('orWhere', () => {
       age: z.number().nullable(),
     }))
 
-    const userQuery = defineQueryBuilder(User)
+    const queryBuilder = defineQueryBuilder([User])
 
-    const _users = userQuery.query()
+    const _users = queryBuilder.user.query()
       .where(user => user.name === 'John')
       .orWhere(user => user.id > 10)
       .orWhere(user => user.isAdmin === true)
@@ -45,12 +45,12 @@ describe('orWhere', () => {
         id: z.number(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
+      queryBuilder.user.save([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
       /* = and > operators */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.id === 1)
         .orWhere(user => user.id > 3)
         .get()
@@ -59,7 +59,7 @@ describe('orWhere', () => {
       assertType<Array<{ id: number }>>(users)
 
       /* != and < operators */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.id !== 1)
         .orWhere(user => user.id < 2)
         .get()
@@ -79,9 +79,9 @@ describe('orWhere', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Sarah' },
         { id: 3, name: 'Paul' },
@@ -89,7 +89,7 @@ describe('orWhere', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.name === 'John')
         .orWhere(user => user.name === 'Sarah')
         .get()
@@ -101,7 +101,7 @@ describe('orWhere', () => {
       assertType<Array<{ id: number, name: string }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.name !== 'John')
         .orWhere(user => user.name !== 'Sarah')
         .get()
@@ -121,9 +121,9 @@ describe('orWhere', () => {
         isAdmin: z.boolean(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, isAdmin: true },
         { id: 2, isAdmin: false },
         { id: 3, isAdmin: true },
@@ -131,7 +131,7 @@ describe('orWhere', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.isAdmin === true)
         .orWhere(user => user.id === 2)
         .get()
@@ -144,7 +144,7 @@ describe('orWhere', () => {
       assertType<Array<{ id: number, isAdmin: boolean }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.isAdmin !== true)
         .orWhere(user => user.id === 1)
         .get()
@@ -163,9 +163,9 @@ describe('orWhere', () => {
         name: z.string().nullable(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: null },
         { id: 3, name: 'Zoe' },
@@ -174,7 +174,7 @@ describe('orWhere', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.name === null)
         .orWhere(user => user.id === 1)
         .get()
@@ -187,7 +187,7 @@ describe('orWhere', () => {
       assertType<Array<{ id: number, name: string | null }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.name !== null)
         .orWhere(user => user.id === 2)
         .get()
@@ -207,16 +207,16 @@ describe('orWhere', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
       expect(() => {
-        userQuery.query()
+        queryBuilder.user.query()
           .orWhere(user => user.name === 'John')
           .get()
       }).toThrow('Cannot use orWhere without where')
 
       expect(() => {
-        userQuery.query()
+        queryBuilder.user.query()
           .orWhere(user => user.name === 'John')
           .where(user => user.name === 'Sarah')
           .get()
@@ -231,9 +231,9 @@ describe('orWhere', () => {
         isAdmin: z.boolean(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John', age: 25, isAdmin: true },
         { id: 2, name: 'Sarah', age: 30, isAdmin: false },
         { id: 3, name: 'Paul', age: 35, isAdmin: true },
@@ -241,7 +241,7 @@ describe('orWhere', () => {
         { id: 5, name: 'John', age: 45, isAdmin: false },
       ])
 
-      const users1 = userQuery.query()
+      const users1 = queryBuilder.user.query()
         .orWhere(user => user.isAdmin === true)
         .where(user => user.name === 'John')
         .where(user => user.age > 30)
@@ -254,7 +254,7 @@ describe('orWhere', () => {
       ])
       assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users1)
 
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .orWhere(user => user.age > 35)
         .where(user => user.name === 'John')
         .where(user => user.isAdmin === false)
@@ -268,7 +268,7 @@ describe('orWhere', () => {
       ])
       assertType<Array<{ id: number, name: string, age: number, isAdmin: boolean }>>(users2)
 
-      const users3 = userQuery.query()
+      const users3 = queryBuilder.user.query()
         .where(user => user.name === 'John')
         .where(user => user.age > 30)
         .orWhere(user => user.name === 'Sarah')

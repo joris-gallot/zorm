@@ -6,6 +6,8 @@ export default antfu(
     typescript: true,
     rules: {
       'unused-imports/no-unused-imports': 'error',
+      'test/no-only-tests': 'error',
+      'test/no-disabled-tests': 'error'
     },
   },
   {

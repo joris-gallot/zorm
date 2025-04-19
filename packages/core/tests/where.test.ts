@@ -11,9 +11,9 @@ describe('where', () => {
       age: z.number().nullable(),
     }))
 
-    const userQuery = defineQueryBuilder(User)
+    const queryBuilder = defineQueryBuilder([User])
 
-    const _users = userQuery.query()
+    const _users = queryBuilder.user.query()
       .where(user => user.name === 'John')
       .where(user => user.id > 10)
       .where(user => user.isAdmin === true)
@@ -46,12 +46,12 @@ describe('where', () => {
         age: z.number().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([{ id: 1, age: 10 }, { id: 2 }, { id: 3 }, { id: 4 }])
+      queryBuilder.user.save([{ id: 1, age: 10 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.id === 1)
         .get()
 
@@ -59,7 +59,7 @@ describe('where', () => {
       assertType<Array<{ id: number, age?: number }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.id !== 1)
         .get()
 
@@ -67,7 +67,7 @@ describe('where', () => {
       assertType<Array<{ id: number, age?: number }>>(users2)
 
       /* > operator */
-      let users3 = userQuery.query()
+      let users3 = queryBuilder.user.query()
         .where(user => user.id > 2)
         .get()
 
@@ -75,13 +75,13 @@ describe('where', () => {
       assertType<Array<{ id: number, age?: number }>>(users3)
 
       // @ts-expect-error age is optional
-      users3 = userQuery.query().where(user => user.age >= 10).get()
+      users3 = queryBuilder.user.query().where(user => user.age >= 10).get()
 
       expect(users3).toEqual([{ id: 1, age: 10 }])
       assertType<Array<{ id: number, age?: number }>>(users3)
 
       /* < operator */
-      const users4 = userQuery.query()
+      const users4 = queryBuilder.user.query()
         .where(user => user.id < 3)
         .get()
 
@@ -89,7 +89,7 @@ describe('where', () => {
       assertType<Array<{ id: number, age?: number }>>(users4)
 
       /* >= operator */
-      const users5 = userQuery.query()
+      const users5 = queryBuilder.user.query()
         .where(user => user.id >= 2)
         .get()
 
@@ -97,7 +97,7 @@ describe('where', () => {
       assertType<Array<{ id: number, age?: number }>>(users5)
 
       /* <= operator */
-      const users6 = userQuery.query()
+      const users6 = queryBuilder.user.query()
         .where(user => user.id <= 3)
         .get()
 
@@ -111,9 +111,9 @@ describe('where', () => {
         name: z.string(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: 'Sarah' },
         { id: 3, name: 'Paul' },
@@ -121,7 +121,7 @@ describe('where', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.name === 'John')
         .get()
 
@@ -129,7 +129,7 @@ describe('where', () => {
       assertType<Array<{ id: number, name: string }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.name !== 'John')
         .get()
 
@@ -143,9 +143,9 @@ describe('where', () => {
         isAdmin: z.boolean(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, isAdmin: true },
         { id: 2, isAdmin: false },
         { id: 3, isAdmin: true },
@@ -153,7 +153,7 @@ describe('where', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.isAdmin === true)
         .get()
 
@@ -161,7 +161,7 @@ describe('where', () => {
       assertType<Array<{ id: number, isAdmin: boolean }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.isAdmin !== true)
         .get()
 
@@ -175,9 +175,9 @@ describe('where', () => {
         name: z.string().nullable(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: null },
         { id: 3, name: 'Zoe' },
@@ -186,7 +186,7 @@ describe('where', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.name === null)
         .get()
 
@@ -194,7 +194,7 @@ describe('where', () => {
       assertType<Array<{ id: number, name: string | null }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.name !== null)
         .get()
 
@@ -208,9 +208,9 @@ describe('where', () => {
         name: z.string().optional(),
       }))
 
-      const userQuery = defineQueryBuilder(User)
+      const queryBuilder = defineQueryBuilder([User])
 
-      userQuery.save([
+      queryBuilder.user.save([
         { id: 1, name: 'John' },
         { id: 2, name: undefined },
         { id: 3, name: 'Doe' },
@@ -219,7 +219,7 @@ describe('where', () => {
       ])
 
       /* = operator */
-      const users = userQuery.query()
+      const users = queryBuilder.user.query()
         .where(user => user.name === undefined)
         .get()
 
@@ -227,7 +227,7 @@ describe('where', () => {
       assertType<Array<{ id: number, name?: string }>>(users)
 
       /* != operator */
-      const users2 = userQuery.query()
+      const users2 = queryBuilder.user.query()
         .where(user => user.name !== undefined)
         .get()
 
