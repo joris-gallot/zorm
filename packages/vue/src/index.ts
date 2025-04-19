@@ -37,21 +37,6 @@ class VueDatabase implements Database {
   }
 }
 
-export function useReactivityAdapter(): void {
+export function useReactiveDatabase(): void {
   defineReactivityDatabase(new VueDatabase())
-  // return defineReactivityAdapter(
-  //   () => {
-  //     const state = shallowRef(0)
-
-  //     return {
-  //       depend: (): void => {
-  //         // eslint-disable-next-line ts/no-unused-expressions
-  //         state.value
-  //       },
-  //       trigger: (): void => {
-  //         triggerRef(state)
-  //       },
-  //     }
-  //   },
-  // )
 }
