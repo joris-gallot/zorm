@@ -118,17 +118,14 @@ const usersWithPosts = userQuery.query()
 
 ## Reactivity
 
-Currently it only handles reactivity through Vue integration (see [Vue integration example](packages/vue/src/index.ts)), but support for other frameworks will be added.
+Reactivity is handled through dedicated integration packages, external to `@zorm-ts/core`. This allows zorm to integrate seamlessly with various frontend frameworks' reactivity systems.
 
-### Vue
+Currently, the following integrations are available:
 
-zorm provides first-class support for Vue through the `@zorm-ts/vue` package. This integration enables reactive queries that automatically update your components when the data changes.
+-   **Vue:** `@zorm-ts/vue` - [Documentation](packages/vue/README.md)
+-   **Svelte:** `@zorm-ts/svelte` - [Documentation](packages/svelte/README.md)
 
-```sh
-npm install @zorm-ts/vue
-```
-
-For detailed Vue integration instructions, check out the [@zorm-ts/vue documentation](packages/vue/README.md).
+Support for other frameworks is planned.
 
 ## License
 MIT
