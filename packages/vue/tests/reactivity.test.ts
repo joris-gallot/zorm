@@ -1,10 +1,15 @@
-import { DefaultDatabase, defineEntity, defineQueryBuilder, getDb } from '@zorm-ts/core'
-import { describe, expect, it } from 'vitest'
+import { DefaultDatabase, defineEntity, defineQueryBuilder, defineReactivityDatabase, getDb } from '@zorm-ts/core'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { computed } from 'vue'
 import { z } from 'zod'
 import { useReactiveDatabase, VueDatabase } from '../src/index'
 
 describe('reactivity', () => {
+  beforeEach(() => {
+    // reset to default database
+    defineReactivityDatabase(new DefaultDatabase())
+  })
+
   it('findById should not react to changes', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
@@ -30,6 +35,8 @@ describe('reactivity', () => {
   })
 
   it('findById should react to changes', () => {
+    useReactiveDatabase()
+
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
     const { user: userQuery } = defineQueryBuilder([User])
