@@ -2,12 +2,12 @@
 import { postQuery, userQuery } from '../lib/queries'
 
 let userId = 1
-$: users = userQuery.query().where(user => (user.age || 0) > 10).get()
-$: userWithPosts = userQuery.findById(userId, { with: { posts: true } })
+let users = $state(() => userQuery.query().where(user => (user.age || 0) > 10).get())
+let userWithPosts = $state(() => userQuery.findById(userId, { with: { posts: true } }))
 
 let postId = 1;
-$: post = postQuery.findById(postId)
-$: postWithUser = postQuery.findById(postId, { with: { user: true } })
+let post = $state(() => postQuery.findById(postId))
+let postWithUser = $state(() => postQuery.findById(postId, { with: { user: true } }))
 
 function updateUser() {
   userQuery.save([{
@@ -26,15 +26,15 @@ function updateUser() {
       Update user
     </button>
     Users
-    <pre>{JSON.stringify(users, null, 2)}</pre>
+    <pre>{JSON.stringify(users(), null, 2)}</pre>
     User {userId} with posts
-    <pre>{JSON.stringify(userWithPosts, null, 2)}</pre>
+    <pre>{JSON.stringify(userWithPosts(), null, 2)}</pre>
   </div>
 
   <div class="flex flex-col gap-4 p-4">
     Post {postId}
-    <pre>{JSON.stringify(post, null, 2)}</pre>
+    <pre>{JSON.stringify(post(), null, 2)}</pre>
     Post {postId} with user
-    <pre>{JSON.stringify(postWithUser, null, 2)}</pre>
+    <pre>{JSON.stringify(postWithUser(), null, 2)}</pre>
   </div>
 </div>
