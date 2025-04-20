@@ -128,6 +128,12 @@ importers:
 
   playground/svelte:
     dependencies:
+      '@zorm-ts/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@zorm-ts/svelte':
+        specifier: workspace:*
+        version: link:../../packages/svelte
       zod:
         specifier: 'catalog:'
         version: 3.24.2
@@ -144,14 +150,8 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.0.0
         version: 4.1.2(vite@6.2.5(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
-      '@zorm-ts/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@zorm-ts/svelte':
-        specifier: workspace:*
-        version: link:../../packages/svelte
       svelte:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.28.1
       svelte-check:
         specifier: ^4.0.0
@@ -168,6 +168,12 @@ importers:
 
   playground/vue:
     dependencies:
+      '@zorm-ts/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@zorm-ts/vue':
+        specifier: workspace:*
+        version: link:../../packages/vue
       tailwindcss:
         specifier: ^4.0.17
         version: 4.0.17
@@ -193,12 +199,6 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
-      '@zorm-ts/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@zorm-ts/vue':
-        specifier: workspace:*
-        version: link:../../packages/vue
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
