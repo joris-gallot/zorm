@@ -78,7 +78,9 @@ export function getDb(): ZormDatabase {
 }
 
 export function defineReactivityDatabase(database: ZormDatabase): void {
+  const tempDb = db.getDb()
   db = database
+  db.initFrom(tempDb)
 }
 
 export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: N, schema: S): Entity<N, S> {

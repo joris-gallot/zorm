@@ -4,11 +4,7 @@ import { defineReactivityDatabase } from '@zorm-ts/core'
 import { ref } from 'vue'
 
 export class VueDatabase implements ZormDatabase {
-  #db: Ref<Record<string, Record<string, ObjectWithId>>>
-
-  constructor() {
-    this.#db = ref({})
-  }
+  #db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
 
   public registerEntity(name: string): void {
     this.#db.value[name] = {}
@@ -31,6 +27,14 @@ export class VueDatabase implements ZormDatabase {
 
   public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
     this.#db.value[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
+  }
+
+  public initFrom(db: Record<string, Record<string, ObjectWithId>>): void {
+    this.#db.value = db
+  }
+
+  public getDb(): Record<string, Record<string, ObjectWithId>> {
+    return this.#db.value
   }
 }
 
