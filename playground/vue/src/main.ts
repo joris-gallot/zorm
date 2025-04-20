@@ -1,4 +1,4 @@
-import { useReactivityAdapter } from '@zorm-ts/vue'
+import { useReactiveDatabase } from '@zorm-ts/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { postQuery, userQuery } from './queries.js'
@@ -6,7 +6,7 @@ import './style.css'
 
 const app = createApp(App)
 
-useReactivityAdapter()
+useReactiveDatabase()
 
 postQuery.save([{
   id: 1,

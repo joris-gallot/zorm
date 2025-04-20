@@ -1,10 +1,15 @@
-import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
-import { describe, expect, it } from 'vitest'
+import { DefaultDatabase, defineEntity, defineQueryBuilder, defineReactivityDatabase, getDb } from '@zorm-ts/core'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { computed } from 'vue'
 import { z } from 'zod'
-import { useReactivityAdapter } from '../src/index'
+import { useReactiveDatabase, VueDatabase } from '../src/index'
 
 describe('reactivity', () => {
+  beforeEach(() => {
+    // reset to default database
+    defineReactivityDatabase(new DefaultDatabase())
+  })
+
   it('findById should not react to changes', () => {
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
@@ -21,8 +26,16 @@ describe('reactivity', () => {
     expect(user.value).toEqual({ id: 1, name: 'John' })
   })
 
+  it('should update db instance', () => {
+    expect(getDb()).toBeInstanceOf(DefaultDatabase)
+
+    useReactiveDatabase()
+
+    expect(getDb()).toBeInstanceOf(VueDatabase)
+  })
+
   it('findById should react to changes', () => {
-    useReactivityAdapter()
+    useReactiveDatabase()
 
     const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
 
@@ -37,10 +50,14 @@ describe('reactivity', () => {
     userQuery.save([{ id: 1, name: 'Jane' }])
 
     expect(user.value).toEqual({ id: 1, name: 'Jane' })
+
+    const nullUser = computed(() => userQuery.findById(2))
+
+    expect(nullUser.value).toBeNull()
   })
 
   it('findById should react to changes with relations', () => {
-    useReactivityAdapter()
+    useReactiveDatabase()
 
     const User = defineEntity('user', z.object({
       id: z.number(),
@@ -74,7 +91,7 @@ describe('reactivity', () => {
   })
 
   it('where should react to changes', () => {
-    useReactivityAdapter()
+    useReactiveDatabase()
 
     const User = defineEntity('user', z.object({ id: z.number(), age: z.number() }))
 
@@ -92,7 +109,7 @@ describe('reactivity', () => {
   })
 
   it('where should react to changes with relations', () => {
-    useReactivityAdapter()
+    useReactiveDatabase()
 
     const User = defineEntity('user', z.object({
       id: z.number(),
