@@ -29,11 +29,11 @@ export class VueDatabase implements ZormDatabase {
     this.#db.value[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
   }
 
-  public initFrom(db: Record<string, Record<string, ObjectWithId>>): void {
+  public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     this.#db.value = db
   }
 
-  public getDb(): Record<string, Record<string, ObjectWithId>> {
+  public getData(): Record<string, Record<string, ObjectWithId>> {
     return this.#db.value
   }
 }

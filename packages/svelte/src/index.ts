@@ -39,12 +39,12 @@ export class SvelteDatabase implements ZormDatabase {
     this.#update()
   }
 
-  public initFrom(db: Record<string, Record<string, ObjectWithId>>): void {
+  public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     this.#db = db
     this.#update()
   }
 
-  public getDb(): Record<string, Record<string, ObjectWithId>> {
+  public getData(): Record<string, Record<string, ObjectWithId>> {
     this.#subscribe()
     return this.#db
   }

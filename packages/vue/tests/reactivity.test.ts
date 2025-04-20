@@ -41,7 +41,7 @@ describe('reactivity', () => {
 
     userQuery.save([{ id: 1, name: 'John' }])
 
-    expect(getDb()).toEqual({
+    expect(getDb().getData()).toEqual({
       user: {
         1: { id: 1, name: 'John' },
       },
@@ -49,7 +49,7 @@ describe('reactivity', () => {
 
     useReactiveDatabase()
 
-    expect(getDb()).toEqual({
+    expect(getDb().getData()).toEqual({
       user: {
         1: { id: 1, name: 'John' },
       },
