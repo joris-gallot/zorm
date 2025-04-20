@@ -6,11 +6,13 @@ runs:
   steps:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
+      with:
+        package_json_file: ${{ github.action_path }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version-file: ${{ github.action_path }}/../../.nvmrc # Adjust path relative to action file
+        node-version-file: ${{ github.action_path }}
         cache: pnpm
 
     - name: Install dependencies
