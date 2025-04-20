@@ -19,4 +19,10 @@ export default antfu(
       '@typescript-eslint/explicit-function-return-type': 'error',
     },
   },
+  {
+    files: ['**/*.md/*.ts'],
+    rules: {
+      'prefer-const': 'off',
+    },
+  },
 )
