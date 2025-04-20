@@ -8,6 +8,7 @@ runs:
       uses: pnpm/action-setup@v4
 
     - run: ls -la
+      shell: bash
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
