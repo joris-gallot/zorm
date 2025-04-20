@@ -6,8 +6,8 @@ runs:
   steps:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
-      # with:
-      #   package_json_file: ${{ github.action_path }}/../../../package.json
+
+    - run: ls -la
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
