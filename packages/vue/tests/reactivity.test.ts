@@ -34,6 +34,28 @@ describe('reactivity', () => {
     expect(getDb()).toBeInstanceOf(VueDatabase)
   })
 
+  it('shoud keep db data after init reactive database', () => {
+    const User = defineEntity('user', z.object({ id: z.number(), name: z.string() }))
+
+    const { user: userQuery } = defineQueryBuilder([User])
+
+    userQuery.save([{ id: 1, name: 'John' }])
+
+    expect(getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John' },
+      },
+    })
+
+    useReactiveDatabase()
+
+    expect(getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John' },
+      },
+    })
+  })
+
   it('findById should react to changes', () => {
     useReactiveDatabase()
 
