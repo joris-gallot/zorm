@@ -15,19 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          package_json_file: package.json
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Type check
         run: pnpm type-check
@@ -36,19 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          package_json_file: package.json
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       # Need to build the core package for reactivity tests
       - name: Build core
@@ -61,19 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          package_json_file: package.json
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: ESLint
         run: pnpm lint
@@ -82,19 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          package_json_file: package.json
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Build
         run: pnpm build
