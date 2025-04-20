@@ -50,6 +50,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # Need to build the core package for reactivity tests
       - name: Build core
         run: pnpm build:core
 
