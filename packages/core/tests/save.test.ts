@@ -65,6 +65,66 @@ describe('save', () => {
     }))
 
     /* user */
+    _queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        imageId: 1,
+      }],
+    })
+
+    _queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        imageId: 1,
+        image: {
+          id: 1,
+          url: 'https://example.com/image.jpg',
+        },
+      }],
+      settings: {
+        id: 1,
+        name: 'Admin',
+        userId: 1,
+        isAdmin: true,
+      },
+    })
+
+    _queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+      // @ts-expect-error invalid object should be a post
+      posts: [{}],
+      // @ts-expect-error invalid object should be a settings
+      settings: [{}],
+    })
+
+    _queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+      posts: [{
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        imageId: 1,
+        // @ts-expect-error invalid object should be an image
+        image: {},
+      }],
+    })
+
+    // @ts-expect-error missing id
+    _queryBuilder.user.save({
+      name: 'John Doe',
+    })
+
+    /* user with array */
     _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
@@ -227,6 +287,168 @@ describe('save', () => {
   })
 
   it('should save entities', () => {
+    expect(db.getDb()).toEqual({})
+
+    const User = defineEntity('user', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    expect(db.getDb()).toEqual({ user: {} })
+
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string(),
+      userId: z.number(),
+    }))
+
+    expect(db.getDb()).toEqual({ user: {}, post: {} })
+
+    const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
+      user: {
+        posts: many(Post, {
+          reference: Post.fields.userId,
+          field: User.fields.id,
+        }),
+      },
+      post: {
+        user: one(User, {
+          reference: User.fields.id,
+          field: Post.fields.userId,
+        }),
+      },
+    }))
+
+    expect(queryBuilder.user.findById(1)).toEqual(null)
+
+    queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+      },
+      post: {},
+    })
+
+    queryBuilder.user.save({
+      id: 1,
+      name: 'John Doe',
+    })
+    queryBuilder.user.save({
+      id: 2,
+      name: 'Jane Doe',
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe' },
+      },
+      post: {},
+    })
+
+    queryBuilder.user.save({
+      id: 2,
+      name: 'Jane Doe 2',
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe 2' },
+      },
+      post: {},
+    })
+
+    queryBuilder.user.save({
+      id: 3,
+      name: 'John Doe 2',
+      posts: [{
+        id: 2,
+        title: 'Post 2',
+        userId: 3,
+      }],
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe 2' },
+        3: { id: 3, name: 'John Doe 2' },
+      },
+      post: {
+        2: { id: 2, title: 'Post 2', userId: 3 },
+      },
+    })
+
+    queryBuilder.post.save({
+      id: 1,
+      title: 'Post 1',
+      userId: 1,
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe 2' },
+        3: { id: 3, name: 'John Doe 2' },
+      },
+      post: {
+        1: { id: 1, title: 'Post 1', userId: 1 },
+        2: { id: 2, title: 'Post 2', userId: 3 },
+      },
+    })
+
+    queryBuilder.post.save({
+      id: 1,
+      title: 'Post 1',
+      userId: 1,
+      user: {
+        id: 3,
+        name: 'John Doe 2',
+      },
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe 2' },
+        3: { id: 3, name: 'John Doe 2' },
+      },
+      post: {
+        1: { id: 1, title: 'Post 1', userId: 1 },
+        2: { id: 2, title: 'Post 2', userId: 3 },
+      },
+    })
+
+    queryBuilder.post.save({
+      id: 1,
+      title: 'Post 1',
+      userId: 1,
+      user: {
+        id: 4,
+        name: 'John Doe 3',
+      },
+    })
+
+    expect(db.getDb()).toEqual({
+      user: {
+        1: { id: 1, name: 'John Doe' },
+        2: { id: 2, name: 'Jane Doe 2' },
+        3: { id: 3, name: 'John Doe 2' },
+        4: { id: 4, name: 'John Doe 3' },
+      },
+      post: {
+        1: { id: 1, title: 'Post 1', userId: 1 },
+        2: { id: 2, title: 'Post 2', userId: 3 },
+      },
+    })
+  })
+
+  it('should save entities with array', () => {
     expect(db.getDb()).toEqual({})
 
     const User = defineEntity('user', z.object({

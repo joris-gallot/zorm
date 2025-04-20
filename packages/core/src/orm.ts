@@ -244,7 +244,7 @@ type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relatio
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
   findById: <O extends FindByIdOptions<E, R>>(id: T['id'], options?: ExactDeep<O, FindByIdOptions<E, R>>) => FindByIdResult<E, R, T, O> | null
-  save: (entities: Array<EntityWithOptionalRelations<E, R, T>>) => void
+  save: (entities: Array<EntityWithOptionalRelations<E, R, T>> | EntityWithOptionalRelations<E, R, T>) => void
 }
 
 type GlobalQueryBuilder<E extends Array<Entity<string, ZodSchemaWithId>>, N extends E[number]['name'], R extends Relations<N>> = {
@@ -295,9 +295,14 @@ function parseAndSaveEntity<E extends Entity<any, any>>(
 }
 
 function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends z.infer<E['zodSchema']>>(entity: E, relations: R): QueryBuilder<E, R, T> {
-  function save(entities: Array<EntityWithOptionalRelations<E, R, T>>): void {
-    for (const e of entities) {
-      parseAndSaveEntity({ entity, data: e, relations })
+  function save(entities: Array<EntityWithOptionalRelations<E, R, T>> | EntityWithOptionalRelations<E, R, T>): void {
+    if (Array.isArray(entities)) {
+      for (const e of entities) {
+        parseAndSaveEntity({ entity, data: e, relations })
+      }
+    }
+    else {
+      parseAndSaveEntity({ entity, data: entities, relations })
     }
   }
 
