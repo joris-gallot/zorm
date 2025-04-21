@@ -7,6 +7,7 @@
     "paths": {
       "@zorm-ts/core": ["../core/src/index.ts"]
     },
+    "types": ["@vitest/browser/providers/playwright"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true

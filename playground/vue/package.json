@@ -18,10 +18,10 @@
     "@tailwindcss/vite": "^4.1.2",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "catalog:",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "catalog:",
-    "vite": "^6.2.4",
+    "vite": "catalog:",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vue-tsc": "^2.2.8"
   }

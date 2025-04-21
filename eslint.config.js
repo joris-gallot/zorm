@@ -12,7 +12,7 @@ export default antfu(
   },
   {
     ignores: [
-      '**/*.test.ts',
+      '**/tests/**',
       'playground/**',
     ],
     rules: {
