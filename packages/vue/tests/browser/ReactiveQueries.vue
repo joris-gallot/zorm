@@ -16,6 +16,8 @@ const postId = 1
 const post = computed(() => postQuery.findById(postId))
 const postWithUser = computed(() => postQuery.findById(postId, { with: { user: true } }))
 
+const nullUser = computed(() => userQuery.findById(1000))
+
 function updateUser() {
   userQuery.save([{
     id: 1,
@@ -39,6 +41,9 @@ function updateUser() {
 
       <h3>User {{ userId }} with Posts</h3>
       <pre data-testid="user-with-posts">{{ userWithPosts }}</pre>
+
+      <h3>User {{ 1000 }} (not found)</h3>
+      <pre data-testid="null-user">{{ nullUser }}</pre>
     </div>
 
     <div class="column">
