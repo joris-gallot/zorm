@@ -9,12 +9,6 @@ describe('reactivity', async () => {
     defineReactivityDatabase(new DefaultDatabase())
   })
 
-  it('should update db instance', async () => {
-    expect(getDb()).toBeInstanceOf(DefaultDatabase)
-    useReactiveDatabase()
-    expect(getDb()).toBeInstanceOf(VueDatabase)
-  })
-
   it('should not react to changes', async () => {
     const { getByTestId } = render(ReactiveQueries, {
       props: {
@@ -175,5 +169,11 @@ describe('reactivity', async () => {
     }
 
     await expect(getByTestId('post-with-user').element().textContent).toBe(JSON.stringify(updatedPostWithUser, null, 2))
+  })
+
+  it('should update db instance', async () => {
+    expect(getDb()).toBeInstanceOf(DefaultDatabase)
+    useReactiveDatabase()
+    expect(getDb()).toBeInstanceOf(VueDatabase)
   })
 })
