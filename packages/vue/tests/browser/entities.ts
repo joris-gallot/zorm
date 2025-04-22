@@ -1,5 +1,8 @@
 import { defineEntity } from '@zorm-ts/core'
 import { z } from 'zod'
+import { useReactiveDatabase } from '../../src'
+
+useReactiveDatabase()
 
 export const User = defineEntity(
   'user',

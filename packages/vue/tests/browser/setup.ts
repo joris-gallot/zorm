@@ -1,9 +1,6 @@
-import { useReactiveDatabase } from '../../src'
 import { postQuery, userQuery } from './queries'
 
 export function setup() {
-  useReactiveDatabase()
-
   postQuery.save([{
     id: 1,
     title: 'Post 1',
