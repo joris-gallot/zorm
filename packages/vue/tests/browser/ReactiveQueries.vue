@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { postQuery, userQuery } from './queries.js'
 import { setup } from './setup.js'
 
-setup()
+const { reactive } = defineProps<{
+  reactive: boolean
+}>()
+
+const { userQuery, postQuery } = setup({ reactive })
 
 const userId = 1
 const users = computed(() => userQuery.query().where(user => (user.age || 0) > 10).get())
