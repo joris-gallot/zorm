@@ -23,13 +23,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@antfu/ni": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
     "@vitest/browser": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
     "eslint": "catalog:",
     "playwright": "catalog:",
-    "vitest": "catalog:",
-    "vitest-browser-vue": "catalog:"
+    "vitest": "catalog:"
   }
 }

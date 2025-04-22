@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     include: ['**/*.browser.test.ts'],
+    name: 'vue - browser',
     browser: {
       enabled: true,
       provider: 'playwright',

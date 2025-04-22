@@ -39,8 +39,10 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "typescript": "catalog:",
     "unbuild": "catalog:",
+    "vitest-browser-vue": "catalog:",
     "zod": "catalog:"
   }
 }
