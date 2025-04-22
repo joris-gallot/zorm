@@ -28,6 +28,9 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
 
+      - uses: browser-actions/setup-chrome@v1
+      - run: chrome --version
+
       # Need to build the core package for reactivity tests
       - name: Build core
         run: pnpm build:core
