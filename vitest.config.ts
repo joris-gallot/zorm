@@ -14,14 +14,16 @@ export default defineConfig({
         test: {
           name: 'vue',
           environment: 'node',
-          include: ['packages/vue/**/*.test.ts', '!packages/vue/**/*.browser.test.ts'],
+          include: ['packages/vue/**/*.test.ts'],
+          exclude: ['packages/vue/**/*.browser.test.ts', '**/node_modules/**', '**/dist/**'],
         },
       },
       {
         test: {
           name: 'svelte',
           environment: 'node',
-          include: ['packages/svelte/**/*.test.ts', '!packages/svelte/**/*.browser.test.ts'],
+          include: ['packages/svelte/**/*.test.ts'],
+          exclude: ['packages/svelte/**/*.browser.test.ts', '**/node_modules/**', '**/dist/**'],
         },
       },
       'packages/**/vitest.config.ts',
