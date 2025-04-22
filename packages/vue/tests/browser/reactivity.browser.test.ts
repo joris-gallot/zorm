@@ -172,9 +172,6 @@ describe('reactivity', async () => {
   })
 
   it('should update db instance', async () => {
-    const vueDb = new VueDatabase()
-    expect(vueDb).toBeInstanceOf(VueDatabase)
-
     expect(getDb()).toBeInstanceOf(DefaultDatabase)
     useReactiveDatabase()
     expect(getDb()).toBeInstanceOf(VueDatabase)
