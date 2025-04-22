@@ -26,12 +26,14 @@
   },
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "unbuild",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "vue-tsc --noEmit"
   },
   "peerDependencies": {
     "@zorm-ts/core": "workspace:>=0.0.5",
@@ -43,6 +45,7 @@
     "typescript": "catalog:",
     "unbuild": "catalog:",
     "vitest-browser-vue": "catalog:",
+    "vue-tsc": "catalog:",
     "zod": "catalog:"
   }
 }

@@ -1,8 +1,8 @@
 import { DefaultDatabase, defineReactivityDatabase, getDb } from '@zorm-ts/core'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render } from 'vitest-browser-vue'
-import { useReactiveDatabase, VueDatabase } from '../../src'
-import ReactiveQueries from './ReactiveQueries.vue'
+import { render } from 'vitest-browser-svelte'
+import { SvelteDatabase, useReactiveDatabase } from '../../src'
+import ReactiveQueries from './ReactiveQueries.svelte'
 
 describe('reactivity', async () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('reactivity', async () => {
   it('should update db instance', async () => {
     expect(getDb()).toBeInstanceOf(DefaultDatabase)
     useReactiveDatabase()
-    expect(getDb()).toBeInstanceOf(VueDatabase)
+    expect(getDb()).toBeInstanceOf(SvelteDatabase)
   })
 
   it('should not react to changes', async () => {

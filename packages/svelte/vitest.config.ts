@@ -1,11 +1,11 @@
-import vue from '@vitejs/plugin-vue'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [svelte()],
   test: {
     include: ['**/*.browser.test.ts'],
-    name: 'vue - browser',
+    name: 'svelte - browser',
     browser: {
       enabled: true,
       headless: true,
