@@ -28,6 +28,9 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
 
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+
       # Need to build the core package for reactivity tests
       - name: Build core
         run: pnpm build:core

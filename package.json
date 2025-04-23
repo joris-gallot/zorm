@@ -8,9 +8,11 @@
   },
   "scripts": {
     "test": "vitest --run",
+    "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
+    "lint:fix:all": "eslint --fix",
     "type-check": "nr -r type-check",
     "build": "nr -r build",
     "build:core": "cd packages/core && pnpm build",
@@ -21,9 +23,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@antfu/ni": "catalog:",
+    "@vitest/browser": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
     "eslint": "catalog:",
+    "playwright": "catalog:",
     "vitest": "catalog:"
   }
 }

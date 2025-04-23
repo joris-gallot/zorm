@@ -10,13 +10,13 @@ npm install @zorm-ts/vue
 
 ## Usage
 
-To use zorm with Vue, you need to define a reactivity adapter, this will ensure that your Vue components react to changes in your zorm queries. Call `useReactivityAdapter()` once at the highest level of your application (typically in your main.ts/js file) to properly initialize the reactivity system.
+To use zorm with Vue, you need to define a reactive database, this will ensure that your components react to changes in your zorm queries. Call `useReactiveDatabase()` once at the highest level of your application (typically in your main.ts/js file) to properly initialize the reactivity system.
 
 ```typescript
-import { useReactivityAdapter } from '@zorm-ts/vue'
+import { useReactiveDatabase } from '@zorm-ts/vue'
 
-// Initialize the Vue reactivity adapter
-useReactivityAdapter()
+// Initialize the Vue reactive database
+useReactiveDatabase()
 
 // Use in your Vue components
 const users = computed(() => userQuery.query().get()) // Will be reactive!

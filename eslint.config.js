@@ -7,16 +7,22 @@ export default antfu(
     rules: {
       'unused-imports/no-unused-imports': 'error',
       'test/no-only-tests': 'error',
-      'test/no-disabled-tests': 'error'
+      'test/no-disabled-tests': 'error',
     },
   },
   {
     ignores: [
-      '**/*.test.ts',
+      '**/tests/**',
       'playground/**',
     ],
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'error',
+    },
+  },
+  {
+    files: ['**/*.md/*.ts'],
+    rules: {
+      'prefer-const': 'off',
     },
   },
 )

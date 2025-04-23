@@ -287,14 +287,14 @@ describe('save', () => {
   })
 
   it('should save entities', () => {
-    expect(db.getDb()).toEqual({})
+    expect(db.getData()).toEqual({})
 
     const User = defineEntity('user', z.object({
       id: z.number(),
       name: z.string(),
     }))
 
-    expect(db.getDb()).toEqual({ user: {} })
+    expect(db.getData()).toEqual({ user: {} })
 
     const Post = defineEntity('post', z.object({
       id: z.number(),
@@ -302,7 +302,7 @@ describe('save', () => {
       userId: z.number(),
     }))
 
-    expect(db.getDb()).toEqual({ user: {}, post: {} })
+    expect(db.getData()).toEqual({ user: {}, post: {} })
 
     const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
       user: {
@@ -326,7 +326,7 @@ describe('save', () => {
       name: 'John Doe',
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
       },
@@ -342,7 +342,7 @@ describe('save', () => {
       name: 'Jane Doe',
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe' },
@@ -355,7 +355,7 @@ describe('save', () => {
       name: 'Jane Doe 2',
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -373,7 +373,7 @@ describe('save', () => {
       }],
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -390,7 +390,7 @@ describe('save', () => {
       userId: 1,
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -412,7 +412,7 @@ describe('save', () => {
       },
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -434,7 +434,7 @@ describe('save', () => {
       },
     })
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -449,14 +449,14 @@ describe('save', () => {
   })
 
   it('should save entities with array', () => {
-    expect(db.getDb()).toEqual({})
+    expect(db.getData()).toEqual({})
 
     const User = defineEntity('user', z.object({
       id: z.number(),
       name: z.string(),
     }))
 
-    expect(db.getDb()).toEqual({ user: {} })
+    expect(db.getData()).toEqual({ user: {} })
 
     const Post = defineEntity('post', z.object({
       id: z.number(),
@@ -464,7 +464,7 @@ describe('save', () => {
       userId: z.number(),
     }))
 
-    expect(db.getDb()).toEqual({ user: {}, post: {} })
+    expect(db.getData()).toEqual({ user: {}, post: {} })
 
     const queryBuilder = defineQueryBuilder([User, Post], ({ many, one }) => ({
       user: {
@@ -488,7 +488,7 @@ describe('save', () => {
       name: 'John Doe',
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
       },
@@ -503,7 +503,7 @@ describe('save', () => {
       name: 'Jane Doe',
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe' },
@@ -516,7 +516,7 @@ describe('save', () => {
       name: 'Jane Doe 2',
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -534,7 +534,7 @@ describe('save', () => {
       }],
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -551,7 +551,7 @@ describe('save', () => {
       userId: 1,
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -573,7 +573,7 @@ describe('save', () => {
       },
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },
@@ -595,7 +595,7 @@ describe('save', () => {
       },
     }])
 
-    expect(db.getDb()).toEqual({
+    expect(db.getData()).toEqual({
       user: {
         1: { id: 1, name: 'John Doe' },
         2: { id: 2, name: 'Jane Doe 2' },

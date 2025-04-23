@@ -23,7 +23,7 @@ function updateUser() {
 <template>
   <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col gap-4 p-4">
-      <button @click="updateUser">
+      <button class="border border-blue-500 cursor-pointer text-blue-500 p-1 rounded-md" @click="updateUser">
         Update user
       </button>
       Users

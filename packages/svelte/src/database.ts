@@ -1,50 +1,52 @@
-import type { ObjectWithId } from './orm'
+import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 
-export interface ZormDatabase {
-  registerEntity: (name: string) => void
-  getAll: (entity: string) => ObjectWithId[]
-  getEntity: (entity: string, id: ObjectWithId['id']) => ObjectWithId | null
-  setEntity: (entity: string, value: ObjectWithId) => void
-  setEntityKey: (entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown) => void
-  setData: (db: Record<string, Record<string, ObjectWithId>>) => void
-  getData: () => Record<string, Record<string, ObjectWithId>>
-}
+import { createSubscriber } from 'svelte/reactivity'
 
-export class DefaultDatabase implements ZormDatabase {
+/* v8 ignore next: find why the next line is partially uncovered */
+export class SvelteDatabase implements ZormDatabase {
   #db: Record<string, Record<string, ObjectWithId>> = {}
+  #update: () => void = () => {}
+  #subscribe: () => void
+
+  constructor() {
+    this.#subscribe = createSubscriber((updateFn) => {
+      this.#update = updateFn
+    })
+  }
 
   public registerEntity(name: string): void {
     this.#db[name] = {}
+    this.#update()
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    // entity is guaranteed to exist when getAll is called
+    this.#subscribe()
     const values = this.#db[entity]!
-
     return Object.values(values)
   }
 
   public getEntity(entity: string, id: ObjectWithId['id']): ObjectWithId | null {
+    this.#subscribe()
     return this.#db[entity]![id] ?? null
   }
 
   public setEntity(entity: string, value: ObjectWithId): void {
     this.#db[entity]![value.id] = value
+    this.#update()
   }
 
   public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
     this.#db[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
+    this.#update()
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     this.#db = db
+    this.#update()
   }
 
   public getData(): Record<string, Record<string, ObjectWithId>> {
+    this.#subscribe()
     return this.#db
-  }
-
-  public reset(): void {
-    this.#db = {}
   }
 }
