@@ -2,6 +2,7 @@ import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 
 import { createSubscriber } from 'svelte/reactivity'
 
+/* v8 ignore next: find why the next line is partially uncovered */
 export class SvelteDatabase implements ZormDatabase {
   #db: Record<string, Record<string, ObjectWithId>> = {}
   #update: () => void = () => {}

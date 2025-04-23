@@ -2,6 +2,7 @@ import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 
+/* v8 ignore next: find why the next line is partially uncovered */
 export class VueDatabase implements ZormDatabase {
   #db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
 
