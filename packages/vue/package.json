@@ -1,7 +1,7 @@
 {
   "name": "@zorm-ts/vue",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Vue integration for zorm",
   "author": "Joris Gallot",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "peerDependencies": {
-    "@zorm-ts/core": "workspace:>=0.0.5",
+    "@zorm-ts/core": "workspace:>=0.0.7",
     "vue": "catalog:"
   },
   "devDependencies": {

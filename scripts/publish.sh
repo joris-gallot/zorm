@@ -2,14 +2,16 @@
 
 project=$1
 
+available_packages=("core" "vue" "svelte")
+
 if [ -z "$project" ]; then
   echo "Usage: $0 <package-name>"
-  echo "Available packages: core, vue"
+  echo "Available packages: ${available_packages[@]}"
   exit 1
 fi
 
-if [ "$project" != "core" ] && [ "$project" != "vue" ]; then
-  echo "Invalid package name. Available packages: core, vue"
+if ! echo "${available_packages[@]}" | grep -q "\b$project\b"; then
+  echo "Invalid package name. Available packages: ${available_packages[@]}"
   exit 1
 fi
 

@@ -36,7 +36,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@zorm-ts/core": "workspace:>=0.0.5",
+    "@zorm-ts/core": "workspace:>=0.0.7",
     "svelte": "catalog:"
   },
   "devDependencies": {
