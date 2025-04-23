@@ -118,7 +118,7 @@ const usersWithPosts = userQuery.query()
 
 ## Reactivity
 
-Reactivity is handled through dedicated integration packages, external to `@zorm-ts/core`. This allows zorm to integrate seamlessly with various frontend frameworks' reactivity systems.
+Reactivity is handled through dedicated integration packages, external to `@zorm-ts/core`, this allows zorm to integrate seamlessly with various frontend frameworks' reactivity systems.
 
 Currently, the following integrations are available:
 
