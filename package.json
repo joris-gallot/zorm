@@ -18,9 +18,11 @@
     "build:core": "cd packages/core && pnpm build",
     "build:vue": "cd packages/vue && pnpm build",
     "build:svelte": "cd packages/svelte && pnpm build",
+    "build:solidjs": "cd packages/solidjs && pnpm build",
     "publish:core": "sh scripts/publish.sh core",
     "publish:vue": "sh scripts/publish.sh vue",
-    "publish:svelte": "sh scripts/publish.sh svelte"
+    "publish:svelte": "sh scripts/publish.sh svelte",
+    "publish:solidjs": "sh scripts/publish.sh solidjs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",

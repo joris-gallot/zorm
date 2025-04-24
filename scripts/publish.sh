@@ -2,7 +2,7 @@
 
 project=$1
 
-available_packages=("core" "vue" "svelte")
+available_packages=("core" "vue" "svelte" "solidjs")
 
 if [ -z "$project" ]; then
   echo "Usage: $0 <package-name>"
