@@ -10,7 +10,7 @@ zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to de
 - 🤝 Support for one-to-one and one-to-many relationships
 - 🚀 Eager loading of related entities
 - 🛡️ Runtime validation through Zod schemas
-- ⚡️ Reactivity support for Vue and Svelte (other frameworks planned)
+- ⚡️ [Reactivity support](#reactivity)
 
 ## Installation
 ```sh
@@ -122,8 +122,9 @@ Reactivity is handled through dedicated integration packages, external to `@zorm
 
 Currently, the following integrations are available:
 
--   **Vue:** `@zorm-ts/vue` - [Documentation](packages/vue/README.md)
+-   **Solidjs:** `@zorm-ts/solidjs` - [Documentation](packages/solidjs/README.md)
 -   **Svelte:** `@zorm-ts/svelte` - [Documentation](packages/svelte/README.md)
+-   **Vue:** `@zorm-ts/vue` - [Documentation](packages/vue/README.md)
 
 Support for other frameworks is planned.
 
