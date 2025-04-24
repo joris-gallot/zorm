@@ -1,7 +1,7 @@
 {
   "name": "@zorm-ts/solidjs",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "description": "SolidJS integration for zorm",
   "author": "Joris Gallot",
   "license": "MIT",
