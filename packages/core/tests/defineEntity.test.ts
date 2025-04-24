@@ -17,6 +17,32 @@ describe('defineEntity', () => {
           name: z.string(),
           age: z.number().nullable(),
         }),
+        // @ts-expect-error name must match the entity name
+        name: 'foo',
+        fields: {
+          id: {
+            zodType: z.number(),
+            name: 'id',
+          },
+          name: {
+            zodType: z.string(),
+            name: 'name',
+          },
+          age: {
+            zodType: z.number().nullable(),
+            name: 'age',
+          },
+        },
+      },
+    )
+
+    assertType<typeof _User>(
+      {
+        zodSchema: z.object({
+          id: z.number(),
+          name: z.string(),
+          age: z.number().nullable(),
+        }),
         name: 'user',
         fields: {
           id: {
