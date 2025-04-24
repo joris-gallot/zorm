@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.column {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.update-button {
+  border: 1px solid blue;
+  color: blue;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+pre {
+  background-color: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 4px;
+  overflow-x: auto; /* Handle long lines */
+} 
