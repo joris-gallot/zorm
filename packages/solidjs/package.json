@@ -1,0 +1,50 @@
+{
+  "name": "@zorm-ts/solidjs",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "SolidJS integration for zorm",
+  "author": "Joris Gallot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joris-gallot/zorm.git"
+  },
+  "keywords": [
+    "typescript",
+    "orm",
+    "solidjs",
+    "schema-validation",
+    "type-inference",
+    "runtime-validation",
+    "zod"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@zorm-ts/core": "workspace:>=0.0.7",
+    "solid-js": "catalog:"
+  },
+  "devDependencies": {
+    "@solidjs/testing-library": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "unbuild": "catalog:",
+    "vite-plugin-solid": "catalog:",
+    "zod": "catalog:"
+  }
+}

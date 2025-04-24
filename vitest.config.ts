@@ -29,6 +29,14 @@ export default defineConfig({
           exclude: ['packages/svelte/**/*.browser.test.ts', '**/node_modules/**', '**/dist/**'],
         },
       },
+      {
+        test: {
+          name: 'solidjs',
+          environment: 'node',
+          include: ['packages/solidjs/**/*.test.ts'],
+          exclude: ['packages/solidjs/**/*.browser.test.tsx', '**/node_modules/**', '**/dist/**'],
+        },
+      },
       'packages/**/vitest.config.ts',
     ],
     coverage: {

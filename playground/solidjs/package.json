@@ -1,0 +1,25 @@
+{
+  "name": "solidjs-playground",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@zorm-ts/core": "workspace:*",
+    "@zorm-ts/solidjs": "workspace:*",
+    "solid-js": "catalog:",
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-solid": "catalog:"
+  }
+}

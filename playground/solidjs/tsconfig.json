@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@zorm-ts/core": ["../../packages/core/src/index.ts"],
+      "@zorm-ts/solidjs": ["../../packages/solidjs/src/index.ts"]
+    },
+    "types": ["vite/client"],
+    "strict": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true
+  }
+}
