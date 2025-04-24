@@ -221,12 +221,13 @@ export type TypeOfRelations<
     : never
 }
 
-interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, Result = T> {
-  where: (cb: (value: T) => boolean) => Query<E, R, T, Result>
-  orWhere: (cb: (value: T) => boolean) => Query<E, R, T, Result>
-  orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, Result>
-  with: <W extends WithRelationsOption<E, R>>(relations: ExactDeep<W, WithRelationsOption<E, R>>) => Query<E, R, T, Prettify<Result & TypeOfRelations<E, R, W>>>
-  get: () => Array<Result>
+interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>, First extends boolean = false, Result = T> {
+  where: (cb: (value: T) => boolean) => Query<E, R, T, First, Result>
+  orWhere: (cb: (value: T) => boolean) => Query<E, R, T, First, Result>
+  orderBy: (criteria: OrderByCriteria<T>, orders: OrderByOrders) => Query<E, R, T, First, Result>
+  with: <W extends WithRelationsOption<E, R>>(relations: ExactDeep<W, WithRelationsOption<E, R>>) => Query<E, R, T, First, Prettify<Result & TypeOfRelations<E, R, W>>>
+  first: () => Query<E, R, T, true, Result>
+  get: () => First extends true ? Result | null : Array<Result>
 }
 
 type RelationsFn<N extends string, R extends Relations<N>> = (options: RelationsOptions) => R
@@ -330,8 +331,8 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
   const queryWhereFilters: Array<(arr: T[]) => T[]> = []
   const queryOrWhereFilters: Array<(arr: T[]) => T[]> = []
   const queryRelationsToLoad: Array<WithRelationsOption<E, R>> = []
-
   const queryOrderBy: { criteria: OrderByCriteria<T>, orders: OrderByOrders } = { criteria: [], orders: [] }
+  let returnFirstResult = false
 
   function resetQuery(): void {
     queryWhereFilters.length = 0
@@ -341,7 +342,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
     queryRelationsToLoad.length = 0
   }
 
-  function query(): Query<E, R, T> {
+  function query(): Query<E, R, T, boolean> {
     return {
       where: (cb): Query<E, R, T> => {
         queryWhereFilters.push(arr => arr.filter(cb))
@@ -361,7 +362,11 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
         queryRelationsToLoad.push(relation as WithRelationsOption<E, R>)
         return query()
       },
-      get: (): T[] => {
+      first: (): Query<E, R, T, true> => {
+        returnFirstResult = true
+        return query() as unknown as Query<E, R, T, true>
+      },
+      get: (): T[] | (T | null) => {
         let result = db.getAll(entity.name) as T[]
 
         if (queryOrWhereFilters.length > 0 && queryWhereFilters.length === 0) {
@@ -394,7 +399,7 @@ function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R e
 
         resetQuery()
 
-        return result
+        return returnFirstResult ? (result[0] ?? null) : result
       },
     }
   }
