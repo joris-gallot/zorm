@@ -381,6 +381,13 @@ describe('relations typing', () => {
     assertType<UserWithRelationsOption>({
       posts: undefined,
     })
+
+    assertType<UserWithRelationsOption>({
+      posts: {
+        // @ts-expect-error can't load user relation within a user query
+        user: true,
+      },
+    })
     assertType<UserWithRelationsOption>({
       // @ts-expect-error should be true
       posts: 'true',
@@ -443,6 +450,22 @@ describe('relations typing', () => {
     assertType<UserWithAllRelations>({
       // @ts-expect-error should be true
       settings: {},
+    })
+
+    assertType<UserWithAllRelations>({
+      settings: {
+        id: 1,
+        name: 'settings 1',
+      },
+      posts: [{
+        id: 1,
+        name: 'post 1',
+        // @ts-expect-error can't load user relation within a user query
+        user: {
+          id: 1,
+          name: 'user 1',
+        },
+      }],
     })
     assertType<UserWithAllRelations>({
       posts: [{
@@ -600,6 +623,21 @@ describe('relations typing', () => {
         comments: [{}],
       }],
     })
+
+    assertType<UserWithOptionalRelations>({
+      id: 1,
+      name: 'user 1',
+      posts: [{
+        id: 1,
+        name: 'post 1',
+        // @ts-expect-error can't load user relation within a user query
+        user: {
+          id: 1,
+          name: 'user 1',
+        },
+        comments: [],
+      }],
+    })
     assertType<UserWithOptionalRelations>({
       id: 1,
       name: 'user 1',
@@ -638,6 +676,8 @@ describe('relations typing', () => {
       user: {
         id: 1,
         name: 'user 1',
+        // @ts-expect-error can't load posts relation within a post query
+        posts: [],
       },
       comments: [
         // @ts-expect-error should be a valid comment
@@ -660,7 +700,6 @@ describe('relations typing', () => {
     type PostRelationsObject = TypeOfRelations<PostEntity, Relations, {
       comments: true
       user: {
-        posts: true
         settings: true
       }
     }>
@@ -669,6 +708,22 @@ describe('relations typing', () => {
       user: {
         id: 1,
         name: 'user 1',
+        settings: {
+          id: 1,
+          name: 'settings 1',
+        },
+      },
+      comments: [{
+        id: 1,
+        content: 'comment 1',
+      }],
+    })
+
+    assertType<PostRelationsObject>({
+      user: {
+        id: 1,
+        name: 'user 1',
+        // @ts-expect-error can't load posts relation within a post query
         posts: [],
         settings: {
           id: 1,
@@ -765,6 +820,17 @@ describe('relations typing', () => {
       comments: [{}],
     })
 
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      name: 'post 1',
+      user: {
+        id: 1,
+        name: 'user 1',
+        // @ts-expect-error can't load posts relation within a post query
+        posts: [],
+      },
+    })
+
     type SettingsWithAllRelations = ActualRelations<SettingsEntity, Relations>
 
     assertType<SettingsWithAllRelations>({
@@ -800,6 +866,11 @@ describe('relations typing', () => {
             name: 'post 1',
           },
         ],
+        // @ts-expect-error can't load settings relation within a user query
+        settings: {
+          id: 1,
+          name: 'settings 1',
+        },
       },
     })
 
@@ -1093,6 +1164,19 @@ describe('relations typing', () => {
         comments: [{}],
       }],
     })
+
+    assertType<UserWithAllRelations>({
+      posts: [{
+        id: 1,
+        name: 'post 1',
+        // @ts-expect-error can't load user relation within a user query
+        user: {
+          id: 1,
+          name: 'user 1',
+        },
+        comments: [],
+      }],
+    })
     assertType<UserWithAllRelations>({
       posts: [{
         id: 1,
@@ -1258,8 +1342,8 @@ describe('relations typing', () => {
     })
     assertType<PostWithAllRelations>({
       user: {
+        // @ts-expect-error should be a boolean
         posts: {
-          // @ts-expect-error should be a boolean
           comments: true,
         },
       },
@@ -1269,60 +1353,345 @@ describe('relations typing', () => {
       user: {
         id: 1,
         name: 'user 1',
+        // @ts-expect-error can't load posts relation within a user post
         posts: [],
       },
       // @ts-expect-error should be a boolean
       comments: {},
     })
-    assertType<PostWithAllRelations>({
-      user: {
-        id: 1,
-        name: 'user 1',
-        // @ts-expect-error should be an array of posts
-        posts: [{}],
+  })
+
+  it('relations - many to many', () => {
+    interface PostEntity {
+      name: 'post'
+      zodSchema: ZodObject<{
+        id: ZodNumber
+        title: ZodString
+      }>
+      fields: {
+        id: {
+          zodType: ZodNumber
+          name: 'id'
+        }
+        title: {
+          zodType: ZodString
+          name: 'title'
+        }
+      }
+    }
+
+    interface TagEntity {
+      name: 'tag'
+      zodSchema: ZodObject<{
+        id: ZodNumber
+        name: ZodString
+      }>
+      fields: {
+        id: {
+          zodType: ZodNumber
+          name: 'id'
+        }
+        name: {
+          zodType: ZodString
+          name: 'name'
+        }
+      }
+    }
+
+    interface PostTagEntity {
+      name: 'postTag'
+      zodSchema: ZodObject<{
+        id: ZodNumber
+        postId: ZodNumber
+        tagId: ZodNumber
+      }>
+      fields: {
+        id: {
+          zodType: ZodNumber
+          name: 'id'
+        }
+        postId: {
+          zodType: ZodNumber
+          name: 'postId'
+        }
+        tagId: {
+          zodType: ZodNumber
+          name: 'tagId'
+        }
+      }
+    }
+
+    type Relations = {
+      post: {
+        postTags: {
+          kind: 'many'
+          field: PostEntity['fields']['id']
+          reference: {
+            entity: PostTagEntity
+            field: PostTagEntity['fields']['postId']
+          }
+        }
+      }
+      tag: {
+        postsTags: {
+          kind: 'many'
+          field: TagEntity['fields']['id']
+          reference: {
+            entity: PostTagEntity
+            field: PostTagEntity['fields']['tagId']
+          }
+        }
+      }
+      postTag: {
+        post: {
+          kind: 'one'
+          field: PostTagEntity['fields']['postId']
+          reference: {
+            entity: PostEntity
+            field: PostEntity['fields']['id']
+          }
+        }
+        tag: {
+          kind: 'one'
+          field: PostTagEntity['fields']['tagId']
+          reference: {
+            entity: TagEntity
+            field: TagEntity['fields']['id']
+          }
+        }
+      }
+    }
+
+    type PostWithRelationsOption = WithRelationsOption<PostEntity, Relations>
+
+    assertType<PostWithRelationsOption>({ postTags: true })
+    assertType<PostWithRelationsOption>({ postTags: false })
+    assertType<PostWithRelationsOption>({ postTags: undefined })
+    assertType<PostWithRelationsOption>({
+      postTags: {
+        tag: true,
       },
-      comments: [{
+    })
+    assertType<PostWithRelationsOption>({
+      postTags: {
+        // @ts-expect-error can't load postTags from tag
+        tag: {},
+      },
+    })
+    assertType<PostWithRelationsOption>({
+      postTags: {
+        // @ts-expect-error can't load post relation within postTag query
+        post: true,
+      },
+    })
+    assertType<PostWithRelationsOption>({
+      postTags: {
+        // @ts-expect-error 'invalid' is not a relation of postTag
+        invalid: true,
+      },
+    })
+    assertType<PostWithRelationsOption>({
+      // @ts-expect-error value should be boolean or object
+      postTags: 'true',
+    })
+
+    type PostWithAllRelations = ActualRelations<PostEntity, Relations>
+
+    assertType<PostWithAllRelations>({ postTags: [] })
+    assertType<PostWithAllRelations>({
+      postTags: [{
         id: 1,
-        content: 'comment 1',
+        postId: 1,
+        tagId: 1,
+      }],
+    })
+    assertType<PostWithAllRelations>({
+      postTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        // @ts-expect-error should be a valid tag
+        tag: true,
+      }],
+    })
+    assertType<PostWithAllRelations>({
+      postTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        tag: {
+          id: 1,
+          name: 'Tech',
+        },
       }],
     })
 
-    assertType<PostWithAllRelations>({
-      user: {
-        id: 1,
-        name: 'user 1',
-        posts: [{
+    type PostRelationObject = TypeOfRelations<PostEntity, Relations, {
+      postTags: {
+        tag: true
+      }
+    }>
+
+    assertType<PostRelationObject>({ postTags: [] })
+    assertType<PostRelationObject>({
+      postTags: [
+        // @ts-expect-error tag property is missing
+        {
           id: 1,
-          name: 'post 1',
-          // @ts-expect-error should be an array of comments
-          comments: true,
-        }],
-      },
-      comments: [{
+          postId: 1,
+          tagId: 1,
+        },
+      ],
+    })
+    assertType<PostRelationObject>({
+      postTags: [{
         id: 1,
-        content: 'comment 1',
+        postId: 1,
+        tagId: 1,
+        tag: {
+          id: 1,
+          name: 'Tech',
+        },
+      }],
+    })
+    assertType<PostRelationObject>({
+      postTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        tag: {
+          id: 1,
+          // @ts-expect-error name should be string
+          name: 123,
+        },
       }],
     })
 
-    assertType<PostWithAllRelations>({
-      user: {
+    type PostWithOptionalRelations = EntityWithOptionalRelations<PostEntity, Relations>
+
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      title: 'Post 1',
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      title: 'Post 1',
+      postTags: [{
         id: 1,
-        name: 'user 1',
-        posts: [{
-          id: 1,
-          name: 'post 1',
-          comments: [
-            {
-              id: 1,
-              content: 'comment 1',
-            },
-          ],
-        }],
-      },
-      comments: [{
-        id: 1,
-        content: 'comment 1',
+        postId: 1,
+        tagId: 1,
       }],
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      title: 'Post 1',
+      postTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        tag: {
+          id: 1,
+          name: 'Tech',
+        },
+      }],
+    })
+    assertType<PostWithOptionalRelations>({
+      id: 1,
+      title: 'Post 1',
+      // @ts-expect-error postTags should be array of PostTagEntity
+      postTags: [{}],
+    })
+
+    type TagWithRelationsOption = WithRelationsOption<TagEntity, Relations>
+
+    assertType<TagWithRelationsOption>({ postsTags: true })
+    assertType<TagWithRelationsOption>({ postsTags: false })
+    assertType<TagWithRelationsOption>({
+      postsTags: {
+        post: true,
+      },
+    })
+    assertType<TagWithRelationsOption>({
+      postsTags: {
+        // @ts-expect-error can't load postsTags from post
+        post: {},
+      },
+    })
+    assertType<TagWithRelationsOption>({
+      postsTags: {
+        // @ts-expect-error can't load tag relation within tag query
+        tag: true,
+      },
+    })
+
+    type TagWithAllRelations = ActualRelations<TagEntity, Relations>
+
+    assertType<TagWithAllRelations>({ postsTags: [] })
+    assertType<TagWithAllRelations>({
+      postsTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        post: {
+          id: 1,
+          title: 'Post 1',
+        },
+      }],
+    })
+
+    type TagRelationObject = TypeOfRelations<TagEntity, Relations, {
+      postsTags: {
+        post: true
+      }
+    }>
+
+    assertType<TagRelationObject>({ postsTags: [] })
+    assertType<TagRelationObject>({
+      postsTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        post: {
+          id: 1,
+          title: 'Post 1',
+        },
+      }],
+    })
+    assertType<TagRelationObject>({
+      postsTags: [
+        // @ts-expect-error post property is missing
+        {
+          id: 1,
+          postId: 1,
+          tagId: 1,
+        },
+      ],
+    })
+
+    type TagWithOptionalRelations = EntityWithOptionalRelations<TagEntity, Relations>
+
+    assertType<TagWithOptionalRelations>({
+      id: 1,
+      name: 'Tech',
+    })
+    assertType<TagWithOptionalRelations>({
+      id: 1,
+      name: 'Tech',
+      postsTags: [{
+        id: 1,
+        postId: 1,
+        tagId: 1,
+        post: {
+          id: 1,
+          title: 'Post 1',
+        },
+      }],
+    })
+    assertType<TagWithOptionalRelations>({
+      id: 1,
+      name: 'Tech',
+      // @ts-expect-error postsTags should be array of PostTagEntity
+      postsTags: [{}],
     })
   })
 })

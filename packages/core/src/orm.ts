@@ -97,18 +97,18 @@ export function defineEntity<N extends string, S extends ZodSchemaWithId>(name: 
   return { name, fields, zodSchema: schema }
 }
 
-export type ActualRelations<E extends AnyEntity, R extends Relations<any>> = {
-  [K in keyof R[E['name']]]: R[E['name']][K] extends Relation<'one', infer RE>
-    ? EntityWithOptionalRelations<RE, R>
+export type ActualRelations<E extends AnyEntity, R extends Relations<any>, N extends string[] = [E['name']]> = {
+  [K in keyof R[E['name']] as R[E['name']][K] extends Relation<any, infer RE> ? RE['name'] extends N[number] ? never : K : never]: R[E['name']][K] extends Relation<'one', infer RE>
+    ? EntityWithOptionalRelations<RE, R, [...N, RE['name']]>
     : R[E['name']][K] extends Relation<'many', infer RE>
-      ? Array<EntityWithOptionalRelations<RE, R>>
+      ? Array<EntityWithOptionalRelations<RE, R, [...N, RE['name']]>>
       : never
 }
 
-export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> =
+export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = [E['name']], T extends ObjectWithId = z.infer<E['zodSchema']>> =
   keyof R[E['name']] extends never
     ? T
-    : Prettify<T & Partial<ActualRelations<E, R>>>
+    : Prettify<T & Partial<ActualRelations<E, R, N>>>
 
 interface LoadRelationsOptions<E extends AnyEntity, R extends Relations<any>, RL extends WithRelationsOption<E, R>, T extends z.infer<E['zodSchema']>> {
   entityData: T
@@ -154,7 +154,7 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
           return loadRelations({
             entityData: value,
             relations,
-            relationsToLoad: relationValue as WithRelationsOption<E, R>,
+            relationsToLoad: relationValue as WithRelationsOption<AnyEntity, R>,
             entity: refEntity,
           })
         })
@@ -165,7 +165,7 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
           // @ts-expect-error can't valid the type between ObjectWithId and the relation type
           entityData: entityWithRelations[relationName],
           relations,
-          relationsToLoad: relationValue as WithRelationsOption<E, R>,
+          relationsToLoad: relationValue as WithRelationsOption<AnyEntity, R>,
           entity: refEntity,
         })
       }
@@ -177,18 +177,25 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
 
 type Relations<Names extends string> = Partial<Record<Names, Record<string, Relation>>>
 
+export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> =
+  R[E['name']] extends Record<string, Relation> ?
+    R[E['name']][keyof R[E['name']]] extends Relation<any, infer RE extends AnyEntity> ?
+      RE['name']
+      : never
+    : never
+
 export type WithRelationsOption<
   E extends AnyEntity,
   R extends Relations<any>,
-  N extends string[] = [],
+  N extends string[] = [E['name']],
 > = keyof R[E['name']] extends never
   ? never
   : {
-      [K in keyof R[E['name']] as K extends N[number] ? never : K]?:
-        | boolean
-        | (R[E['name']][K] extends Relation<any, infer RE>
-          ? WithRelationsOption<RE, R, [...N, E['name']]>
-          : never)
+      [K in keyof R[E['name']] as R[E['name']][K] extends Relation<any, infer RE> ? RE['name'] extends N[number] ? never : K : never]?:
+      R[E['name']][K] extends Relation<any, infer RE> ?
+      boolean |
+      (Exclude<GetRelationEntitiesName<RE, R>, N[number]> extends never ? never : WithRelationsOption<RE, R, [...N, RE['name']]>)
+        : never
     }
 
 type GetNestedRelationType<
@@ -232,13 +239,6 @@ interface Query<E extends Entity<string, ZodSchemaWithId>, R extends Relations<a
 
 type RelationsFn<N extends string, R extends Relations<N>> = (options: RelationsOptions) => R
 
-export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> =
-  R[E['name']] extends Record<string, Relation> ?
-    R[E['name']][keyof R[E['name']]] extends Relation<any, infer RE extends AnyEntity> ?
-      RE['name']
-      : never
-    : never
-
 interface FindByIdOptions<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> { with?: WithRelationsOption<E, R> }
 
 type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId, O extends FindByIdOptions<E, R>> =
@@ -247,7 +247,7 @@ type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relatio
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
   findById: <O extends FindByIdOptions<E, R>>(id: T['id'], options?: ExactDeep<O, FindByIdOptions<E, R>>) => FindByIdResult<E, R, T, O> | null
-  save: (entities: Array<EntityWithOptionalRelations<E, R, T>> | EntityWithOptionalRelations<E, R, T>) => void
+  save: (entities: Array<EntityWithOptionalRelations<E, R>> | EntityWithOptionalRelations<E, R>) => void
 }
 
 type GlobalQueryBuilder<E extends Array<Entity<string, ZodSchemaWithId>>, N extends E[number]['name'], R extends Relations<N>> = {
@@ -298,7 +298,7 @@ function parseAndSaveEntity<E extends Entity<any, any>>(
 }
 
 function defineEntityQueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends z.infer<E['zodSchema']>>(entity: E, relations: R): QueryBuilder<E, R, T> {
-  function save(entities: Array<EntityWithOptionalRelations<E, R, T>> | EntityWithOptionalRelations<E, R, T>): void {
+  function save(entities: Array<EntityWithOptionalRelations<E, R>> | EntityWithOptionalRelations<E, R>): void {
     if (Array.isArray(entities)) {
       for (const e of entities) {
         parseAndSaveEntity({ entity, data: e, relations })

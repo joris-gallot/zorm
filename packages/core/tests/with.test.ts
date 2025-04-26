@@ -558,4 +558,197 @@ describe('with', () => {
       }
     }>>(usersWithFalseNotifications)
   })
+
+  it('should work with many-to-many relationships', () => {
+    const Post = defineEntity('post', z.object({
+      id: z.number(),
+      title: z.string(),
+    }))
+
+    const Tag = defineEntity('tag', z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+
+    const PostTag = defineEntity('postTag', z.object({
+      id: z.number(),
+      postId: z.number(),
+      tagId: z.number(),
+    }))
+
+    const queryBuilder = defineQueryBuilder([Post, Tag, PostTag], ({ many, one }) => ({
+      post: {
+        postTags: many(PostTag, {
+          reference: PostTag.fields.postId,
+          field: Post.fields.id,
+        }),
+      },
+      tag: {
+        postTags: many(PostTag, {
+          reference: PostTag.fields.tagId,
+          field: Tag.fields.id,
+        }),
+      },
+      postTag: {
+        post: one(Post, {
+          reference: Post.fields.id,
+          field: PostTag.fields.postId,
+        }),
+        tag: one(Tag, {
+          reference: Tag.fields.id,
+          field: PostTag.fields.tagId,
+        }),
+      },
+    }))
+
+    queryBuilder.post.save([{
+      id: 1,
+      title: 'Post 1',
+    }, {
+      id: 2,
+      title: 'Post 2',
+    }])
+
+    queryBuilder.tag.save([{
+      id: 1,
+      name: 'Tech',
+    }, {
+      id: 2,
+      name: 'News',
+    }])
+
+    queryBuilder.postTag.save([{
+      id: 1,
+      postId: 1,
+      tagId: 1,
+    }, {
+      id: 2,
+      postId: 1,
+      tagId: 2,
+    }, {
+      id: 3,
+      postId: 2,
+      tagId: 1,
+    }])
+
+    const postsWithPostTags = queryBuilder.post.query()
+      .with({ postTags: { tag: true } })
+      .get()
+
+    expect(postsWithPostTags).toEqual([
+      {
+        id: 1,
+        title: 'Post 1',
+        postTags: [
+          {
+            id: 1,
+            postId: 1,
+            tagId: 1,
+            tag: {
+              id: 1,
+              name: 'Tech',
+            },
+          },
+          {
+            id: 2,
+            postId: 1,
+            tagId: 2,
+            tag: {
+              id: 2,
+              name: 'News',
+            },
+          },
+        ],
+      },
+      {
+        id: 2,
+        title: 'Post 2',
+        postTags: [
+          {
+            id: 3,
+            postId: 2,
+            tagId: 1,
+            tag: {
+              id: 1,
+              name: 'Tech',
+            },
+          },
+        ],
+      },
+    ])
+
+    assertType<Array<{
+      id: number
+      title: string
+      postTags: Array<{
+        id: number
+        postId: number
+        tagId: number
+        tag: {
+          id: number
+          name: string
+        }
+      }>
+    }>>(postsWithPostTags)
+
+    const tagsWithPostTags = queryBuilder.tag.query()
+      .with({ postTags: { post: true } })
+      .get()
+
+    expect(tagsWithPostTags).toEqual([
+      {
+        id: 1,
+        name: 'Tech',
+        postTags: [
+          {
+            id: 1,
+            postId: 1,
+            tagId: 1,
+            post: {
+              id: 1,
+              title: 'Post 1',
+            },
+          },
+          {
+            id: 3,
+            postId: 2,
+            tagId: 1,
+            post: {
+              id: 2,
+              title: 'Post 2',
+            },
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'News',
+        postTags: [
+          {
+            id: 2,
+            postId: 1,
+            tagId: 2,
+            post: {
+              id: 1,
+              title: 'Post 1',
+            },
+          },
+        ],
+      },
+    ])
+
+    assertType<Array<{
+      id: number
+      name: string
+      postTags: Array<{
+        id: number
+        postId: number
+        tagId: number
+        post: {
+          id: number
+          title: string
+        }
+      }>
+    }>>(tagsWithPostTags)
+  })
 })
