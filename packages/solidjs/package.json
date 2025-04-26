@@ -1,7 +1,7 @@
 {
   "name": "@zorm-ts/solidjs",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "SolidJS integration for zorm",
   "author": "Joris Gallot",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@zorm-ts/core": "workspace:>=0.0.7",
+    "@zorm-ts/core": "workspace:>=0.1.0",
     "solid-js": "catalog:"
   },
   "devDependencies": {
