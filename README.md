@@ -7,7 +7,7 @@ zorm is a minimalist ORM powered by [Zod](https://zod.dev/). It allows you to de
 - 🔍 Fully typed query builder with:
   - Autocomplete for relation names in eager loading
   - Inferred return types including nested relations
-- 🤝 Support for one-to-one and one-to-many relationships
+- 🤝 Support for one-to-one, one-to-many and many-to-many relationships
 - 🚀 Eager loading of related entities
 - 🛡️ Runtime validation through Zod schemas
 - ⚡️ [Reactivity support](#reactivity)
