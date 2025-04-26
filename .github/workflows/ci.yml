@@ -11,7 +11,7 @@ on:
       - LICENSE
 
 jobs:
-  type-check:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Type check
-        run: pnpm type-check
+        run: pnpm typecheck
 
   tests:
     runs-on: ubuntu-latest

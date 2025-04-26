@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "type-check": "vue-tsc --build"
+    "typecheck": "vue-tsc --build"
   },
   "dependencies": {
     "@zorm-ts/core": "workspace:*",

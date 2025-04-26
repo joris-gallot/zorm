@@ -33,7 +33,7 @@
     "build": "unbuild",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "zod": "catalog:"

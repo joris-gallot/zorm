@@ -33,7 +33,7 @@
     "build": "unbuild",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "type-check": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit"
   },
   "peerDependencies": {
     "@zorm-ts/core": "workspace:>=0.0.7",

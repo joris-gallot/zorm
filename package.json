@@ -13,7 +13,7 @@
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
     "lint:fix:all": "eslint --fix",
-    "type-check": "nr -r type-check",
+    "typecheck": "nr -r typecheck",
     "build": "nr -r build",
     "build:core": "cd packages/core && pnpm build",
     "build:vue": "cd packages/vue && pnpm build",
