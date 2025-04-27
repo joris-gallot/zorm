@@ -1,12 +1,12 @@
 import { render } from '@solidjs/testing-library'
-import { DefaultDatabase, defineReactivityDatabase, getDb } from '@zorm-ts/core'
+import { DefaultDatabase, defineDatabase, getDb } from '@zorm-ts/core'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { SolidjsDatabase, useReactiveDatabase } from '../../src'
 import ReactiveQueries from './ReactiveQueries'
 
 describe('reactivity', async () => {
   beforeEach(() => {
-    defineReactivityDatabase(new DefaultDatabase())
+    defineDatabase(new DefaultDatabase())
   })
 
   it('should not react to changes', async () => {

@@ -1,4 +1,4 @@
-import { DefaultDatabase, defineReactivityDatabase, getDb } from '@zorm-ts/core'
+import { DefaultDatabase, defineDatabase, getDb } from '@zorm-ts/core'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render } from 'vitest-browser-svelte'
 import { SvelteDatabase, useReactiveDatabase } from '../../src'
@@ -6,7 +6,7 @@ import ReactiveQueries from './ReactiveQueries.svelte'
 
 describe('reactivity', async () => {
   beforeEach(() => {
-    defineReactivityDatabase(new DefaultDatabase())
+    defineDatabase(new DefaultDatabase())
   })
 
   it('should update db instance', async () => {

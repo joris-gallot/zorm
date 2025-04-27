@@ -18,7 +18,6 @@ export class DefaultDatabase implements ZormDatabase {
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    // entity is guaranteed to exist when getAll is called
     const values = this.#db[entity]!
 
     return Object.values(values)

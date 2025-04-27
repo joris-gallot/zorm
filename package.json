@@ -33,6 +33,7 @@
     "@vitest/ui": "catalog:test",
     "eslint": "catalog:lint",
     "playwright": "catalog:test",
-    "vitest": "catalog:test"
+    "vitest": "catalog:test",
+    "vitest-localstorage-mock": "catalog:test"
   }
 }

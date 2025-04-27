@@ -11,7 +11,6 @@ export class VueDatabase implements ZormDatabase {
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    // entity is guaranteed to exist when getAll is called
     const values = this.#db.value[entity]!
 
     return Object.values(values)

@@ -4,7 +4,7 @@ import * as exports from '../src/index'
 const expectedExports = [
   'DefaultDatabase',
   'getDb',
-  'defineReactivityDatabase',
+  'defineDatabase',
   'defineEntity',
   'defineQueryBuilder',
 ]

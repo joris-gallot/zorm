@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { DefaultDatabase, defineReactivityDatabase, getDb } from '../src'
+import { DefaultDatabase, defineDatabase, getDb } from '../src'
 
-describe('defineReactivityDatabase', () => {
+describe('defineDatabase', () => {
   it('should be instance of DefaultDatabase', () => {
-    defineReactivityDatabase(new DefaultDatabase())
+    defineDatabase(new DefaultDatabase())
     expect(getDb()).toBeInstanceOf(DefaultDatabase)
   })
 })

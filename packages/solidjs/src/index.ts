@@ -1,8 +1,8 @@
-import { defineReactivityDatabase } from '@zorm-ts/core'
+import { defineDatabase } from '@zorm-ts/core'
 import { SolidjsDatabase } from './database'
 
 export * from './database'
 
 export function useReactiveDatabase(): void {
-  defineReactivityDatabase(new SolidjsDatabase())
+  defineDatabase(new SolidjsDatabase())
 }

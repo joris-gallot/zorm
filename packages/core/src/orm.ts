@@ -77,7 +77,7 @@ export function getDb(): ZormDatabase {
   return db
 }
 
-export function defineReactivityDatabase(database: ZormDatabase): void {
+export function defineDatabase(database: ZormDatabase): void {
   const dbData = db.getData()
   db = database
   db.setData(dbData)
