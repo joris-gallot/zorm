@@ -8,6 +8,8 @@ catalog:
   zod: '>=3.0.0'
 
 catalogs:
+  docs:
+    vitepress: ^1.6.3
   lint:
     '@antfu/eslint-config': ^4.13.0
     eslint: ^9.26.0

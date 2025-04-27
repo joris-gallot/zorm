@@ -9,6 +9,7 @@ on:
       - '**/*.md'
       - '**/*.gitignore'
       - LICENSE
+      - 'docs/**'
 
 jobs:
   typecheck:
