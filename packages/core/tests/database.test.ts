@@ -23,26 +23,28 @@ export class LocalStorageDatabase implements ZormDatabase {
   }
 
   public setEntity(entity: string, value: ObjectWithId): void {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      ...JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!),
-      [entity]: {
-        ...JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)[entity],
-        [value.id]: value,
-      },
-    }))
+    const db = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+
+    db[entity] = {
+      ...db[entity],
+      [value.id]: value,
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(db))
   }
 
   public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      ...JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!),
-      [entity]: {
-        ...JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)[entity],
-        [id]: {
-          ...JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)[entity]![id],
-          [key]: value,
-        },
+    const db = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+
+    db[entity] = {
+      ...db[entity],
+      [id]: {
+        ...db[entity]![id],
+        [key]: value,
       },
-    }))
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(db))
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
