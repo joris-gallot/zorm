@@ -1,4 +1,4 @@
-import type { DefaultDatabase } from '../src/database'
+import type { DefaultDatabase } from '../src/databases/default'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { defineEntity, defineQueryBuilder, getDb } from '../src/orm'

@@ -1,4 +1,4 @@
-import type { ObjectWithId } from './orm'
+import type { ObjectWithId } from '../orm'
 
 export interface ZormDatabase {
   registerEntity: (name: string) => void

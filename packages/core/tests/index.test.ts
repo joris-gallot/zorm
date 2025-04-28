@@ -3,6 +3,8 @@ import * as exports from '../src/index'
 
 const expectedExports = [
   'DefaultDatabase',
+  'LOCAL_STORAGE_KEY',
+  'LocalStorageDatabase',
   'getDb',
   'defineDatabase',
   'defineEntity',
