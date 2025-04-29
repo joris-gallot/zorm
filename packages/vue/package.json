@@ -37,15 +37,15 @@
   },
   "peerDependencies": {
     "@zorm-ts/core": "workspace:>=0.1.0",
-    "vue": "catalog:"
+    "vue": "catalog:vue"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
-    "typescript": "catalog:",
+    "@types/node": "catalog:types",
+    "@vitejs/plugin-vue": "catalog:vue",
+    "typescript": "catalog:types",
     "unbuild": "catalog:",
-    "vitest-browser-vue": "catalog:",
-    "vue-tsc": "catalog:",
+    "vitest-browser-vue": "catalog:vue",
+    "vue-tsc": "catalog:vue",
     "zod": "catalog:"
   }
 }

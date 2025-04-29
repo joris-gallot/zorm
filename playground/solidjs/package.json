@@ -12,14 +12,14 @@
   "dependencies": {
     "@zorm-ts/core": "workspace:*",
     "@zorm-ts/solidjs": "workspace:*",
-    "solid-js": "catalog:",
-    "tailwindcss": "catalog:",
+    "solid-js": "catalog:solidjs",
+    "tailwindcss": "catalog:playground",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "catalog:",
-    "typescript": "catalog:",
-    "vite": "catalog:",
-    "vite-plugin-solid": "catalog:"
+    "@tailwindcss/vite": "catalog:playground",
+    "typescript": "catalog:types",
+    "vite": "catalog:playground",
+    "vite-plugin-solid": "catalog:solidjs"
   }
 }

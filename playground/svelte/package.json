@@ -12,17 +12,17 @@
   "dependencies": {
     "@zorm-ts/core": "workspace:*",
     "@zorm-ts/svelte": "workspace:*",
-    "tailwindcss": "catalog:",
+    "tailwindcss": "catalog:playground",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^4.0.0",
-    "@sveltejs/kit": "^2.16.0",
-    "@sveltejs/vite-plugin-svelte": "catalog:",
-    "@tailwindcss/vite": "catalog:",
-    "svelte": "catalog:",
-    "svelte-check": "^4.0.0",
-    "typescript": "^5.0.0",
-    "vite": "catalog:"
+    "@sveltejs/adapter-auto": "catalog:svelte",
+    "@sveltejs/kit": "catalog:svelte",
+    "@sveltejs/vite-plugin-svelte": "catalog:svelte",
+    "@tailwindcss/vite": "catalog:playground",
+    "svelte": "catalog:svelte",
+    "svelte-check": "catalog:svelte",
+    "typescript": "catalog:types",
+    "vite": "catalog:playground"
   }
 }

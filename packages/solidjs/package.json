@@ -37,14 +37,14 @@
   },
   "peerDependencies": {
     "@zorm-ts/core": "workspace:>=0.1.0",
-    "solid-js": "catalog:"
+    "solid-js": "catalog:solidjs"
   },
   "devDependencies": {
-    "@solidjs/testing-library": "catalog:",
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
+    "@solidjs/testing-library": "catalog:solidjs",
+    "@types/node": "catalog:types",
+    "typescript": "catalog:types",
     "unbuild": "catalog:",
-    "vite-plugin-solid": "catalog:",
+    "vite-plugin-solid": "catalog:solidjs",
     "zod": "catalog:"
   }
 }

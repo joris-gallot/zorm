@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "lint": "eslint packages",
+    "lint:all": "eslint",
     "lint:fix": "eslint --fix packages",
     "lint:fix:all": "eslint --fix",
     "typecheck": "nr -r typecheck",
@@ -25,13 +26,13 @@
     "publish:solidjs": "sh scripts/publish.sh solidjs"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "catalog:",
+    "@antfu/eslint-config": "catalog:lint",
     "@antfu/ni": "catalog:",
-    "@vitest/browser": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "@vitest/ui": "catalog:",
-    "eslint": "catalog:",
-    "playwright": "catalog:",
-    "vitest": "catalog:"
+    "@vitest/browser": "catalog:test",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
+    "eslint": "catalog:lint",
+    "playwright": "catalog:test",
+    "vitest": "catalog:test"
   }
 }

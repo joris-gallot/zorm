@@ -6,27 +6,68 @@ settings:
 
 catalogs:
   default:
-    '@antfu/eslint-config':
-      specifier: ^4.11.0
-      version: 4.12.0
     '@antfu/ni':
       specifier: ^24.3.0
       version: 24.3.0
-    '@solidjs/testing-library':
-      specifier: ^0.8.10
-      version: 0.8.10
-    '@sveltejs/vite-plugin-svelte':
-      specifier: ^5.0.0
-      version: 5.0.3
-    '@tailwindcss/vite':
-      specifier: ^4.1.4
-      version: 4.1.4
     '@types/node':
       specifier: ^22.13.14
       version: 22.13.14
-    '@vitejs/plugin-vue':
-      specifier: ^5.2.3
-      version: 5.2.3
+    typescript:
+      specifier: ^5.8.0
+      version: 5.8.2
+    unbuild:
+      specifier: ^3.5.0
+      version: 3.5.0
+    zod:
+      specifier: '>=3.0.0'
+      version: 3.24.2
+  lint:
+    '@antfu/eslint-config':
+      specifier: ^4.11.0
+      version: 4.12.0
+    eslint:
+      specifier: ^9.23.0
+      version: 9.25.1
+  playground:
+    '@tailwindcss/vite':
+      specifier: ^4.1.4
+      version: 4.1.4
+    tailwindcss:
+      specifier: ^4.0.17
+      version: 4.1.4
+    vite:
+      specifier: ^6.3.2
+      version: 6.3.2
+  solidjs:
+    '@solidjs/testing-library':
+      specifier: ^0.8.10
+      version: 0.8.10
+    solid-js:
+      specifier: ^1.9.5
+      version: 1.9.5
+    vite-plugin-solid:
+      specifier: ^2.11.6
+      version: 2.11.6
+  svelte:
+    '@sveltejs/adapter-auto':
+      specifier: ^4.0.0
+      version: 4.0.0
+    '@sveltejs/kit':
+      specifier: ^2.16.0
+      version: 2.20.7
+    '@sveltejs/vite-plugin-svelte':
+      specifier: ^5.0.0
+      version: 5.0.3
+    svelte:
+      specifier: '>=5.0.0'
+      version: 5.28.1
+    svelte-check:
+      specifier: ^4.0.0
+      version: 4.1.6
+    vitest-browser-svelte:
+      specifier: ^0.1.0
+      version: 0.1.0
+  test:
     '@vitest/browser':
       specifier: ^3.1.1
       version: 3.1.2
@@ -36,39 +77,22 @@ catalogs:
     '@vitest/ui':
       specifier: ^3.1.2
       version: 3.1.2
-    eslint:
-      specifier: ^9.23.0
-      version: 9.25.1
     playwright:
       specifier: ^1.52.0
       version: 1.52.0
-    solid-js:
-      specifier: ^1.9.5
-      version: 1.9.5
-    svelte:
-      specifier: '>=5.0.0'
-      version: 5.28.1
-    tailwindcss:
-      specifier: ^4.0.17
-      version: 4.1.4
-    typescript:
-      specifier: ^5.8.0
-      version: 5.8.2
-    unbuild:
-      specifier: ^3.5.0
-      version: 3.5.0
-    vite:
-      specifier: ^6.3.2
-      version: 6.3.2
-    vite-plugin-solid:
-      specifier: ^2.11.6
-      version: 2.11.6
     vitest:
       specifier: ^3.1.2
       version: 3.1.2
-    vitest-browser-svelte:
-      specifier: ^0.1.0
-      version: 0.1.0
+  vue:
+    '@vitejs/plugin-vue':
+      specifier: ^5.2.3
+      version: 5.2.3
+    '@vue/tsconfig':
+      specifier: ^0.7.0
+      version: 0.7.0
+    vite-plugin-vue-devtools:
+      specifier: ^7.7.2
+      version: 7.7.2
     vitest-browser-vue:
       specifier: ^0.2.0
       version: 0.2.0
@@ -78,37 +102,34 @@ catalogs:
     vue-tsc:
       specifier: ^2.2.8
       version: 2.2.8
-    zod:
-      specifier: '>=3.0.0'
-      version: 3.24.2
 
 importers:
 
   .:
     devDependencies:
       '@antfu/eslint-config':
-        specifier: 'catalog:'
+        specifier: catalog:lint
         version: 4.12.0(@typescript-eslint/utils@8.31.0(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.2))(@vue/compiler-sfc@3.5.13)(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.2)
       '@antfu/ni':
         specifier: 'catalog:'
         version: 24.3.0
       '@vitest/browser':
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.1.2(playwright@1.52.0)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))(vitest@3.1.2)
       '@vitest/coverage-v8':
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.1.2(@vitest/browser@3.1.2)(vitest@3.1.2)
       '@vitest/ui':
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.1.2(vitest@3.1.2)
       eslint:
-        specifier: 'catalog:'
+        specifier: catalog:lint
         version: 9.25.1(jiti@2.4.2)
       playwright:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 1.52.0
       vitest:
-        specifier: 'catalog:'
+        specifier: catalog:test
         version: 3.1.2(@types/debug@4.1.12)(@types/node@22.13.14)(@vitest/browser@3.1.2)(@vitest/ui@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
 
   packages/core:
@@ -133,11 +154,11 @@ importers:
         specifier: workspace:>=0.1.0
         version: link:../core
       solid-js:
-        specifier: 'catalog:'
+        specifier: catalog:solidjs
         version: 1.9.5
     devDependencies:
       '@solidjs/testing-library':
-        specifier: 'catalog:'
+        specifier: catalog:solidjs
         version: 0.8.10(solid-js@1.9.5)
       '@types/node':
         specifier: 'catalog:'
@@ -149,7 +170,7 @@ importers:
         specifier: 'catalog:'
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
       vite-plugin-solid:
-        specifier: 'catalog:'
+        specifier: catalog:solidjs
         version: 2.11.6(solid-js@1.9.5)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       zod:
         specifier: 'catalog:'
@@ -161,11 +182,11 @@ importers:
         specifier: workspace:>=0.1.0
         version: link:../core
       svelte:
-        specifier: 'catalog:'
+        specifier: catalog:svelte
         version: 5.28.1
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
-        specifier: 'catalog:'
+        specifier: catalog:svelte
         version: 5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@types/node':
         specifier: 'catalog:'
@@ -177,7 +198,7 @@ importers:
         specifier: 'catalog:'
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
       vitest-browser-svelte:
-        specifier: 'catalog:'
+        specifier: catalog:svelte
         version: 0.1.0(@vitest/browser@3.1.2)(svelte@5.28.1)(vitest@3.1.2)
       zod:
         specifier: 'catalog:'
@@ -189,14 +210,14 @@ importers:
         specifier: workspace:>=0.1.0
         version: link:../core
       vue:
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 3.5.13(typescript@5.8.2)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 22.13.14
       '@vitejs/plugin-vue':
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 5.2.3(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       typescript:
         specifier: 'catalog:'
@@ -205,10 +226,10 @@ importers:
         specifier: 'catalog:'
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
       vitest-browser-vue:
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 0.2.0(@vitest/browser@3.1.2)(vitest@3.1.2)(vue@3.5.13(typescript@5.8.2))
       vue-tsc:
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 2.2.8(typescript@5.8.2)
       zod:
         specifier: 'catalog:'
@@ -223,26 +244,26 @@ importers:
         specifier: workspace:*
         version: link:../../packages/solidjs
       solid-js:
-        specifier: 'catalog:'
+        specifier: catalog:solidjs
         version: 1.9.5
       tailwindcss:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4
       zod:
         specifier: 'catalog:'
         version: 3.24.2
     devDependencies:
       '@tailwindcss/vite':
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
       vite:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
       vite-plugin-solid:
-        specifier: 'catalog:'
+        specifier: catalog:solidjs
         version: 2.11.6(solid-js@1.9.5)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
 
   playground/svelte:
@@ -254,35 +275,35 @@ importers:
         specifier: workspace:*
         version: link:../../packages/svelte
       tailwindcss:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4
       zod:
         specifier: 'catalog:'
         version: 3.24.2
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^4.0.0
+        specifier: catalog:svelte
         version: 4.0.0(@sveltejs/kit@2.20.7(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)))(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)))
       '@sveltejs/kit':
-        specifier: ^2.16.0
+        specifier: catalog:svelte
         version: 2.20.7(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)))(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: 'catalog:'
+        specifier: catalog:svelte
         version: 5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@tailwindcss/vite':
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       svelte:
-        specifier: 'catalog:'
+        specifier: catalog:svelte
         version: 5.28.1
       svelte-check:
-        specifier: ^4.0.0
+        specifier: catalog:svelte
         version: 4.1.6(picomatch@4.0.2)(svelte@5.28.1)(typescript@5.8.2)
       typescript:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.8.2
       vite:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
 
   playground/vue:
@@ -294,17 +315,17 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vue
       tailwindcss:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4
       vue:
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 3.5.13(typescript@5.8.2)
       zod:
         specifier: 'catalog:'
         version: 3.24.2
     devDependencies:
       '@tailwindcss/vite':
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 4.1.4(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@tsconfig/node22':
         specifier: ^22.0.1
@@ -313,22 +334,22 @@ importers:
         specifier: 'catalog:'
         version: 22.13.14
       '@vitejs/plugin-vue':
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 5.2.3(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       '@vue/tsconfig':
-        specifier: ^0.7.0
+        specifier: catalog:vue
         version: 0.7.0(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
       vite:
-        specifier: 'catalog:'
+        specifier: catalog:playground
         version: 6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
       vite-plugin-vue-devtools:
-        specifier: ^7.7.2
+        specifier: catalog:vue
         version: 7.7.2(rollup@4.37.0)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       vue-tsc:
-        specifier: 'catalog:'
+        specifier: catalog:vue
         version: 2.2.8(typescript@5.8.2)
 
 packages:
@@ -2318,14 +2339,6 @@ packages:
 
   fault@2.0.1:
     resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
-
-  fdir@6.4.3:
-    resolution: {integrity: sha512-PMXmW2y1hDDfTSRc9gaXIuCCRpuoz3Kaz8cUelp3smouvfT632ozg2vrT6lJsHKKOF59YLbOGfAWGUcKEfRMQw==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fdir@6.4.4:
     resolution: {integrity: sha512-1NZP+GK4GfuAv3PqKvxQRDMjdSRZjnkq7KfhlNrCNNlZ0ygQFpebfrnfnq/W7fpUnAv9aGWmY1zKx7FYL3gwhg==}
@@ -6017,10 +6030,6 @@ snapshots:
     dependencies:
       format: 0.2.2
 
-  fdir@6.4.3(picomatch@4.0.2):
-    optionalDependencies:
-      picomatch: 4.0.2
-
   fdir@6.4.4(picomatch@4.0.2):
     optionalDependencies:
       picomatch: 4.0.2
@@ -7337,7 +7346,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.3
-      fdir: 6.4.3(picomatch@4.0.2)
+      fdir: 6.4.4(picomatch@4.0.2)
       picocolors: 1.1.1
       sade: 1.8.1
       svelte: 5.28.1

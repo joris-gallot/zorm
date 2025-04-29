@@ -39,8 +39,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
+    "@types/node": "catalog:types",
+    "typescript": "catalog:types",
     "unbuild": "catalog:"
   }
 }
