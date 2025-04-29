@@ -9,12 +9,6 @@ catalogs:
     '@antfu/ni':
       specifier: ^24.3.0
       version: 24.3.0
-    '@types/node':
-      specifier: ^22.13.14
-      version: 22.13.14
-    typescript:
-      specifier: ^5.8.0
-      version: 5.8.2
     unbuild:
       specifier: ^3.5.0
       version: 3.5.0
@@ -83,6 +77,16 @@ catalogs:
     vitest:
       specifier: ^3.1.2
       version: 3.1.2
+  types:
+    '@tsconfig/node22':
+      specifier: ^22.0.1
+      version: 22.0.1
+    '@types/node':
+      specifier: ^22.13.14
+      version: 22.13.14
+    typescript:
+      specifier: ^5.8.0
+      version: 5.8.2
   vue:
     '@vitejs/plugin-vue':
       specifier: ^5.2.3
@@ -139,10 +143,10 @@ importers:
         version: 3.24.2
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 22.13.14
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       unbuild:
         specifier: 'catalog:'
@@ -161,10 +165,10 @@ importers:
         specifier: catalog:solidjs
         version: 0.8.10(solid-js@1.9.5)
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 22.13.14
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       unbuild:
         specifier: 'catalog:'
@@ -189,10 +193,10 @@ importers:
         specifier: catalog:svelte
         version: 5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 22.13.14
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       unbuild:
         specifier: 'catalog:'
@@ -214,13 +218,13 @@ importers:
         version: 3.5.13(typescript@5.8.2)
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 22.13.14
       '@vitejs/plugin-vue':
         specifier: catalog:vue
         version: 5.2.3(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       unbuild:
         specifier: 'catalog:'
@@ -257,7 +261,7 @@ importers:
         specifier: catalog:playground
         version: 4.1.4(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       vite:
         specifier: catalog:playground
@@ -300,7 +304,7 @@ importers:
         specifier: catalog:svelte
         version: 4.1.6(picomatch@4.0.2)(svelte@5.28.1)(typescript@5.8.2)
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       vite:
         specifier: catalog:playground
@@ -328,10 +332,10 @@ importers:
         specifier: catalog:playground
         version: 4.1.4(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       '@tsconfig/node22':
-        specifier: ^22.0.1
+        specifier: catalog:types
         version: 22.0.1
       '@types/node':
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 22.13.14
       '@vitejs/plugin-vue':
         specifier: catalog:vue
@@ -340,7 +344,7 @@ importers:
         specifier: catalog:vue
         version: 0.7.0(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
       typescript:
-        specifier: 'catalog:'
+        specifier: catalog:types
         version: 5.8.2
       vite:
         specifier: catalog:playground
