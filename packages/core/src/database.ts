@@ -1,4 +1,6 @@
-import type { ObjectWithId } from '../orm'
+import type { ObjectWithId } from './orm'
+
+export const LOCAL_STORAGE_KEY = 'zorm_database'
 
 export interface ZormDatabase {
   registerEntity: (name: string) => void

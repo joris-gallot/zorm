@@ -1,8 +1,8 @@
 import type { z, ZodNumber, ZodObject, ZodString } from 'zod'
-import type { ZormDatabase } from './databases/default'
+import type { ZormDatabase } from './database'
 import type { OrderByCriteria, OrderByOrders } from './orderBy'
 import type { ExactDeep, Prettify } from './types'
-import { DefaultDatabase } from './databases/default'
+import { DefaultDatabase } from './database'
 import { orderBy } from './orderBy'
 
 interface ZodSchemaWithId extends ZodObject<{ id: ZodNumber | ZodString }> {}

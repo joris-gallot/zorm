@@ -1,7 +1,8 @@
-import { DefaultDatabase, defineDatabase, getDb } from '@zorm-ts/core'
+import { DefaultDatabase, defineDatabase, getDb, LOCAL_STORAGE_KEY } from '@zorm-ts/core'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render } from 'vitest-browser-vue'
 import { useReactiveDatabase, VueDatabase } from '../../src'
+
 import ReactiveQueries from './ReactiveQueries.vue'
 
 describe('reactivity', async () => {
@@ -178,16 +179,62 @@ describe('reactivity', async () => {
   })
 
   describe('local storage', () => {
-    beforeEach(() => {
-      useReactiveDatabase({ localStorage: true })
-    })
-
     it('should react to changes', async () => {
       const { getByTestId } = render(ReactiveQueries, {
         props: {
           reactive: true,
+          databaseOptions: {
+            localStorage: true,
+          },
         },
       })
+
+      const expectedLocalStorageData = {
+        image: {},
+        post: {
+          1: {
+            id: 1,
+            title: 'Post 1',
+            userId: 1,
+            imageId: 1,
+          },
+          2: {
+            id: 2,
+            title: 'Post 2',
+            userId: 1,
+            imageId: 2,
+          },
+          3: {
+            id: 3,
+            title: 'Post 3',
+            userId: 2,
+            imageId: 3,
+          },
+        },
+        user: {
+          1: {
+            id: 1,
+            name: 'John',
+            email: 'john@doe.com',
+            age: 10,
+          },
+          2: {
+            id: 2,
+            name: 'Jane',
+            email: 'jane@doe.com',
+            age: 20,
+          },
+          3: {
+            id: 3,
+            name: 'Jim',
+            email: 'jim@beam.com',
+            age: 30,
+          },
+        },
+      }
+
+      let localStorageData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+      await expect(localStorageData).toEqual(expectedLocalStorageData)
 
       const expectedUsers = [
         { id: 2, name: 'Jane', email: 'jane@doe.com', age: 20 },
@@ -235,6 +282,53 @@ describe('reactivity', async () => {
       await expect(getByTestId('post-with-user').element().textContent).toBe(JSON.stringify(expectedPostWithUser, null, 2))
 
       await getByTestId('update-user').click()
+
+      const updatedLocalStorageData = {
+        image: {},
+        post: {
+          1: {
+            id: 1,
+            title: 'Post 1',
+            userId: 1,
+            imageId: 1,
+          },
+          2: {
+            id: 2,
+            title: 'Post 2',
+            userId: 1,
+            imageId: 2,
+          },
+          3: {
+            id: 3,
+            title: 'Post 3',
+            userId: 2,
+            imageId: 3,
+          },
+        },
+        user: {
+          1: {
+            id: 1,
+            name: 'John',
+            email: 'john@example.com',
+            age: 30,
+          },
+          2: {
+            id: 2,
+            name: 'Jane',
+            email: 'jane@doe.com',
+            age: 20,
+          },
+          3: {
+            id: 3,
+            name: 'Jim',
+            email: 'jim@beam.com',
+            age: 30,
+          },
+        },
+      }
+
+      localStorageData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+      await expect(localStorageData).toEqual(updatedLocalStorageData)
 
       const updatedUsers = [
         { id: 1, name: 'John', email: 'john@example.com', age: 30 },
@@ -284,6 +378,8 @@ describe('reactivity', async () => {
     })
 
     it('should update db instance', async () => {
+      expect(getDb()).toBeInstanceOf(DefaultDatabase)
+      useReactiveDatabase()
       expect(getDb()).toBeInstanceOf(VueDatabase)
     })
   })

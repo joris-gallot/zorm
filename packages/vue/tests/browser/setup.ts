@@ -1,10 +1,11 @@
+import type { VueDatabaseOptions } from '../../src'
 import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
 import { z } from 'zod'
 import { useReactiveDatabase } from '../../src'
 
-export function setup({ reactive }: { reactive: boolean }) {
+export function setup({ reactive, databaseOptions }: { reactive: boolean, databaseOptions?: VueDatabaseOptions }) {
   if (reactive) {
-    useReactiveDatabase()
+    useReactiveDatabase(databaseOptions)
   }
 
   const User = defineEntity(
