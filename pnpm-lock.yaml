@@ -37,8 +37,8 @@ catalogs:
       specifier: ^0.8.10
       version: 0.8.10
     solid-js:
-      specifier: ^1.9.5
-      version: 1.9.5
+      specifier: ^1.9.6
+      version: 1.9.6
     vite-plugin-solid:
       specifier: ^2.11.6
       version: 2.11.6
@@ -159,11 +159,11 @@ importers:
         version: link:../core
       solid-js:
         specifier: catalog:solidjs
-        version: 1.9.5
+        version: 1.9.6
     devDependencies:
       '@solidjs/testing-library':
         specifier: catalog:solidjs
-        version: 0.8.10(solid-js@1.9.5)
+        version: 0.8.10(solid-js@1.9.6)
       '@types/node':
         specifier: catalog:types
         version: 22.13.14
@@ -175,7 +175,7 @@ importers:
         version: 3.5.0(typescript@5.8.2)(vue-tsc@2.2.8(typescript@5.8.2))(vue@3.5.13(typescript@5.8.2))
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.6(solid-js@1.9.5)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
+        version: 2.11.6(solid-js@1.9.6)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
       zod:
         specifier: 'catalog:'
         version: 3.24.2
@@ -249,7 +249,7 @@ importers:
         version: link:../../packages/solidjs
       solid-js:
         specifier: catalog:solidjs
-        version: 1.9.5
+        version: 1.9.6
       tailwindcss:
         specifier: catalog:playground
         version: 4.1.4
@@ -268,7 +268,7 @@ importers:
         version: 6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.6(solid-js@1.9.5)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
+        version: 2.11.6(solid-js@1.9.6)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
 
   playground/svelte:
     dependencies:
@@ -3748,8 +3748,8 @@ packages:
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
-  solid-js@1.9.5:
-    resolution: {integrity: sha512-ogI3DaFcyn6UhYhrgcyRAMbu/buBJitYQASZz5WzfQVPP10RD2AbCoRZ517psnezrasyCbWzIxZ6kVqet768xw==}
+  solid-js@1.9.6:
+    resolution: {integrity: sha512-PoasAJvLk60hRtOTe9ulvALOdLjjqxuxcGZRolBQqxOnXrBXHGzqMT4ijNhGsDAYdOgEa8ZYaAE94PSldrFSkA==}
 
   solid-refresh@0.6.3:
     resolution: {integrity: sha512-F3aPsX6hVw9ttm5LYlth8Q15x6MlI/J3Dn+o3EQyRTtTxidepSTwAYdozt01/YA+7ObcciagGEyXIopGZzQtbA==}
@@ -4967,10 +4967,10 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@solidjs/testing-library@0.8.10(solid-js@1.9.5)':
+  '@solidjs/testing-library@0.8.10(solid-js@1.9.6)':
     dependencies:
       '@testing-library/dom': 10.4.0
-      solid-js: 1.9.5
+      solid-js: 1.9.6
 
   '@stylistic/eslint-plugin@4.2.0(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.2)':
     dependencies:
@@ -7835,18 +7835,18 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
-  solid-js@1.9.5:
+  solid-js@1.9.6:
     dependencies:
       csstype: 3.1.3
       seroval: 1.2.1
       seroval-plugins: 1.2.1(seroval@1.2.1)
 
-  solid-refresh@0.6.3(solid-js@1.9.5):
+  solid-refresh@0.6.3(solid-js@1.9.6):
     dependencies:
       '@babel/generator': 7.27.0
       '@babel/helper-module-imports': 7.25.9
       '@babel/types': 7.27.0
-      solid-js: 1.9.5
+      solid-js: 1.9.6
     transitivePeerDependencies:
       - supports-color
 
@@ -8184,14 +8184,14 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-solid@2.11.6(solid-js@1.9.5)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)):
+  vite-plugin-solid@2.11.6(solid-js@1.9.6)(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)):
     dependencies:
       '@babel/core': 7.26.10
       '@types/babel__core': 7.20.5
       babel-preset-solid: 1.9.5(@babel/core@7.26.10)
       merge-anything: 5.1.7
-      solid-js: 1.9.5
-      solid-refresh: 0.6.3(solid-js@1.9.5)
+      solid-js: 1.9.6
+      solid-refresh: 0.6.3(solid-js@1.9.6)
       vite: 6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
       vitefu: 1.0.6(vite@6.3.2(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
     transitivePeerDependencies:
