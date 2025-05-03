@@ -61,7 +61,7 @@ const usersWithPosts = userQuery.query()
   .get()
 ```
 
-## Reactivity
+## Integrations
 
 zorm provides dedicated packages for popular frameworks:
 
