@@ -1,8 +1,7 @@
 import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
-import type { Ref, WritableComputedRef } from 'vue'
+import type { Ref } from 'vue'
 import { LOCAL_STORAGE_KEY } from '@zorm-ts/core'
-
-import { computed, ref } from 'vue'
+import { ref, watch } from 'vue'
 
 export interface VueDatabaseOptions {
   localStorage?: boolean
@@ -10,34 +9,33 @@ export interface VueDatabaseOptions {
 
 /* v8 ignore next: find why the next line is partially uncovered */
 export class VueDatabase implements ZormDatabase {
-  #_db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
+  #db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
   #isLocalStorage: boolean
 
-  #db: WritableComputedRef<Record<string, Record<string, ObjectWithId>>> = computed({
-    set: (value) => {
-      if (this.#isLocalStorage) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value))
-      }
-      this.#_db.value = value
-    },
-    get: () => {
-      if (this.#isLocalStorage) {
-        this.#_db.value = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+  constructor({ localStorage: isLocalStorage = false }: VueDatabaseOptions = {}) {
+    this.#isLocalStorage = isLocalStorage
+
+    if (isLocalStorage) {
+      if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
+        this.#db.value = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
       }
 
-      return this.#_db.value
-    },
-  })
-
-  constructor({ localStorage = false }: VueDatabaseOptions = {}) {
-    this.#isLocalStorage = localStorage
+      watch(this.#db, (db) => {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(db))
+      }, { deep: true })
+    }
   }
 
   public registerEntity(name: string): void {
-    this.#db.value = { ...this.#db.value, [name]: {} }
+    if (this.#db.value[name]) {
+      return
+    }
+
+    this.#db.value[name] = {}
   }
 
   public getAll(entity: string): ObjectWithId[] {
+    // entity is guaranteed to exist when getAll is called
     const values = this.#db.value[entity]!
 
     return Object.values(values)
@@ -48,29 +46,18 @@ export class VueDatabase implements ZormDatabase {
   }
 
   public setEntity(entity: string, value: ObjectWithId): void {
-    this.#db.value = {
-      ...this.#db.value,
-      [entity]: {
-        ...this.#db.value[entity],
-        [value.id]: value,
-      },
-    }
+    this.#db.value[entity]![value.id] = value
   }
 
   public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    this.#db.value = {
-      ...this.#db.value,
-      [entity]: {
-        ...this.#db.value[entity],
-        [id]: {
-          ...this.#db.value[entity]![id],
-          [key]: value as ObjectWithId[keyof ObjectWithId],
-        },
-      },
-    }
+    this.#db.value[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
+    if (this.#isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
+      return
+    }
+
     this.#db.value = db
   }
 

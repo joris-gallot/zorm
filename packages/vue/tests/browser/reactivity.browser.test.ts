@@ -4,6 +4,7 @@ import { render } from 'vitest-browser-vue'
 import { useReactiveDatabase, VueDatabase } from '../../src'
 
 import ReactiveQueries from './ReactiveQueries.vue'
+import { defaultDbData } from './setup'
 
 describe('reactivity', async () => {
   beforeEach(() => {
@@ -179,6 +180,10 @@ describe('reactivity', async () => {
   })
 
   describe('local storage', () => {
+    beforeEach(() => {
+      localStorage.removeItem(LOCAL_STORAGE_KEY)
+    })
+
     it('should react to changes', async () => {
       const { getByTestId } = render(ReactiveQueries, {
         props: {
@@ -189,52 +194,8 @@ describe('reactivity', async () => {
         },
       })
 
-      const expectedLocalStorageData = {
-        image: {},
-        post: {
-          1: {
-            id: 1,
-            title: 'Post 1',
-            userId: 1,
-            imageId: 1,
-          },
-          2: {
-            id: 2,
-            title: 'Post 2',
-            userId: 1,
-            imageId: 2,
-          },
-          3: {
-            id: 3,
-            title: 'Post 3',
-            userId: 2,
-            imageId: 3,
-          },
-        },
-        user: {
-          1: {
-            id: 1,
-            name: 'John',
-            email: 'john@doe.com',
-            age: 10,
-          },
-          2: {
-            id: 2,
-            name: 'Jane',
-            email: 'jane@doe.com',
-            age: 20,
-          },
-          3: {
-            id: 3,
-            name: 'Jim',
-            email: 'jim@beam.com',
-            age: 30,
-          },
-        },
-      }
-
       let localStorageData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
-      await expect(localStorageData).toEqual(expectedLocalStorageData)
+      await expect(localStorageData).toEqual(defaultDbData)
 
       const expectedUsers = [
         { id: 2, name: 'Jane', email: 'jane@doe.com', age: 20 },
@@ -388,52 +349,8 @@ describe('reactivity', async () => {
         },
       })
 
-      const expectedLocalStorageData = {
-        image: {},
-        post: {
-          1: {
-            id: 1,
-            title: 'Post 1',
-            userId: 1,
-            imageId: 1,
-          },
-          2: {
-            id: 2,
-            title: 'Post 2',
-            userId: 1,
-            imageId: 2,
-          },
-          3: {
-            id: 3,
-            title: 'Post 3',
-            userId: 2,
-            imageId: 3,
-          },
-        },
-        user: {
-          1: {
-            id: 1,
-            name: 'John',
-            email: 'john@doe.com',
-            age: 10,
-          },
-          2: {
-            id: 2,
-            name: 'Jane',
-            email: 'jane@doe.com',
-            age: 20,
-          },
-          3: {
-            id: 3,
-            name: 'Jim',
-            email: 'jim@beam.com',
-            age: 30,
-          },
-        },
-      }
-
       let localStorageData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
-      await expect(localStorageData).toEqual(expectedLocalStorageData)
+      await expect(localStorageData).toEqual(defaultDbData)
 
       const expectedUsers = [
         { id: 2, name: 'Jane', email: 'jane@doe.com', age: 20 },
