@@ -22,7 +22,7 @@ catalogs:
   svelte:
     '@sveltejs/adapter-auto': ^6.0.0
     '@sveltejs/kit': ^2.20.8
-    '@sveltejs/vite-plugin-svelte': ^5.0.0
+    '@sveltejs/vite-plugin-svelte': ^5.0.3
     svelte: '>=5.0.0'
     svelte-check: ^4.0.0
     vitest-browser-svelte: ^0.1.0
