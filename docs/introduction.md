@@ -73,7 +73,7 @@ Each integration package provides reactive bindings that work seamlessly with th
 # Core package
 npm install @zorm-ts/core
 
-# Framework integrations (optional)
+# Framework integrations for reactivity (optional)
 npm install @zorm-ts/solidjs  # For SolidJS
 npm install @zorm-ts/svelte   # For Svelte
 npm install @zorm-ts/vue      # For Vue
