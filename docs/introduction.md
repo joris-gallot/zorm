@@ -8,10 +8,10 @@ zorm is a minimalist, type-safe ORM powered by [Zod](https://zod.dev/). It provi
 
 ## Why zorm?
 
-- **Type Safety**: Built on top of Zod, zorm ensures your data is always type-safe and validated at runtime
-- **Simple API**: Intuitive query builder with full autocomplete support
-- **Flexible Relations**: Easy management of one-to-one, one-to-many, and many-to-many relationships
-- **Framework Agnostic**: Core functionality is framework-agnostic, with dedicated packages for popular frameworks
+- 🛡️ **Type Safety**: Built on top of Zod, zorm ensures your data is always type-safe and validated at runtime
+- 🔍 **Simple API**: Intuitive query builder with full autocomplete support
+- 🤝 **Flexible Relations**: Easy management of one-to-one, one-to-many, and many-to-many relationships
+- ⚡ **Framework Agnostic**: Core functionality is framework-agnostic, with dedicated packages for popular frameworks
 
 ## Quick Start
 
@@ -57,7 +57,7 @@ const usersWithPosts = userQuery.query()
   .get()
 ```
 
-## Framework Integration
+## Reactivity
 
 zorm provides dedicated packages for popular frameworks:
 
