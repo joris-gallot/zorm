@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🛡️
     title: Type-Safe Schema Definition
-    details: Leverage Zod's powerful type system to define and validate your entities with full TypeScript support
+    details: Leverage Zod's powerful schema system to define and validate your entities with full TypeScript support
   - icon: 🔍
     title: Intuitive Query Builder
     details: Build complex queries with full type safety, including autocomplete for relations and inferred return types
