@@ -1,9 +1,9 @@
 import type { VueDatabaseOptions } from '../../src'
-import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
+import { defineEntity, defineQueryBuilder, LOCAL_STORAGE_KEY } from '@zorm-ts/core'
 import { z } from 'zod'
 import { useReactiveDatabase } from '../../src'
 
-export function setup({ reactive, databaseOptions }: { reactive: boolean, databaseOptions?: VueDatabaseOptions }) {
+export function setup({ reactive, initFromLocalStorage = false, databaseOptions }: { reactive: boolean, initFromLocalStorage?: boolean, databaseOptions?: VueDatabaseOptions }) {
   if (reactive) {
     useReactiveDatabase(databaseOptions)
   }
@@ -55,57 +55,57 @@ export function setup({ reactive, databaseOptions }: { reactive: boolean, databa
     },
   }))
 
-  postQuery.save([{
-    id: 1,
-    title: 'Post 1',
-    userId: 1,
-    imageId: 1,
-  }, {
-    id: 2,
-    title: 'Post 2',
-    userId: 1,
-    imageId: 2,
-  }, {
-    id: 3,
-    title: 'Post 3',
-    userId: 2,
-    imageId: 3,
+  const defaultData = {
+    image: {},
+    post: {
+      1: {
+        id: 1,
+        title: 'Post 1',
+        userId: 1,
+        imageId: 1,
+      },
+      2: {
+        id: 2,
+        title: 'Post 2',
+        userId: 1,
+        imageId: 2,
+      },
+      3: {
+        id: 3,
+        title: 'Post 3',
+        userId: 2,
+        imageId: 3,
+      },
+    },
     user: {
-      id: 2,
-      name: 'Jane',
-      email: 'jane@doe.com',
-      age: 20,
+      1: {
+        id: 1,
+        name: 'John',
+        email: 'john@doe.com',
+        age: 10,
+      },
+      2: {
+        id: 2,
+        name: 'Jane',
+        email: 'jane@doe.com',
+        age: 20,
+      },
+      3: {
+        id: 3,
+        name: 'Jim',
+        email: 'jim@beam.com',
+        age: 30,
+      },
     },
-  }])
+  }
 
-  userQuery.save([
-    {
-      id: 1,
-      name: 'John',
-      email: 'john@doe.com',
-      age: 10,
-      posts: [
-        {
-          id: 2,
-          title: 'Post 2',
-          userId: 1,
-          imageId: 2,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Jane',
-      email: 'jane@doe.com',
-      age: 20,
-    },
-    {
-      id: 3,
-      name: 'Jim',
-      email: 'jim@beam.com',
-      age: 30,
-    },
-  ])
+  if (initFromLocalStorage) {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(defaultData))
+  }
+  else {
+    postQuery.save(Object.values(defaultData.post))
+    userQuery.save(Object.values(defaultData.user))
+  }
 
   return {
     userQuery,
