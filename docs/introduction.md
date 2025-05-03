@@ -15,8 +15,8 @@ zorm is a minimalist, type-safe ORM powered by [Zod](https://zod.dev/). It provi
 
 ## Quick Start
 
-```ts
-import { defineEntity } from '@zorm-ts/core'
+```ts twoslash
+import { defineEntity, defineQueryBuilder } from '@zorm-ts/core'
 import { z } from 'zod'
 
 // Define your entities
@@ -49,6 +49,10 @@ const { user: userQuery } = defineQueryBuilder([User, Post], ({ many }) => ({
 }))
 
 // Query your data
+const users = userQuery.query()
+  .where(user => user.email.endsWith('@example.com'))
+  .get()
+
 const usersWithPosts = userQuery.query()
   .where(user => user.email.endsWith('@example.com'))
   .with({

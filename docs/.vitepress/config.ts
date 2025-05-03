@@ -1,6 +1,6 @@
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'zorm',
   description: 'A minimalist, type-safe ORM powered by Zod',
@@ -13,9 +13,14 @@ export default defineConfig({
         ],
       },
     ],
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/joris-gallot/zorm' },
     ],
+  },
+  markdown: {
+    codeTransformers: [
+      transformerTwoslash(),
+    ],
+    languages: ['js', 'jsx', 'ts', 'tsx'],
   },
 })

@@ -31,12 +31,15 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@antfu/ni": "catalog:",
+    "@shikijs/vitepress-twoslash": "catalog:docs",
     "@vitest/browser": "catalog:test",
     "@vitest/coverage-v8": "catalog:test",
     "@vitest/ui": "catalog:test",
+    "@zorm-ts/core": "workspace:*",
     "eslint": "catalog:lint",
     "playwright": "catalog:test",
     "vitepress": "catalog:docs",
-    "vitest": "catalog:test"
+    "vitest": "catalog:test",
+    "zod": "catalog:"
   }
 }
