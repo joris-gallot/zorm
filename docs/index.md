@@ -9,10 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/getting-started
-    - theme: alt
-      text: API Reference
-      link: /api-examples
+      link: /introduction
 
 features:
   - icon: 🛡️
