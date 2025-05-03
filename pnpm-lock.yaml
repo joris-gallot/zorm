@@ -63,7 +63,7 @@ catalogs:
       version: 0.1.0
   test:
     '@vitest/browser':
-      specifier: ^3.1.1
+      specifier: ^3.1.2
       version: 3.1.2
     '@vitest/coverage-v8':
       specifier: ^3.1.2
