@@ -5,7 +5,6 @@ packages:
 catalog:
   '@antfu/ni': ^24.3.0
   unbuild: ^3.5.0
-  vitest-localstorage-mock: ^0.1.2
   zod: '>=3.0.0'
 
 catalogs:
@@ -33,7 +32,6 @@ catalogs:
     '@vitest/ui': ^3.1.2
     playwright: ^1.52.0
     vitest: ^3.1.2
-    vitest-localstorage-mock: ^0.1.2
   types:
     '@tsconfig/node22': ^22.0.1
     '@types/node': ^22.15.3

@@ -77,9 +77,6 @@ catalogs:
     vitest:
       specifier: ^3.1.2
       version: 3.1.2
-    vitest-localstorage-mock:
-      specifier: ^0.1.2
-      version: 0.1.2
   types:
     '@tsconfig/node22':
       specifier: ^22.0.1
@@ -138,9 +135,6 @@ importers:
       vitest:
         specifier: catalog:test
         version: 3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(@vitest/browser@3.1.2)(@vitest/ui@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
-      vitest-localstorage-mock:
-        specifier: catalog:test
-        version: 0.1.2(vitest@3.1.2)
 
   packages/core:
     dependencies:
@@ -4119,11 +4113,6 @@ packages:
       '@vitest/browser': ^2.1.0 || ^3.0.0-0
       vitest: ^2.1.0 || ^3.0.0-0
       vue: ^3.0.0
-
-  vitest-localstorage-mock@0.1.2:
-    resolution: {integrity: sha512-1oee6iDWhhquzVogssbpwQi6a2F3L+nCKF2+qqyCs5tH0sOYRyTqnsfj2dtmEQiL4xtJkHLn42hEjHGESlsJHw==}
-    peerDependencies:
-      vitest: '*'
 
   vitest@3.1.2:
     resolution: {integrity: sha512-WaxpJe092ID1C0mr+LH9MmNrhfzi8I65EX/NRU/Ld016KqQNRgxSOlGNP1hHN+a/F8L15Mh8klwaF77zR3GeDQ==}
@@ -8270,10 +8259,6 @@ snapshots:
       '@vue/test-utils': 2.4.6
       vitest: 3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(@vitest/browser@3.1.2)(@vitest/ui@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
       vue: 3.5.13(typescript@5.8.3)
-
-  vitest-localstorage-mock@0.1.2(vitest@3.1.2):
-    dependencies:
-      vitest: 3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(@vitest/browser@3.1.2)(@vitest/ui@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1)
 
   vitest@3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(@vitest/browser@3.1.2)(@vitest/ui@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1):
     dependencies:

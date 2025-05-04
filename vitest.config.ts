@@ -8,7 +8,6 @@ export default defineConfig({
     workspace: [
       {
         test: {
-          setupFiles: ['vitest-localstorage-mock'],
           name: 'core',
           environment: 'node',
           include: ['packages/core/**/*.test.ts'],
