@@ -6,12 +6,12 @@ outline: deep
 
 zorm is a minimalist, type-safe ORM powered by [Zod](https://zod.dev/). It provides a simple yet powerful way to define and manipulate entities in your application, with full TypeScript support and intuitive relation management.
 
-## Why zorm?
+## Features
 
 - 🛡️ **Type Safety**: Built on top of Zod, zorm ensures your data is always type-safe and validated at runtime
 - 🔍 **Simple API**: Intuitive query builder with full autocomplete support
 - 🤝 **Flexible Relations**: Easy management of one-to-one, one-to-many, and many-to-many relationships
-- ⚡ **Framework Agnostic**: Core functionality is framework-agnostic, with dedicated packages for popular frameworks
+- ⚡ **Reactivity**: Reactivity is handled through dedicated [integration packages](#integrations)
 
 ## Quick Start
 
