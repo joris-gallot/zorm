@@ -12,24 +12,36 @@ export class SvelteDatabase implements ZormDatabase {
   #db: Record<string, Record<string, ObjectWithId>> = {}
   #update: () => void = () => {}
   #subscribe: () => void
+  #isLocalStorage: boolean
 
   constructor({ localStorage: isLocalStorage = false }: SvelteDatabaseOptions = {}) {
     this.#subscribe = createSubscriber((updateFn) => {
       this.#update = updateFn
     })
 
-    if (isLocalStorage) {
-      // console.log('isLocalStorage', isLocalStorage)
-      if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
-        this.#db = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
-        this.#update()
-      }
+    this.#isLocalStorage = isLocalStorage
+
+    if (isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
+      this.#db = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+      this.update()
+    }
+  }
+
+  private update(): void {
+    this.#update()
+
+    if (this.#isLocalStorage) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#db))
     }
   }
 
   public registerEntity(name: string): void {
+    if (this.#db[name]) {
+      return
+    }
+
     this.#db[name] = {}
-    this.#update()
+    this.update()
   }
 
   public getAll(entity: string): ObjectWithId[] {
@@ -45,17 +57,21 @@ export class SvelteDatabase implements ZormDatabase {
 
   public setEntity(entity: string, value: ObjectWithId): void {
     this.#db[entity]![value.id] = value
-    this.#update()
+    this.update()
   }
 
   public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
     this.#db[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
-    this.#update()
+    this.update()
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
+    if (this.#isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
+      return
+    }
+
     this.#db = db
-    this.#update()
+    this.update()
   }
 
   public getData(): Record<string, Record<string, ObjectWithId>> {
