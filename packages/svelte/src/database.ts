@@ -1,6 +1,11 @@
 import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
+import { LOCAL_STORAGE_KEY } from '@zorm-ts/core'
 
 import { createSubscriber } from 'svelte/reactivity'
+
+export interface SvelteDatabaseOptions {
+  localStorage?: boolean
+}
 
 /* v8 ignore next: find why the next line is partially uncovered */
 export class SvelteDatabase implements ZormDatabase {
@@ -8,10 +13,18 @@ export class SvelteDatabase implements ZormDatabase {
   #update: () => void = () => {}
   #subscribe: () => void
 
-  constructor() {
+  constructor({ localStorage: isLocalStorage = false }: SvelteDatabaseOptions = {}) {
     this.#subscribe = createSubscriber((updateFn) => {
       this.#update = updateFn
     })
+
+    if (isLocalStorage) {
+      // console.log('isLocalStorage', isLocalStorage)
+      if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
+        this.#db = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+        this.#update()
+      }
+    }
   }
 
   public registerEntity(name: string): void {
