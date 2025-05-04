@@ -2,14 +2,22 @@ import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 import type { SetStoreFunction } from 'solid-js/store'
 import { createStore } from 'solid-js/store'
 
+export interface SolidjsDatabaseOptions {
+  localStorage?: boolean
+}
+
 /* v8 ignore next: find why the next line is partially uncovered */
 export class SolidjsDatabase implements ZormDatabase {
   #store: [Record<string, Record<string, ObjectWithId>>, SetStoreFunction<Record<string, Record<string, ObjectWithId>>>]
   #setDb: SetStoreFunction<Record<string, Record<string, ObjectWithId>>>
 
-  constructor() {
+  constructor({ localStorage: isLocalStorage = false }: SolidjsDatabaseOptions = {}) {
     this.#store = createStore<Record<string, Record<string, ObjectWithId>>>({})
     this.#setDb = this.#store[1]
+
+    if (isLocalStorage) {
+      // TODO: init from local storage
+    }
   }
 
   #db(): Record<string, Record<string, ObjectWithId>> {

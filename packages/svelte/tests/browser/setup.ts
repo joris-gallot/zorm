@@ -47,7 +47,15 @@ export const defaultDbData = {
   },
 }
 
-export function setup({ reactive, initFromLocalStorage = false, databaseOptions }: { reactive: boolean, initFromLocalStorage?: boolean, databaseOptions?: SvelteDatabaseOptions }) {
+export function setup({
+  reactive,
+  initFromLocalStorage = false,
+  databaseOptions,
+}: {
+  reactive: boolean
+  initFromLocalStorage?: boolean
+  databaseOptions?: SvelteDatabaseOptions
+}) {
   // init from local storage before adding entities
   if (initFromLocalStorage) {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(defaultDbData))
