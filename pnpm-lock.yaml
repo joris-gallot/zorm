@@ -37,7 +37,7 @@ catalogs:
       specifier: ^0.8.10
       version: 0.8.10
     solid-js:
-      specifier: ^1.9.6
+      specifier: '>=1.9.0'
       version: 1.9.6
     vite-plugin-solid:
       specifier: ^2.11.6
