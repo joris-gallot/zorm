@@ -4,5 +4,5 @@
     "config:recommended"
   ],
   "rangeStrategy": "bump",
-  "ignoreDeps": ["svelte", "vue", "solid-js"]
+  "ignoreDeps": ["svelte", "vue", "solid-js", "zod"]
 }
