@@ -8,5 +8,5 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "tests/**/*", "build.config.ts"]
+  "include": ["**/*.ts"]
 }
