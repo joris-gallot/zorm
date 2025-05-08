@@ -1,7 +1,7 @@
 {
   "name": "@zorm-ts/core",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A minimalist, type-safe ORM powered by Zod",
   "author": "Joris Gallot",
   "license": "MIT",
