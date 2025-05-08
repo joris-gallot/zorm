@@ -1,12 +1,36 @@
 import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { LOCAL_STORAGE_KEY } from '@zorm-ts/core'
+import { ref, watch } from 'vue'
+
+export interface VueDatabaseOptions {
+  localStorage?: boolean
+}
 
 /* v8 ignore next: find why the next line is partially uncovered */
 export class VueDatabase implements ZormDatabase {
   #db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
+  #isLocalStorage: boolean
+
+  constructor({ localStorage: isLocalStorage = false }: VueDatabaseOptions = {}) {
+    this.#isLocalStorage = isLocalStorage
+
+    if (isLocalStorage) {
+      if (localStorage.getItem(LOCAL_STORAGE_KEY)) {
+        this.#db.value = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+      }
+
+      watch(this.#db, (db) => {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(db))
+      }, { deep: true })
+    }
+  }
 
   public registerEntity(name: string): void {
+    if (this.#db.value[name]) {
+      return
+    }
+
     this.#db.value[name] = {}
   }
 
@@ -30,6 +54,10 @@ export class VueDatabase implements ZormDatabase {
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
+    if (this.#isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
+      return
+    }
+
     this.#db.value = db
   }
 

@@ -1,14 +1,17 @@
 import type { Component } from 'solid-js'
+import type { SolidjsDatabaseOptions } from '../../src'
 import { createMemo } from 'solid-js'
 import { setup } from './setup.js'
 import './ReactiveQueries.css'
 
 interface ReactiveQueriesProps {
   reactive: boolean
+  initFromLocalStorage?: boolean
+  databaseOptions?: SolidjsDatabaseOptions
 }
 
-const ReactiveQueries: Component<ReactiveQueriesProps> = ({ reactive }: ReactiveQueriesProps) => {
-  const { userQuery, postQuery } = setup({ reactive })
+const ReactiveQueries: Component<ReactiveQueriesProps> = ({ reactive, databaseOptions, initFromLocalStorage }: ReactiveQueriesProps) => {
+  const { userQuery, postQuery } = setup({ reactive, databaseOptions, initFromLocalStorage })
 
   const userId = 1
   const postId = 1

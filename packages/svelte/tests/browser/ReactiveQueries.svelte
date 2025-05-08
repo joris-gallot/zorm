@@ -1,9 +1,10 @@
 <script lang="ts">
+import type { SvelteDatabaseOptions } from '../../src'
 import { setup } from './setup.js'
 
-let { reactive } = $props();
+let { reactive, databaseOptions, initFromLocalStorage } = $props()
 
-let { userQuery, postQuery } = setup({ reactive })
+let { userQuery, postQuery } = setup({ reactive, databaseOptions, initFromLocalStorage })
 
 let userId = 1
 let users = $state(() => userQuery.query().where(user => (user.age || 0) > 10).get())

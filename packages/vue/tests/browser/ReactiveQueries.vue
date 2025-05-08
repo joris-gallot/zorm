@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import type { VueDatabaseOptions } from '../../src'
 import { computed } from 'vue'
 import { setup } from './setup.js'
 
-const { reactive } = defineProps<{
+const { reactive, initFromLocalStorage, databaseOptions } = defineProps<{
   reactive: boolean
+  initFromLocalStorage?: boolean
+  databaseOptions?: VueDatabaseOptions
 }>()
 
-const { userQuery, postQuery } = setup({ reactive })
+const { userQuery, postQuery } = setup({ reactive, initFromLocalStorage, databaseOptions })
 
 const userId = 1
 const users = computed(() => userQuery.query().where(user => (user.age || 0) > 10).get())

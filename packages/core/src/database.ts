@@ -1,5 +1,7 @@
 import type { ObjectWithId } from './orm'
 
+export const LOCAL_STORAGE_KEY = 'zorm_database'
+
 export interface ZormDatabase {
   registerEntity: (name: string) => void
   getAll: (entity: string) => ObjectWithId[]
@@ -18,7 +20,6 @@ export class DefaultDatabase implements ZormDatabase {
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    // entity is guaranteed to exist when getAll is called
     const values = this.#db[entity]!
 
     return Object.values(values)

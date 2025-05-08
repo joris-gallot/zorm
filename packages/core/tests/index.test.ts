@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest'
 import * as exports from '../src/index'
 
 const expectedExports = [
+  'LOCAL_STORAGE_KEY',
   'DefaultDatabase',
   'getDb',
-  'defineReactivityDatabase',
+  'defineDatabase',
   'defineEntity',
   'defineQueryBuilder',
 ]
