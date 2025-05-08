@@ -23,32 +23,33 @@ export class SolidjsDatabase implements ZormDatabase {
     }
   }
 
-  #db(): Record<string, Record<string, ObjectWithId>> {
+  get #db(): Record<string, Record<string, ObjectWithId>> {
     return this.#store[0]
   }
 
-  private setDb(...params: Parameters<SetStoreFunction<Record<string, Record<string, ObjectWithId>>>>): void {
+  private setDb(...params: any[]): void {
+    // @ts-expect-error - did not find a way to type this correctly
     this.#setDb(...params)
     if (this.#isLocalStorage) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#db()))
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#db))
     }
   }
 
   public registerEntity(name: string): void {
-    if (this.#db()[name]) {
+    if (this.#db[name]) {
       return
     }
 
-    this.setDb(name, {})
+    this.#setDb(name, {})
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    const values = this.#db()[entity]!
+    const values = this.#db[entity]!
     return Object.values(values)
   }
 
   public getEntity(entity: string, id: ObjectWithId['id']): ObjectWithId | null {
-    return this.#db()[entity]?.[id] ?? null
+    return this.#db[entity]?.[id] ?? null
   }
 
   public setEntity(entity: string, value: ObjectWithId): void {
@@ -68,6 +69,6 @@ export class SolidjsDatabase implements ZormDatabase {
   }
 
   public getData(): Record<string, Record<string, ObjectWithId>> {
-    return this.#db()
+    return this.#db
   }
 }
