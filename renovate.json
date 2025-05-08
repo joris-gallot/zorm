@@ -4,5 +4,12 @@
     "config:recommended"
   ],
   "rangeStrategy": "bump",
-  "ignoreDeps": ["svelte", "vue", "solid-js", "zod"]
+  "ignoreDeps": ["svelte", "vue", "solid-js", "zod"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["@types/node"],
+      "matchUpdateTypes": ["patch"],
+      "enabled": false
+    }
+  ]
 }
