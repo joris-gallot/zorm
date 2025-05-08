@@ -8,6 +8,7 @@ import { defaultDbData } from './setup'
 describe('reactivity', async () => {
   beforeEach(() => {
     defineDatabase(new DefaultDatabase())
+    getDb().setData({})
   })
 
   it('should not react to changes', async () => {
