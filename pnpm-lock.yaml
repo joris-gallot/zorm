@@ -155,7 +155,7 @@ importers:
   packages/solidjs:
     dependencies:
       '@zorm-ts/core':
-        specifier: workspace:>=0.2.0
+        specifier: workspace:>=0.2.1
         version: link:../core
       solid-js:
         specifier: catalog:solidjs
@@ -183,7 +183,7 @@ importers:
   packages/svelte:
     dependencies:
       '@zorm-ts/core':
-        specifier: workspace:>=0.2.0
+        specifier: workspace:>=0.2.1
         version: link:../core
       svelte:
         specifier: catalog:svelte
@@ -211,7 +211,7 @@ importers:
   packages/vue:
     dependencies:
       '@zorm-ts/core':
-        specifier: workspace:>=0.2.0
+        specifier: workspace:>=0.2.1
         version: link:../core
       vue:
         specifier: catalog:vue

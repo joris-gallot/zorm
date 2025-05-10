@@ -1,7 +1,7 @@
 {
   "name": "@zorm-ts/svelte",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Svelte integration for zorm",
   "author": "Joris Gallot",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@zorm-ts/core": "workspace:>=0.2.0",
+    "@zorm-ts/core": "workspace:>=0.2.1",
     "svelte": "catalog:svelte"
   },
   "devDependencies": {
