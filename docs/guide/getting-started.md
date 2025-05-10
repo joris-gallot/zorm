@@ -40,7 +40,7 @@ const User = defineEntity(
   z.object({
     id: z.number(),
     email: z.string().email(),
-    name: z.string()
+    name: z.string().optional()
   })
 )
 
