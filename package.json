@@ -23,16 +23,23 @@
     "publish:core": "sh scripts/publish.sh core",
     "publish:vue": "sh scripts/publish.sh vue",
     "publish:svelte": "sh scripts/publish.sh svelte",
-    "publish:solidjs": "sh scripts/publish.sh solidjs"
+    "publish:solidjs": "sh scripts/publish.sh solidjs",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@antfu/ni": "catalog:",
+    "@shikijs/vitepress-twoslash": "catalog:docs",
     "@vitest/browser": "catalog:test",
     "@vitest/coverage-v8": "catalog:test",
     "@vitest/ui": "catalog:test",
+    "@zorm-ts/core": "workspace:*",
     "eslint": "catalog:lint",
     "playwright": "catalog:test",
-    "vitest": "catalog:test"
+    "vitepress": "catalog:docs",
+    "vitest": "catalog:test",
+    "zod": "catalog:"
   }
 }

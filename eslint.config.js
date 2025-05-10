@@ -15,6 +15,7 @@ export default antfu(
     ignores: [
       '**/tests/**',
       'playground/**',
+      'docs/**',
     ],
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'error',
