@@ -9,47 +9,47 @@ export interface SolidjsDatabaseOptions {
 
 /* v8 ignore next: find why the next line is partially uncovered */
 export class SolidjsDatabase implements ZormDatabase {
-  #store: [Record<string, Record<string, ObjectWithId>>, SetStoreFunction<Record<string, Record<string, ObjectWithId>>>]
-  #setDb: SetStoreFunction<Record<string, Record<string, ObjectWithId>>>
-  #isLocalStorage: boolean
+  private store: [Record<string, Record<string, ObjectWithId>>, SetStoreFunction<Record<string, Record<string, ObjectWithId>>>]
+  private setStore: SetStoreFunction<Record<string, Record<string, ObjectWithId>>>
+  private isLocalStorage: boolean
 
   constructor({ localStorage: isLocalStorage = false }: SolidjsDatabaseOptions = {}) {
-    this.#store = createStore<Record<string, Record<string, ObjectWithId>>>({})
-    this.#setDb = this.#store[1]
-    this.#isLocalStorage = isLocalStorage
+    this.store = createStore<Record<string, Record<string, ObjectWithId>>>({})
+    this.setStore = this.store[1]
+    this.isLocalStorage = isLocalStorage
 
     if (isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
       this.setDb(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!))
     }
   }
 
-  get #db(): Record<string, Record<string, ObjectWithId>> {
-    return this.#store[0]
+  private get db(): Record<string, Record<string, ObjectWithId>> {
+    return this.store[0]
   }
 
   private setDb(...params: any[]): void {
     // @ts-expect-error - did not find a way to type this correctly
-    this.#setDb(...params)
-    if (this.#isLocalStorage) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#db))
+    this.setStore(...params)
+    if (this.isLocalStorage) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.db))
     }
   }
 
   public registerEntity(name: string): void {
-    if (this.#db[name]) {
+    if (this.db[name]) {
       return
     }
 
-    this.#setDb(name, {})
+    this.setDb(name, {})
   }
 
   public getAll(entity: string): ObjectWithId[] {
-    const values = this.#db[entity]!
+    const values = this.db[entity]!
     return Object.values(values)
   }
 
   public getEntity(entity: string, id: ObjectWithId['id']): ObjectWithId | null {
-    return this.#db[entity]?.[id] ?? null
+    return this.db[entity]?.[id] ?? null
   }
 
   public setEntity(entity: string, value: ObjectWithId): void {
@@ -61,7 +61,7 @@ export class SolidjsDatabase implements ZormDatabase {
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
-    if (this.#isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
+    if (this.isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
       return
     }
 
@@ -69,6 +69,6 @@ export class SolidjsDatabase implements ZormDatabase {
   }
 
   public getData(): Record<string, Record<string, ObjectWithId>> {
-    return this.#db
+    return this.db
   }
 }
