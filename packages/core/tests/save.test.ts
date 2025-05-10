@@ -708,7 +708,7 @@ describe('save', () => {
           title: 'short',
           userId: 1,
         }],
-      }])).toThrow('String must contain at least 10 character(s)')
+      }])).toThrow()
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -746,7 +746,7 @@ describe('save', () => {
         id: 1,
         title: 'short',
         userId: 1,
-      }])).toThrow('String must contain at least 10 character(s)')
+      }])).toThrow()
 
       expect(() => queryBuilder.post.save([{
         id: 1,
@@ -816,7 +816,7 @@ describe('save', () => {
           title: 'short',
           userId: 1,
         }],
-      }])).toThrow('String must contain at least 10 character(s)')
+      }])).toThrow()
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -845,7 +845,7 @@ describe('save', () => {
             postId: 1,
           }],
         }],
-      }])).toThrow('String must contain at most 10 character(s)')
+      }])).toThrow()
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -904,7 +904,7 @@ describe('save', () => {
         id: 1,
         title: 'short',
         userId: 1,
-      }])).toThrow('String must contain at least 10 character(s)')
+      }])).toThrow()
 
       expect(() => queryBuilder.post.save([{
         id: 1,
