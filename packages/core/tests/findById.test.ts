@@ -146,7 +146,7 @@ describe('findById', () => {
     }))
 
     const Post = defineEntity('post', z.object({
-      id: z.number(),
+      id: z.string(),
       title: z.string(),
       userId: z.string(),
     }))
@@ -166,7 +166,7 @@ describe('findById', () => {
     }])
 
     queryBuilder.post.save([{
-      id: 1,
+      id: '1',
       title: 'Post 1',
       userId: '1',
     }])
@@ -187,13 +187,13 @@ describe('findById', () => {
     expect(userWithPosts).toEqual({
       id: '1',
       name: 'John Doe',
-      posts: [{ id: 1, title: 'Post 1', userId: '1' }],
+      posts: [{ id: '1', title: 'Post 1', userId: '1' }],
     })
     assertType<{
       id: string
       name: string
       posts: Array<{
-        id: number
+        id: string
         title: string
         userId: string
       }>
