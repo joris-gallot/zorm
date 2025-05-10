@@ -7,10 +7,10 @@ export default defineConfig({
   themeConfig: {
     sidebar: [
       {
-        text: 'Getting Started',
+        text: 'Guide',
         items: [
-          { text: 'Introduction', link: '/introduction' },
-          { text: 'Why?', link: '/why' },
+          { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Why?', link: '/guide/why' },
         ],
       },
     ],
