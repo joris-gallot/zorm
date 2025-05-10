@@ -10,7 +10,7 @@ catalog:
 catalogs:
   docs:
     '@shikijs/vitepress-twoslash': ^3.3.0
-    vitepress: ^2.0.0-alpha.5
+    vitepress: 2.0.0-alpha.5
   lint:
     '@antfu/eslint-config': ^4.13.0
     eslint: ^9.26.0
