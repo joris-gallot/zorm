@@ -16,17 +16,11 @@ npm install @zorm-ts/core
 
 zorm provides dedicated packages for popular frameworks:
 
-- **SolidJS**: `@zorm-ts/solidjs`
-- **Svelte**: `@zorm-ts/svelte`
-- **Vue**: `@zorm-ts/vue`
+- **[SolidJS](https://www.solidjs.com/)**: `@zorm-ts/solidjs` - [Documentation](/reactivity/solidjs)
+- **[Svelte](https://svelte.dev/)**: `@zorm-ts/svelte` - [Documentation](/reactivity/svelte)
+- **[Vue](https://vuejs.org/)**: `@zorm-ts/vue` - [Documentation](/reactivity/vue)
 
-Each integration package provides reactive bindings that work seamlessly with the framework's reactivity system.
-
-```bash
-npm install @zorm-ts/solidjs  # For SolidJS
-npm install @zorm-ts/svelte   # For Svelte
-npm install @zorm-ts/vue      # For Vue
-```
+Each integration package provides reactive bindings that work seamlessly with the framework's reactivity system, see the [How it works](/reactivity/how-it-works) guide for a detailed explanation of the reactivity system.
 
 ## Example
 
