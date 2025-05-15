@@ -24,7 +24,7 @@ catalogs:
     '@sveltejs/kit': ^2.20.8
     '@sveltejs/vite-plugin-svelte': ^5.0.3
     svelte: '>=5.0.0'
-    svelte-check: ^4.1.7
+    svelte-check: ^4.2.1
     vitest-browser-svelte: ^0.1.0
   test:
     '@vitest/browser': ^3.1.3
