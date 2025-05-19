@@ -25,9 +25,9 @@ jobs:
   tests:
     strategy:
       matrix:
-        zod-version: [3, 4]
+        zod-version: [v3, next]
     runs-on: ubuntu-latest
-    name: Tests - zod v${{ matrix.zod-version }}
+    name: Tests - zod ${{ matrix.zod-version }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Environment
@@ -35,9 +35,9 @@ jobs:
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install
-      
-      - name: Install zod v4
-        if: matrix.zod-version == 4
+
+      - name: Install zod next
+        if: matrix.zod-version == 'next'
         run: pnpm add zod@next --filter @zorm-ts/core
 
       - name: zod version
