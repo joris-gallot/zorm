@@ -33,7 +33,7 @@ catalogs:
     playwright: ^1.52.0
     vitest: ^3.1.4
   types:
-    '@tsconfig/node22': ^22.0.1
+    '@tsconfig/node22': ^22.0.2
     '@types/node': ^22.15.3
     typescript: ^5.8.3
   vue:
