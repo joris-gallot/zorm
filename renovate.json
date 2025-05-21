@@ -4,6 +4,7 @@
     "config:recommended"
   ],
   "rangeStrategy": "bump",
+  "automergeType": "branch",
   "ignoreDeps": ["svelte", "vue", "solid-js", "zod"],
   "packageRules": [
     {
