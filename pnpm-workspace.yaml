@@ -3,7 +3,7 @@ packages:
   - playground/*
 
 catalog:
-  '@antfu/ni': ^24.4.0
+  '@antfu/ni': ^25.0.0
   unbuild: ^3.5.0
   zod: '>=3.0.0'
 
