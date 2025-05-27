@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@antfu/ni':
-      specifier: ^24.4.0
-      version: 24.4.0
+      specifier: ^25.0.0
+      version: 25.0.0
     unbuild:
       specifier: ^3.5.0
       version: 3.5.0
@@ -116,7 +116,7 @@ importers:
         version: 4.13.2(@vue/compiler-sfc@3.5.13)(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3)(vitest@3.1.4)
       '@antfu/ni':
         specifier: 'catalog:'
-        version: 24.4.0
+        version: 25.0.0
       '@vitest/browser':
         specifier: catalog:test
         version: 3.1.4(playwright@1.52.0)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1))(vitest@3.1.4)
@@ -414,8 +414,8 @@ packages:
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
 
-  '@antfu/ni@24.4.0':
-    resolution: {integrity: sha512-ZjriRbGyWGSrBE1RY2qBIXyilejMWLDWh2Go2dqFottyiuOze36+BpPch2z2WnGEgEbzTBVPetMmQvt0xt+iww==}
+  '@antfu/ni@25.0.0':
+    resolution: {integrity: sha512-9q/yCljni37pkMr4sPrI3G4jqdIk074+iukc5aFJl7kmDCCsiJrbZ6zKxnES1Gwg+i9RcDZwvktl23puGslmvA==}
     hasBin: true
 
   '@antfu/utils@0.7.10':
@@ -4009,7 +4009,7 @@ snapshots:
       package-manager-detector: 1.3.0
       tinyexec: 1.0.1
 
-  '@antfu/ni@24.4.0':
+  '@antfu/ni@25.0.0':
     dependencies:
       ansis: 4.0.0
       fzf: 0.5.2
