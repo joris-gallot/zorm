@@ -40,8 +40,8 @@ catalogs:
       specifier: '>=1.9.0'
       version: 1.9.6
     vite-plugin-solid:
-      specifier: ^2.11.6
-      version: 2.11.6
+      specifier: ^2.11.7
+      version: 2.11.7
   svelte:
     '@sveltejs/adapter-auto':
       specifier: ^6.0.1
@@ -175,7 +175,7 @@ importers:
         version: 3.5.0(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(vue@3.5.13(typescript@5.8.3))
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.6(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1))
+        version: 2.11.7(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1))
       zod:
         specifier: 'catalog:'
         version: 3.24.2
@@ -268,7 +268,7 @@ importers:
         version: 6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1)
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.6(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1))
+        version: 2.11.7(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1))
 
   playground/svelte:
     dependencies:
@@ -3780,8 +3780,8 @@ packages:
       '@nuxt/kit':
         optional: true
 
-  vite-plugin-solid@2.11.6:
-    resolution: {integrity: sha512-Sl5CTqJTGyEeOsmdH6BOgalIZlwH3t4/y0RQuFLMGnvWMBvxb4+lq7x3BSiAw6etf0QexfNJW7HSOO/Qf7pigg==}
+  vite-plugin-solid@2.11.7:
+    resolution: {integrity: sha512-5TgK1RnE449g0Ryxb9BXqem89RSy7fE8XGVCo+Gw84IHgPuPVP7nYNP6WBVAaY/0xw+OqfdQee+kusL0y3XYNg==}
     peerDependencies:
       '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
       solid-js: ^1.7.2
@@ -7639,7 +7639,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-solid@2.11.6(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1)):
+  vite-plugin-solid@2.11.7(solid-js@1.9.6)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.7.1)):
     dependencies:
       '@babel/core': 7.26.10
       '@types/babel__core': 7.20.5
