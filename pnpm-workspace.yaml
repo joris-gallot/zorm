@@ -42,4 +42,4 @@ catalogs:
     vite-plugin-vue-devtools: ^7.7.7
     vitest-browser-vue: ^1.0.0
     vue: '>=3.2.25'
-    vue-tsc: ^2.2.10
+    vue-tsc: ^2.2.12
