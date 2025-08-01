@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "engines": {
-    "node": "22.17.1"
+    "node": "22.18.0"
   },
   "scripts": {
     "test": "vitest --run",
