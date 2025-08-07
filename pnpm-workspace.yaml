@@ -39,7 +39,7 @@ catalogs:
   vue:
     '@vitejs/plugin-vue': ^6.0.1
     '@vue/tsconfig': ^0.7.0
-    vite-plugin-vue-devtools: ^7.7.7
+    vite-plugin-vue-devtools: ^8.0.0
     vitest-browser-vue: ^1.0.0
     vue: '>=3.2.25'
     vue-tsc: ^3.0.5
