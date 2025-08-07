@@ -105,8 +105,8 @@ export type ActualRelations<E extends AnyEntity, R extends Relations<any>, N ext
       : never
 }
 
-export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = [E['name']], T extends ObjectWithId = z.infer<E['zodSchema']>> =
-  keyof R[E['name']] extends never
+export type EntityWithOptionalRelations<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, N extends string[] = [E['name']], T extends ObjectWithId = z.infer<E['zodSchema']>>
+  = keyof R[E['name']] extends never
     ? T
     : Prettify<T & Partial<ActualRelations<E, R, N>>>
 
@@ -177,10 +177,10 @@ function loadRelations<E extends AnyEntity, R extends Relations<any>, RL extends
 
 type Relations<Names extends string> = Partial<Record<Names, Record<string, Relation>>>
 
-export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> =
-  R[E['name']] extends Record<string, Relation> ?
-    R[E['name']][keyof R[E['name']]] extends Relation<any, infer RE extends AnyEntity> ?
-      RE['name']
+export type GetRelationEntitiesName<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>>
+  = R[E['name']] extends Record<string, Relation>
+    ? R[E['name']][keyof R[E['name']]] extends Relation<any, infer RE extends AnyEntity>
+      ? RE['name']
       : never
     : never
 
@@ -192,9 +192,10 @@ export type WithRelationsOption<
   ? never
   : {
       [K in keyof R[E['name']] as R[E['name']][K] extends Relation<any, infer RE> ? RE['name'] extends N[number] ? never : K : never]?:
-      R[E['name']][K] extends Relation<any, infer RE> ?
-      boolean |
-      (Exclude<GetRelationEntitiesName<RE, R>, N[number]> extends never ? never : WithRelationsOption<RE, R, [...N, RE['name']]>)
+      R[E['name']][K] extends Relation<any, infer RE>
+        // eslint-disable-next-line style/indent-binary-ops
+        ? boolean
+      | (Exclude<GetRelationEntitiesName<RE, R>, N[number]> extends never ? never : WithRelationsOption<RE, R, [...N, RE['name']]>)
         : never
     }
 
@@ -215,13 +216,13 @@ export type TypeOfRelations<
   W extends WithRelationsOption<E, R>,
   P extends boolean = false,
 > = {
-  [K in keyof W]: K extends keyof R[E['name']] ?
-    R[E['name']][K] extends Relation<infer RK, infer RE> ?
-      W[K] extends true ?
-        RK extends 'many' ? Array<z.infer<RE['zodSchema']>> : z.infer<RE['zodSchema']>
-        : W[K] extends WithRelationsOption<RE, R> ?
-          RK extends 'many' ?
-            Array<GetNestedRelationType<RE, R, W[K], P>>
+  [K in keyof W]: K extends keyof R[E['name']]
+    ? R[E['name']][K] extends Relation<infer RK, infer RE>
+      ? W[K] extends true
+        ? RK extends 'many' ? Array<z.infer<RE['zodSchema']>> : z.infer<RE['zodSchema']>
+        : W[K] extends WithRelationsOption<RE, R>
+          ? RK extends 'many'
+            ? Array<GetNestedRelationType<RE, R, W[K], P>>
             : GetNestedRelationType<RE, R, W[K], P>
           : never
       : never
@@ -241,8 +242,8 @@ type RelationsFn<N extends string, R extends Relations<N>> = (options: Relations
 
 interface FindByIdOptions<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>> { with?: WithRelationsOption<E, R> }
 
-type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId, O extends FindByIdOptions<E, R>> =
-  O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with']>> : T
+type FindByIdResult<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId, O extends FindByIdOptions<E, R>>
+  = O extends { with: any } ? Prettify<T & TypeOfRelations<E, R, O['with']>> : T
 
 interface QueryBuilder<E extends Entity<string, ZodSchemaWithId>, R extends Relations<any>, T extends ObjectWithId = z.infer<E['zodSchema']>> {
   query: () => Query<E, R, T>
