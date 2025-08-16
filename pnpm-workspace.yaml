@@ -12,8 +12,8 @@ catalogs:
     '@antfu/eslint-config': ^5.2.1
     eslint: ^9.33.0
   playground:
-    '@tailwindcss/vite': ^4.1.11
-    tailwindcss: ^4.1.11
+    '@tailwindcss/vite': ^4.1.12
+    tailwindcss: ^4.1.12
     vite: ^6.3.4
   solidjs:
     '@solidjs/testing-library': ^0.8.10
