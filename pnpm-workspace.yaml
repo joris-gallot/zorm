@@ -4,7 +4,7 @@ packages:
 
 catalog:
   '@antfu/ni': ^25.0.0
-  unbuild: ^3.6.0
+  unbuild: ^3.6.1
   zod: '>=3.0.0'
 
 catalogs:
