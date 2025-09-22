@@ -56,8 +56,8 @@ catalogs:
       specifier: '>=5.0.0'
       version: 5.28.1
     svelte-check:
-      specifier: ^4.3.1
-      version: 4.3.1
+      specifier: ^4.3.2
+      version: 4.3.2
     vitest-browser-svelte:
       specifier: ^1.1.0
       version: 1.1.0
@@ -302,7 +302,7 @@ importers:
         version: 5.28.1
       svelte-check:
         specifier: catalog:svelte
-        version: 4.3.1(picomatch@4.0.3)(svelte@5.28.1)(typescript@5.9.2)
+        version: 4.3.2(picomatch@4.0.3)(svelte@5.28.1)(typescript@5.9.2)
       typescript:
         specifier: catalog:types
         version: 5.9.2
@@ -3741,8 +3741,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svelte-check@4.3.1:
-    resolution: {integrity: sha512-lkh8gff5gpHLjxIV+IaApMxQhTGnir2pNUAqcNgeKkvK5bT/30Ey/nzBxNLDlkztCH4dP7PixkMt9SWEKFPBWg==}
+  svelte-check@4.3.2:
+    resolution: {integrity: sha512-71udP5w2kaSTcX8iV0hn3o2FWlabQHhJTJLIQrCqMsrcOeDUO2VhCQKKCA8AMVHSPwdxLEWkUWh9OKxns5PD9w==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
@@ -4718,7 +4718,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -7687,7 +7687,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@4.3.1(picomatch@4.0.3)(svelte@5.28.1)(typescript@5.9.2):
+  svelte-check@4.3.2(picomatch@4.0.3)(svelte@5.28.1)(typescript@5.9.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.3
