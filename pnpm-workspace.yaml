@@ -9,7 +9,7 @@ catalog:
 
 catalogs:
   lint:
-    '@antfu/eslint-config': ^5.3.0
+    '@antfu/eslint-config': ^5.4.1
     eslint: ^9.35.0
   playground:
     '@tailwindcss/vite': ^4.1.13
