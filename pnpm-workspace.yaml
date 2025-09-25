@@ -30,7 +30,7 @@ catalogs:
     '@vitest/browser': ^3.2.4
     '@vitest/coverage-v8': ^3.2.4
     '@vitest/ui': ^3.2.4
-    playwright: ^1.55.0
+    playwright: ^1.55.1
     vitest: ^3.2.4
   types:
     '@tsconfig/node22': ^22.0.2
