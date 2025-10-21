@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@antfu/ni':
-      specifier: ^26.2.0
-      version: 26.2.0
+      specifier: ^27.0.0
+      version: 27.0.0
     unbuild:
       specifier: ^3.6.1
       version: 3.6.1
@@ -116,7 +116,7 @@ importers:
         version: 6.0.0(@vue/compiler-sfc@3.5.13)(eslint@9.38.0(jiti@2.6.1))(typescript@5.9.3)(vitest@3.2.4)
       '@antfu/ni':
         specifier: 'catalog:'
-        version: 26.2.0
+        version: 27.0.0
       '@vitest/browser':
         specifier: catalog:test
         version: 3.2.4(playwright@1.56.1)(vite@6.3.4(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))(vitest@3.2.4)
@@ -420,8 +420,8 @@ packages:
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
 
-  '@antfu/ni@26.2.0':
-    resolution: {integrity: sha512-bvOsrN8FGW1jTG2qD5ud1dpecarVwiAwXeLZ77b75CdDbh/A14L/kNNrvPoiBvyB2BvwJxvOaXBrFyticNYobA==}
+  '@antfu/ni@27.0.0':
+    resolution: {integrity: sha512-r6Qy0CU0xqOKUqEYUnjVrysytX0Z5FFQ0jWnnp9N/8HrvFFD+YmKu73MDgn/2EQrHcg1QmUvfWLKKbgUKPDFcA==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -3193,6 +3193,9 @@ packages:
   package-manager-detector@1.4.1:
     resolution: {integrity: sha512-dSMiVLBEA4XaNJ0PRb4N5cV/SEP4BWrWZKBmfF+OUm2pQTiZ6DDkKeWaltwu3JRhLoy59ayIkJ00cx9K9CaYTg==}
 
+  package-manager-detector@1.5.0:
+    resolution: {integrity: sha512-uBj69dVlYe/+wxj8JOpr97XfsxH/eumMt6HqjNTmJDf/6NO9s+0uxeOneIz3AsPt2m6y9PqzDzd3ATcU17MNfw==}
+
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -4150,11 +4153,11 @@ snapshots:
       package-manager-detector: 1.4.1
       tinyexec: 1.0.1
 
-  '@antfu/ni@26.2.0':
+  '@antfu/ni@27.0.0':
     dependencies:
       ansis: 4.2.0
       fzf: 0.5.2
-      package-manager-detector: 1.4.1
+      package-manager-detector: 1.5.0
       tinyexec: 1.0.1
       tinyglobby: 0.2.15
 
@@ -7090,6 +7093,8 @@ snapshots:
   package-json-from-dist@1.0.1: {}
 
   package-manager-detector@1.4.1: {}
+
+  package-manager-detector@1.5.0: {}
 
   parent-module@1.0.1:
     dependencies:
