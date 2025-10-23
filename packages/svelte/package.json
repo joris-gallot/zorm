@@ -42,6 +42,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "catalog:svelte",
     "@types/node": "catalog:types",
+    "@vitest/browser-playwright": "catalog:test",
     "typescript": "catalog:types",
     "unbuild": "catalog:",
     "vitest-browser-svelte": "catalog:svelte",

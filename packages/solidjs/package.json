@@ -42,6 +42,7 @@
   "devDependencies": {
     "@solidjs/testing-library": "catalog:solidjs",
     "@types/node": "catalog:types",
+    "@vitest/browser-playwright": "catalog:test",
     "typescript": "catalog:types",
     "unbuild": "catalog:",
     "vite-plugin-solid": "catalog:solidjs",

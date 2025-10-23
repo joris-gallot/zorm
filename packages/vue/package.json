@@ -42,6 +42,7 @@
   "devDependencies": {
     "@types/node": "catalog:types",
     "@vitejs/plugin-vue": "catalog:vue",
+    "@vitest/browser-playwright": "catalog:test",
     "typescript": "catalog:types",
     "unbuild": "catalog:",
     "vitest-browser-vue": "catalog:vue",

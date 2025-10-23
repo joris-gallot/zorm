@@ -5,7 +5,7 @@ export default defineConfig({
     include: ['zod'],
   },
   test: {
-    workspace: [
+    projects: [
       {
         test: {
           name: 'core',
