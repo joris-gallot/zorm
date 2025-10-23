@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
-      - '**/*.gitignore'
+      - "**/*.md"
+      - "**/*.gitignore"
       - LICENSE
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        zod-version: [v3, next]
+        zod-version: [v3, v4]
     runs-on: ubuntu-latest
     name: Tests - zod ${{ matrix.zod-version }}
     steps:
@@ -36,9 +36,9 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install
 
-      - name: Install zod next
-        if: matrix.zod-version == 'next'
-        run: pnpm add zod@next --filter @zorm-ts/core
+      - name: Install zod v3
+        if: matrix.zod-version == 'v3'
+        run: pnpm add zod@3 --filter @zorm-ts/core
 
       - name: zod version
         run: pnpm list zod --filter @zorm-ts/core
