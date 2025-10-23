@@ -3,16 +3,21 @@
     "target": "ESNext",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@zorm-ts/core": ["../core/src/index.ts"]
+      "@zorm-ts/core": [
+        "../core/src/index.ts"
+      ]
     },
-    "types": ["@vitest/browser/providers/playwright"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts"
+  ]
 }
