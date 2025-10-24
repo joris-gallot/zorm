@@ -6,9 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@antfu/ni':
-      specifier: ^27.0.0
-      version: 27.0.0
     unbuild:
       specifier: ^3.6.1
       version: 3.6.1
@@ -117,9 +114,6 @@ importers:
       '@antfu/eslint-config':
         specifier: catalog:lint
         version: 6.0.0(@vue/compiler-sfc@3.5.13)(eslint@9.38.0(jiti@2.6.1))(typescript@5.9.3)(vitest@4.0.1)
-      '@antfu/ni':
-        specifier: 'catalog:'
-        version: 27.0.0
       '@vitest/browser':
         specifier: catalog:test
         version: 4.0.1(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))(vitest@4.0.1)
@@ -431,11 +425,6 @@ packages:
 
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
-
-  '@antfu/ni@27.0.0':
-    resolution: {integrity: sha512-r6Qy0CU0xqOKUqEYUnjVrysytX0Z5FFQ0jWnnp9N/8HrvFFD+YmKu73MDgn/2EQrHcg1QmUvfWLKKbgUKPDFcA==}
-    engines: {node: '>=20'}
-    hasBin: true
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -2189,9 +2178,6 @@ packages:
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
-  fzf@0.5.2:
-    resolution: {integrity: sha512-Tt4kuxLXFKHy8KT40zwsUPUkg1CrsgY25FxA2U/j/0WgEDCk3ddc/zLTCCcbSHX9FcKtLuVaDGtGE/STWC+j3Q==}
-
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -3730,14 +3716,6 @@ snapshots:
     dependencies:
       package-manager-detector: 1.5.0
       tinyexec: 1.0.1
-
-  '@antfu/ni@27.0.0':
-    dependencies:
-      ansis: 4.2.0
-      fzf: 0.5.2
-      package-manager-detector: 1.5.0
-      tinyexec: 1.0.1
-      tinyglobby: 0.2.15
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -5637,8 +5615,6 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
-
-  fzf@0.5.2: {}
 
   gensync@1.0.0-beta.2: {}
 

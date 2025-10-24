@@ -14,8 +14,8 @@
     "lint:all": "eslint",
     "lint:fix": "eslint --fix packages",
     "lint:fix:all": "eslint --fix",
-    "typecheck": "nr -r typecheck",
-    "build": "nr -r build",
+    "typecheck": "pnpm -r typecheck",
+    "build": "pnpm -r build",
     "build:core": "cd packages/core && pnpm build",
     "build:vue": "cd packages/vue && pnpm build",
     "build:svelte": "cd packages/svelte && pnpm build",
@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
-    "@antfu/ni": "catalog:",
     "@vitest/browser": "catalog:test",
     "@vitest/coverage-istanbul": "catalog:test",
     "@vitest/ui": "catalog:test",
