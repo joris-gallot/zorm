@@ -1,6 +1,7 @@
 import type { DefaultDatabase } from '../src/database'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
+import { zodEmail } from '../../shared/zod'
 import { defineEntity, defineQueryBuilder, getDb } from '../src/orm'
 
 const db = getDb() as DefaultDatabase
@@ -663,7 +664,7 @@ describe('save', () => {
     it('should parse schema', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.email(),
+        email: zodEmail,
       }))
 
       const queryBuilder = defineQueryBuilder([User])
@@ -682,7 +683,7 @@ describe('save', () => {
     it('should parse schema in relations - many', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.email(),
+        email: zodEmail,
       }))
 
       const Post = defineEntity('post', z.object({
@@ -724,7 +725,7 @@ describe('save', () => {
     it('should parse schema in relations - one', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.email(),
+        email: zodEmail,
       }))
 
       const Post = defineEntity('post', z.object({
@@ -768,7 +769,7 @@ describe('save', () => {
     it('should parse schema with deep relations - many', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.email(),
+        email: zodEmail,
       }))
 
       const Post = defineEntity('post', z.object({
@@ -870,7 +871,7 @@ describe('save', () => {
     it('should parse schema with deep relations - one', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.email(),
+        email: zodEmail,
       }))
 
       const Post = defineEntity('post', z.object({

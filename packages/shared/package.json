@@ -1,0 +1,7 @@
+{
+  "name": "shared",
+  "type": "module",
+  "dependencies": {
+    "zod": "catalog:"
+  }
+}
