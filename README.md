@@ -27,7 +27,7 @@ export const User = defineEntity(
   'user',
   z.object({
     id: z.number(),
-    email: z.string().email(),
+    email: z.email(),
     age: z.number(),
     username: z.string().optional(),
     isAdmin: z.boolean()

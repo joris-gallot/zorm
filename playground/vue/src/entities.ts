@@ -9,7 +9,7 @@ export const User = defineEntity(
   z.object({
     id: z.number(),
     name: z.string(),
-    email: z.string().email(),
+    email: z.email(),
     age: z.number().optional(),
   }),
 )

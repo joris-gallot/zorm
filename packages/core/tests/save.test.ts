@@ -663,7 +663,7 @@ describe('save', () => {
     it('should parse schema', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.string().email(),
+        email: z.email(),
       }))
 
       const queryBuilder = defineQueryBuilder([User])
@@ -682,7 +682,7 @@ describe('save', () => {
     it('should parse schema in relations - many', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.string().email(),
+        email: z.email(),
       }))
 
       const Post = defineEntity('post', z.object({
@@ -724,7 +724,7 @@ describe('save', () => {
     it('should parse schema in relations - one', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.string().email(),
+        email: z.email(),
       }))
 
       const Post = defineEntity('post', z.object({
@@ -768,7 +768,7 @@ describe('save', () => {
     it('should parse schema with deep relations - many', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.string().email(),
+        email: z.email(),
       }))
 
       const Post = defineEntity('post', z.object({
@@ -870,7 +870,7 @@ describe('save', () => {
     it('should parse schema with deep relations - one', () => {
       const User = defineEntity('user', z.object({
         id: z.number(),
-        email: z.string().email(),
+        email: z.email(),
       }))
 
       const Post = defineEntity('post', z.object({
