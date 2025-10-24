@@ -28,9 +28,9 @@ catalogs:
     vitest-browser-svelte: ^2.0.0
   test:
     "@vitest/browser": ^4.0.1
-    "@vitest/coverage-istanbul": "^4.0.1"
+    "@vitest/coverage-istanbul": ^4.0.1
     "@vitest/ui": ^4.0.1
-    "@vitest/browser-playwright": "^4.0.1"
+    "@vitest/browser-playwright": ^4.0.1
     playwright: ^1.56.1
     vitest: ^4.0.1
   types:
