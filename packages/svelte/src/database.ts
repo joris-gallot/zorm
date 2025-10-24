@@ -7,10 +7,9 @@ export interface SvelteDatabaseOptions {
   localStorage?: boolean
 }
 
-/* v8 ignore next: find why the next line is partially uncovered */
 export class SvelteDatabase implements ZormDatabase {
   private db: Record<string, Record<string, ObjectWithId>> = {}
-  private updateDb: () => void = () => {}
+  private updateDb: () => void = () => { }
   private subscribe: () => void
   private isLocalStorage: boolean
 

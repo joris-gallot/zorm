@@ -41,6 +41,7 @@ export default defineConfig({
     ],
     coverage: {
       enabled: true,
+      provider: 'istanbul',
       include: ['packages/**/src/**/*.ts'],
       thresholds: {
         100: true,

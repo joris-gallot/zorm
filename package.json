@@ -29,7 +29,7 @@
     "@antfu/eslint-config": "catalog:lint",
     "@antfu/ni": "catalog:",
     "@vitest/browser": "catalog:test",
-    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/coverage-istanbul": "catalog:test",
     "@vitest/ui": "catalog:test",
     "eslint": "catalog:lint",
     "playwright": "catalog:test",

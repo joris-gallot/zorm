@@ -7,7 +7,6 @@ export interface VueDatabaseOptions {
   localStorage?: boolean
 }
 
-/* v8 ignore next: find why the next line is partially uncovered */
 export class VueDatabase implements ZormDatabase {
   private db: Ref<Record<string, Record<string, ObjectWithId>>> = ref({})
   private isLocalStorage: boolean

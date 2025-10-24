@@ -7,7 +7,6 @@ export interface SolidjsDatabaseOptions {
   localStorage?: boolean
 }
 
-/* v8 ignore next: find why the next line is partially uncovered */
 export class SolidjsDatabase implements ZormDatabase {
   private store: [Record<string, Record<string, ObjectWithId>>, SetStoreFunction<Record<string, Record<string, ObjectWithId>>>]
   private setStore: SetStoreFunction<Record<string, Record<string, ObjectWithId>>>
