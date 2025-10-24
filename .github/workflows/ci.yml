@@ -40,7 +40,7 @@ jobs:
         if: matrix.zod-version == 'v3'
         run: pnpm add zod@3 --filter @zorm-ts/core
 
-      - name: zod version
+      - name: Zod version
         run: pnpm list zod --filter @zorm-ts/core
 
       # Need to build the core package for reactivity tests
