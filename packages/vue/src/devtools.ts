@@ -32,86 +32,90 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
 
     // Get inspector tree - list all entities
     api.on.getInspectorTree((payload) => {
-      if (payload.inspectorId === inspectorId) {
-        const dbData = database.getData()
-        const entities = Object.keys(dbData)
-
-        payload.rootNodes = entities.map((entityName) => {
-          const entityData = dbData[entityName]
-          const count = Object.keys(entityData || {}).length
-
-          return {
-            id: entityName,
-            label: entityName,
-            tags: [
-              {
-                label: `${count} records`,
-                textColor: 0xFFFFFF,
-                backgroundColor: count > 0 ? 0x42B883 : 0x999999,
-              },
-            ],
-            children: Object.values(entityData || {}).map((record: ObjectWithId) => ({
-              id: `${entityName}-${record.id}`,
-              label: `${entityName}#${record.id}`,
-            })),
-          }
-        })
+      if (payload.inspectorId !== inspectorId) {
+        return
       }
+
+      const dbData = database.getData()
+      const entities = Object.keys(dbData)
+
+      payload.rootNodes = entities.map((entityName) => {
+        const entityData = dbData[entityName]
+        const count = Object.keys(entityData || {}).length
+
+        return {
+          id: entityName,
+          label: entityName,
+          tags: [
+            {
+              label: `${count} records`,
+              textColor: 0xFFFFFF,
+              backgroundColor: count > 0 ? 0x42B883 : 0x999999,
+            },
+          ],
+          children: Object.values(entityData || {}).map((record: ObjectWithId) => ({
+            id: `${entityName}-${record.id}`,
+            label: `${entityName}#${record.id}`,
+          })),
+        }
+      })
     })
 
     // Get inspector state - show entity or record details
     api.on.getInspectorState((payload) => {
-      if (payload.inspectorId === inspectorId) {
-        const dbData = database.getData()
+      if (payload.inspectorId !== inspectorId) {
+        return
+      }
 
-        // Check if it's a specific record (format: entityName-id)
-        if (payload.nodeId.includes('-')) {
-          const [entityName, recordId] = payload.nodeId.split('-')
-          const entity = database.getEntity(entityName!, recordId!)
+      const dbData = database.getData()
 
-          if (!entity) {
-            return
-          }
+      // Check if it's a specific record (format: entityName-id)
+      if (payload.nodeId.includes('-')) {
+        const [entityName, recordId] = payload.nodeId.split('-')
+        const entity = database.getEntity(entityName!, recordId!)
 
-          payload.state = {
-            [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
-              key,
-              value,
-              editable: key !== 'id',
-            })),
-          }
+        if (!entity) {
+          return
         }
-        // It's an entity node
-        else {
-          const entityName = payload.nodeId
-          const entityData = dbData[entityName]
 
-          if (!entityData) {
-            return
-          }
+        payload.state = {
+          [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
+            key,
+            value,
+            editable: key !== 'id',
+          })),
+        }
+      }
+      // It's an entity node
+      else {
+        const entityName = payload.nodeId
+        const entityData = dbData[entityName]
 
-          const records = Object.values(entityData)
-          const recordCount = records.length
+        if (!entityData) {
+          return
+        }
 
-          payload.state = {
-            'Entity Info': [
-              {
-                key: 'name',
-                value: entityName,
-                editable: false,
-              },
-              {
-                key: 'count',
-                value: recordCount,
-                editable: false,
-              },
-            ],
-            'Records': records.map((record: ObjectWithId) => ({
-              key: `${entityName}#${record.id}`,
-              value: record,
-              editable: true,
-            })),
-          }
+        const records = Object.values(entityData)
+        const recordCount = records.length
+
+        payload.state = {
+          'Entity Info': [
+            {
+              key: 'name',
+              value: entityName,
+              editable: false,
+            },
+            {
+              key: 'count',
+              value: recordCount,
+              editable: false,
+            },
+          ],
+          'Records': records.map((record: ObjectWithId) => ({
+            key: `${entityName}#${record.id}`,
+            value: record,
+            editable: true,
+          })),
         }
       }
     })
@@ -154,22 +158,36 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
       if (payload.nodeId.includes('-')) {
         const [entityName, recordId] = payload.nodeId.split('-')
         const key = path[path.length - 1]
-        updateEntityField(entityName!, recordId!, key!, state.value)
+
+        if (!entityName || !recordId || !key) {
+          throw new Error('Invalid path for editing inspector state', { cause: { path } })
+        }
+
+        updateEntityField(entityName, recordId, key, state.value)
       }
       // It's an entity node
       else {
         const [entityName, recordId] = path[0]!.split('#')
 
+        if (!recordId || !entityName) {
+          throw new Error('Invalid path for editing inspector state', { cause: { path } })
+        }
+
         // Edit entire entity record
         if (path.length === 1) {
           Object.entries(state.value).forEach(([key, value]) => {
-            updateEntityField(entityName!, recordId!, key, value)
+            updateEntityField(entityName, recordId, key, value)
           })
         }
         // Edit single field
         else {
           const key = path[1]
-          updateEntityField(entityName!, recordId!, key, state.value)
+
+          if (!key) {
+            throw new Error('Invalid path for editing inspector state', { cause: { path } })
+          }
+
+          updateEntityField(entityName, recordId, key, state.value)
         }
       }
 
