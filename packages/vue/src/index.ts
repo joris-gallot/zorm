@@ -12,6 +12,7 @@ export function useReactiveDatabase(options?: VueDatabaseOptions): void {
 }
 
 export default {
+  // istanbul ignore next
   install(app: App, options?: VueDatabaseOptions): void {
     useReactiveDatabase(options)
 
