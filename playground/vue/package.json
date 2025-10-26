@@ -22,7 +22,6 @@
     "@vue/tsconfig": "catalog:vue",
     "typescript": "catalog:types",
     "vite": "catalog:playground",
-    "vite-plugin-vue-devtools": "catalog:vue",
     "vue-tsc": "catalog:vue"
   }
 }
