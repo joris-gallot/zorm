@@ -17,7 +17,7 @@ catalogs:
   solidjs:
     "@solidjs/testing-library": ^0.8.10
     solid-js: ">=1.9.0"
-    vite-plugin-solid: ^2.11.9
+    vite-plugin-solid: ^2.11.10
   svelte:
     "@sveltejs/adapter-auto": ^7.0.0
     "@sveltejs/kit": ^2.47.3

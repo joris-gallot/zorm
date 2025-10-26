@@ -37,8 +37,8 @@ catalogs:
       specifier: '>=1.9.0'
       version: 1.9.6
     vite-plugin-solid:
-      specifier: ^2.11.9
-      version: 2.11.9
+      specifier: ^2.11.10
+      version: 2.11.10
   svelte:
     '@sveltejs/adapter-auto':
       specifier: ^7.0.0
@@ -181,7 +181,7 @@ importers:
         version: 3.6.1(typescript@5.9.3)(vue-tsc@2.2.12(typescript@5.9.3))(vue@3.5.13(typescript@5.9.3))
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.9(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))
+        version: 2.11.10(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))
       zod:
         specifier: 'catalog:'
         version: 4.1.12
@@ -280,7 +280,7 @@ importers:
         version: 7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1)
       vite-plugin-solid:
         specifier: catalog:solidjs
-        version: 2.11.9(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))
+        version: 2.11.10(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))
 
   playground/svelte:
     dependencies:
@@ -3451,8 +3451,8 @@ packages:
       '@nuxt/kit':
         optional: true
 
-  vite-plugin-solid@2.11.9:
-    resolution: {integrity: sha512-bTA6p+bspXZsuulSd2y6aTzegF8xGaJYcq1Uyh/mv+W4DQtzCgL9nN6n2fsTaxp/dMk+ZHHKgGndlNeooqHLKw==}
+  vite-plugin-solid@2.11.10:
+    resolution: {integrity: sha512-Yr1dQybmtDtDAHkii6hXuc1oVH9CPcS/Zb2jN/P36qqcrkNnVPsMTzQ06jyzFPFjj3U1IYKMVt/9ZqcwGCEbjw==}
     peerDependencies:
       '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
       solid-js: ^1.7.2
@@ -7066,7 +7066,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-solid@2.11.9(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1)):
+  vite-plugin-solid@2.11.10(solid-js@1.9.6)(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1)):
     dependencies:
       '@babel/core': 7.26.10
       '@types/babel__core': 7.20.5
