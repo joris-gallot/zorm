@@ -67,16 +67,18 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
         // Check if it's a specific record (format: entityName-id)
         if (payload.nodeId.includes('-')) {
           const [entityName, recordId] = payload.nodeId.split('-')
-          const entity = database.getEntity(entityName, recordId)
+          const entity = database.getEntity(entityName!, recordId!)
 
-          if (entity) {
-            payload.state = {
-              [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
-                key,
-                value,
-                editable: key !== 'id',
-              })),
-            }
+          if (!entity) {
+            return
+          }
+
+          payload.state = {
+            [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
+              key,
+              value,
+              editable: key !== 'id',
+            })),
           }
         }
         // It's an entity node
@@ -84,29 +86,31 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
           const entityName = payload.nodeId
           const entityData = dbData[entityName]
 
-          if (entityData) {
-            const records = Object.values(entityData)
-            const recordCount = records.length
+          if (!entityData) {
+            return
+          }
 
-            payload.state = {
-              'Entity Info': [
-                {
-                  key: 'name',
-                  value: entityName,
-                  editable: false,
-                },
-                {
-                  key: 'count',
-                  value: recordCount,
-                  editable: false,
-                },
-              ],
-              'Records': records.map((record: ObjectWithId) => ({
-                key: `${entityName}#${record.id}`,
-                value: record,
+          const records = Object.values(entityData)
+          const recordCount = records.length
+
+          payload.state = {
+            'Entity Info': [
+              {
+                key: 'name',
+                value: entityName,
                 editable: false,
-              })),
-            }
+              },
+              {
+                key: 'count',
+                value: recordCount,
+                editable: false,
+              },
+            ],
+            'Records': records.map((record: ObjectWithId) => ({
+              key: `${entityName}#${record.id}`,
+              value: record,
+              editable: true,
+            })),
           }
         }
       }
@@ -119,12 +123,12 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
           const [entityName, recordId] = payload.nodeId.split('-')
           const { path, state } = payload
 
-          if (path.length === 0) {
+          if (path.length <= 1) {
             return
           }
 
-          const key = path[path.length - 1]
-          database.setEntityKey(entityName, recordId, key, state.value)
+          const key = path[1]!
+          database.setEntityKey(entityName!, recordId!, key, state.value)
 
           // Add timeline event
           api.addTimelineEvent({
@@ -157,7 +161,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
           // Edit entity record
           if (path.length === 1) {
             Object.entries(state.value).forEach(([key, value]) => {
-              database.setEntityKey(entityName, recordId, key, value)
+              database.setEntityKey(entityName!, recordId!, key!, value)
 
               // Add timeline event
               api.addTimelineEvent({
@@ -181,7 +185,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
           }
           else {
             const key = path[1]
-            database.setEntityKey(entityName, recordId, key, state.value)
+            database.setEntityKey(entityName!, recordId!, key!, state.value)
 
             // Add timeline event
             api.addTimelineEvent({
