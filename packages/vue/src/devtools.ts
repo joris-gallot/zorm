@@ -116,98 +116,65 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
       }
     })
 
+    const addFieldUpdateEvent = (entityName: string, recordId: string, key: string, newValue: unknown) => {
+      api.addTimelineEvent({
+        layerId: timelineLayerId,
+        event: {
+          time: Date.now(),
+          data: {
+            entity: entityName,
+            recordId,
+            field: key,
+            newValue,
+          },
+          title: 'Field Updated',
+          subtitle: `${entityName}#${recordId}.${key}`,
+        },
+      })
+    }
+
+    const updateEntityField = (entityName: string, recordId: string, key: string, value: unknown) => {
+      database.setEntityKey(entityName, recordId, key, value)
+      addFieldUpdateEvent(entityName, recordId, key, value)
+    }
+
     // Edit inspector state
     api.on.editInspectorState((payload) => {
-      if (payload.inspectorId === inspectorId) {
-        if (payload.nodeId.includes('-')) {
-          const [entityName, recordId] = payload.nodeId.split('-')
-          const { path, state } = payload
+      if (payload.inspectorId !== inspectorId) {
+        return
+      }
 
-          if (path.length <= 1) {
-            return
-          }
+      const { path, state } = payload
 
-          const key = path[1]!
-          database.setEntityKey(entityName!, recordId!, key, state.value)
+      if (path.length === 0) {
+        return
+      }
 
-          // Add timeline event
-          api.addTimelineEvent({
-            layerId: timelineLayerId,
-            event: {
-              time: Date.now(),
-              data: {
-                entity: entityName,
-                recordId,
-                field: key,
-                newValue: state.value,
-              },
-              title: 'Field Updated',
-              subtitle: `${entityName}#${recordId}.${key}`,
-            },
+      // Check if it's a specific record (format: entityName-id)
+      if (payload.nodeId.includes('-')) {
+        const [entityName, recordId] = payload.nodeId.split('-')
+        const key = path[path.length - 1]
+        updateEntityField(entityName!, recordId!, key!, state.value)
+      }
+      // It's an entity node
+      else {
+        const [entityName, recordId] = path[0]!.split('#')
+
+        // Edit entire entity record
+        if (path.length === 1) {
+          Object.entries(state.value).forEach(([key, value]) => {
+            updateEntityField(entityName!, recordId!, key, value)
           })
-
-          // Refresh inspector
-          api.sendInspectorState(inspectorId)
         }
+        // Edit single field
         else {
-          const { path, state } = payload
-
-          if (path.length === 0) {
-            return
-          }
-
-          const [entityName, recordId] = path[0]!.split('#')
-
-          // Edit entity record
-          if (path.length === 1) {
-            Object.entries(state.value).forEach(([key, value]) => {
-              database.setEntityKey(entityName!, recordId!, key!, value)
-
-              // Add timeline event
-              api.addTimelineEvent({
-                layerId: timelineLayerId,
-                event: {
-                  time: Date.now(),
-                  data: {
-                    entity: entityName,
-                    recordId,
-                    field: key,
-                    newValue: value,
-                  },
-                  title: 'Field Updated',
-                  subtitle: `${entityName}#${recordId}.${key}`,
-                },
-              })
-            })
-
-            // Refresh inspector
-            api.sendInspectorState(inspectorId)
-          }
-          else {
-            const key = path[1]
-            database.setEntityKey(entityName!, recordId!, key!, state.value)
-
-            // Add timeline event
-            api.addTimelineEvent({
-              layerId: timelineLayerId,
-              event: {
-                time: Date.now(),
-                data: {
-                  entity: entityName,
-                  recordId,
-                  field: key,
-                  newValue: state.value,
-                },
-                title: 'Field Updated',
-                subtitle: `${entityName}#${recordId}.${key}`,
-              },
-            })
-
-            // Refresh inspector
-            api.sendInspectorState(inspectorId)
-          }
+          const key = path[1]
+          updateEntityField(entityName!, recordId!, key, state.value)
         }
       }
+
+      // Refresh inspector
+      api.sendInspectorState(inspectorId)
     })
 
     // Watch for database changes and notify inspector
