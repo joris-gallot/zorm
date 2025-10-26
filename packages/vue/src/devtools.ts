@@ -1,4 +1,4 @@
-import type { ZormDatabase } from '@zorm-ts/core'
+import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
 import type { App } from 'vue'
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { watch } from 'vue'
@@ -12,7 +12,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
     label: 'Zorm',
     packageName: 'zorm',
     homepage: 'https://github.com/joris-gallot/zorm',
-    logo: 'https://zod.dev/logo.svg',
+    logo: 'https://vuejs.org/images/icons/favicon-96x96.png',
     componentStateTypes: [],
     app,
   }, (api) => {
@@ -42,7 +42,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
 
           return {
             id: entityName,
-            label: `${entityName} (${count})`,
+            label: entityName,
             tags: [
               {
                 label: `${count} records`,
@@ -50,9 +50,9 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
                 backgroundColor: count > 0 ? 0x42B883 : 0x999999,
               },
             ],
-            children: Object.values(entityData || {}).map((record: any) => ({
+            children: Object.values(entityData || {}).map((record: ObjectWithId) => ({
               id: `${entityName}-${record.id}`,
-              label: `#${record.id}`,
+              label: `${entityName}#${record.id}`,
             })),
           }
         })
@@ -71,7 +71,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
 
           if (entity) {
             payload.state = {
-              'Record Details': Object.entries(entity).map(([key, value]) => ({
+              [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
                 key,
                 value,
                 editable: key !== 'id',
@@ -101,8 +101,8 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
                   editable: false,
                 },
               ],
-              'Records': records.map((record: any) => ({
-                key: `Record #${record.id}`,
+              'Records': records.map((record: ObjectWithId) => ({
+                key: `${entityName}#${record.id}`,
                 value: record,
                 editable: false,
               })),
@@ -114,11 +114,15 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
 
     // Edit inspector state
     api.on.editInspectorState((payload) => {
-      if (payload.inspectorId === inspectorId && payload.nodeId.includes('-')) {
-        const [entityName, recordId] = payload.nodeId.split('-')
-        const { path, state } = payload
+      if (payload.inspectorId === inspectorId) {
+        if (payload.nodeId.includes('-')) {
+          const [entityName, recordId] = payload.nodeId.split('-')
+          const { path, state } = payload
 
-        if (path.length > 0) {
+          if (path.length === 0) {
+            return
+          }
+
           const key = path[path.length - 1]
           database.setEntityKey(entityName, recordId, key, state.value)
 
@@ -140,6 +144,64 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
 
           // Refresh inspector
           api.sendInspectorState(inspectorId)
+        }
+        else {
+          const { path, state } = payload
+
+          if (path.length === 0) {
+            return
+          }
+
+          const [entityName, recordId] = path[0]!.split('#')
+
+          // Edit entity record
+          if (path.length === 1) {
+            Object.entries(state.value).forEach(([key, value]) => {
+              database.setEntityKey(entityName, recordId, key, value)
+
+              // Add timeline event
+              api.addTimelineEvent({
+                layerId: timelineLayerId,
+                event: {
+                  time: Date.now(),
+                  data: {
+                    entity: entityName,
+                    recordId,
+                    field: key,
+                    newValue: value,
+                  },
+                  title: 'Field Updated',
+                  subtitle: `${entityName}#${recordId}.${key}`,
+                },
+              })
+            })
+
+            // Refresh inspector
+            api.sendInspectorState(inspectorId)
+          }
+          else {
+            const key = path[1]
+            database.setEntityKey(entityName, recordId, key, state.value)
+
+            // Add timeline event
+            api.addTimelineEvent({
+              layerId: timelineLayerId,
+              event: {
+                time: Date.now(),
+                data: {
+                  entity: entityName,
+                  recordId,
+                  field: key,
+                  newValue: state.value,
+                },
+                title: 'Field Updated',
+                subtitle: `${entityName}#${recordId}.${key}`,
+              },
+            })
+
+            // Refresh inspector
+            api.sendInspectorState(inspectorId)
+          }
         }
       }
     })
