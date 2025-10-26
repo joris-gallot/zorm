@@ -116,7 +116,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
       }
     })
 
-    const addFieldUpdateEvent = (entityName: string, recordId: string, key: string, newValue: unknown) => {
+    const addFieldUpdateEvent = (entityName: string, recordId: string, key: string, newValue: unknown): void => {
       api.addTimelineEvent({
         layerId: timelineLayerId,
         event: {
@@ -133,7 +133,7 @@ export function setupZormDevtools(app: App, database: ZormDatabase): void {
       })
     }
 
-    const updateEntityField = (entityName: string, recordId: string, key: string, value: unknown) => {
+    const updateEntityField = (entityName: string, recordId: string, key: string, value: unknown): void => {
       database.setEntityKey(entityName, recordId, key, value)
       addFieldUpdateEvent(entityName, recordId, key, value)
     }
