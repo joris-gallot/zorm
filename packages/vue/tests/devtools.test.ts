@@ -531,5 +531,44 @@ describe('setupZormDevtools', () => {
 
       expect(mockDatabase.setEntityKey).toHaveBeenCalledWith('users', '1', 'email', 'newemail@example.com')
     })
+
+    it('should throw error for invalid record node path', () => {
+      setupZormDevtools(mockApp, mockDatabase)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: 'users-',
+        path: ['name'],
+        state: { value: 'test' },
+      }
+
+      expect(() => editInspectorStateCallback(payload)).toThrow('Invalid path for editing inspector state')
+    })
+
+    it('should throw error for invalid entity node path without recordId', () => {
+      setupZormDevtools(mockApp, mockDatabase)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: 'posts',
+        path: ['posts'],
+        state: { value: 'test' },
+      }
+
+      expect(() => editInspectorStateCallback(payload)).toThrow('Invalid path for editing inspector state')
+    })
+
+    it('should throw error for invalid entity node path with empty key', () => {
+      setupZormDevtools(mockApp, mockDatabase)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: 'posts',
+        path: ['posts#10', ''],
+        state: { value: 'test' },
+      }
+
+      expect(() => editInspectorStateCallback(payload)).toThrow('Invalid path for editing inspector state')
+    })
   })
 })
