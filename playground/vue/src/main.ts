@@ -5,7 +5,7 @@ import './style.css'
 
 const app = createApp(App)
 
-const zDb = JSON.parse(localStorage.getItem('zorm_database') ?? '{}')
+const zDb = JSON.parse(localStorage.getItem('zorm-database') ?? '{}')
 
 if (!Object.keys(zDb.user || {}).length) {
   postQuery.save([{
