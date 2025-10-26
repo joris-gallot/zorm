@@ -9,6 +9,7 @@ export default antfu(
       'unused-imports/no-unused-imports': 'error',
       'test/no-only-tests': 'error',
       'test/no-disabled-tests': 'error',
+      'node/prefer-global/process': 'off',
     },
   },
   {

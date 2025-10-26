@@ -39,8 +39,10 @@
     "@zorm-ts/core": "workspace:>=0.2.1",
     "vue": "catalog:vue"
   },
+  "dependencies": {
+    "@vue/devtools-api": "catalog:vue"
+  },
   "devDependencies": {
-    "@types/node": "catalog:types",
     "@vitejs/plugin-vue": "catalog:vue",
     "@vitest/browser-playwright": "catalog:test",
     "typescript": "catalog:types",
