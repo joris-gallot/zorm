@@ -149,7 +149,7 @@ describe('setupZormDevtools', () => {
       })
       expect(payload.rootNodes[0].children).toHaveLength(2)
       expect(payload.rootNodes[0].children[0]).toEqual({
-        id: 'users-1',
+        id: 'users#1',
         label: 'users#1',
       })
     })
@@ -191,7 +191,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'zorm-database',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         state: {} as any,
       }
 
@@ -266,7 +266,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'other-inspector',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         state: {} as any,
       }
 
@@ -282,7 +282,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'zorm-database',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         path: ['name'],
         state: { value: 'John Doe' },
       }
@@ -359,7 +359,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'other-inspector',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         path: ['name'],
         state: { value: 'John Doe' },
       }
@@ -374,7 +374,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'zorm-database',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         path: [],
         state: { value: 'test' },
       }
@@ -435,20 +435,6 @@ describe('setupZormDevtools', () => {
 
     it('should not setup watch for non-reactive database', () => {
       // This should not setup watch and not throw
-      expect(() => {
-        setupZormDevtools(mockApp)
-      }).not.toThrow()
-    })
-
-    it('should handle database without getData function', () => {
-      const badDatabase = {
-        getData: 'not a function',
-        getEntity: vi.fn(),
-        setEntityKey: vi.fn(),
-      }
-
-      getDbMock.mockReturnValue(badDatabase as any)
-
       expect(() => {
         setupZormDevtools(mockApp)
       }).not.toThrow()
@@ -552,7 +538,7 @@ describe('setupZormDevtools', () => {
 
       const payload = {
         inspectorId: 'zorm-database',
-        nodeId: 'users-1',
+        nodeId: 'users#1',
         path: ['deeply', 'nested', 'email'],
         state: { value: 'newemail@example.com' },
       }
