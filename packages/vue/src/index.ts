@@ -1,4 +1,4 @@
-import type { App } from 'vue'
+import type { App, Plugin } from 'vue'
 import type { VueDatabaseOptions } from './database'
 
 import { defineDatabase, getDb } from '@zorm-ts/core'
@@ -11,7 +11,7 @@ export function useReactiveDatabase(options?: VueDatabaseOptions): void {
   defineDatabase(new VueDatabase(options))
 }
 
-export default {
+export default <Plugin>{
   // istanbul ignore next
   install(app: App, options?: VueDatabaseOptions): void {
     useReactiveDatabase(options)
