@@ -19,7 +19,7 @@ jobs:
       - name: Setup Environment
         uses: ./.github/actions/setup
 
-      - name: Type check
+      - name: Typecheck
         run: pnpm typecheck
 
   tests:

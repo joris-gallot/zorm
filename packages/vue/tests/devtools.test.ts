@@ -30,6 +30,19 @@ vi.mock('@vue/devtools-api', () => ({
   setupDevtoolsPlugin: setupDevtoolsPluginMock,
 }))
 
+const { getDbMock } = vi.hoisted(() => {
+  const getDbMock = vi.fn()
+  return { getDbMock }
+})
+
+vi.mock('@zorm-ts/core', async () => {
+  const actual = await vi.importActual('@zorm-ts/core')
+  return {
+    ...actual,
+    getDb: getDbMock,
+  }
+})
+
 describe('setupZormDevtools', () => {
   let mockApp: App
   let mockDatabase: any
@@ -60,6 +73,8 @@ describe('setupZormDevtools', () => {
       setEntityKey: vi.fn(),
     }
 
+    getDbMock.mockReturnValue(mockDatabase)
+
     // Capture the callbacks
     mockApi.on.getInspectorTree.mockImplementation((callback) => {
       getInspectorTreeCallback = callback
@@ -73,7 +88,7 @@ describe('setupZormDevtools', () => {
   })
 
   it('should setup devtools plugin with correct config', () => {
-    setupZormDevtools(mockApp, mockDatabase)
+    setupZormDevtools(mockApp)
 
     expect(setupDevtoolsPluginMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -90,7 +105,7 @@ describe('setupZormDevtools', () => {
   })
 
   it('should add inspector with correct config', () => {
-    setupZormDevtools(mockApp, mockDatabase)
+    setupZormDevtools(mockApp)
 
     expect(mockApi.addInspector).toHaveBeenCalledWith({
       id: 'zorm-database',
@@ -100,7 +115,7 @@ describe('setupZormDevtools', () => {
   })
 
   it('should add timeline layer with correct config', () => {
-    setupZormDevtools(mockApp, mockDatabase)
+    setupZormDevtools(mockApp)
 
     expect(mockApi.addTimelineLayer).toHaveBeenCalledWith({
       id: 'zorm-operations',
@@ -111,7 +126,7 @@ describe('setupZormDevtools', () => {
 
   describe('getInspectorTree', () => {
     it('should return root nodes for correct inspector', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -140,7 +155,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should show gray tag for empty entities', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -157,7 +172,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should not modify payload for different inspector', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'other-inspector',
@@ -172,7 +187,7 @@ describe('setupZormDevtools', () => {
 
   describe('getInspectorState', () => {
     it('should return state for specific record', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -193,7 +208,7 @@ describe('setupZormDevtools', () => {
 
     it('should return early if entity not found for record', () => {
       mockDatabase.getEntity.mockReturnValue(null)
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -207,7 +222,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should return state for entity node', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -233,7 +248,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should return early if entity data not found', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -247,7 +262,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should not modify payload for different inspector', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'other-inspector',
@@ -263,7 +278,7 @@ describe('setupZormDevtools', () => {
 
   describe('editInspectorState', () => {
     it('should update field for specific record node', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -293,7 +308,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should update entire entity record from entity node', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -311,7 +326,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should update single field from entity node', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -340,7 +355,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should return early for different inspector', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'other-inspector',
@@ -355,7 +370,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should return early for empty path', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -395,7 +410,10 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       } as unknown as ZormDatabase
 
-      setupZormDevtools(mockApp, reactiveDatabase)
+      // Override getDb to return our reactive database
+      getDbMock.mockReturnValue(reactiveDatabase)
+
+      setupZormDevtools(mockApp)
 
       // Track initial calls
       const initialTreeCalls = mockApi.sendInspectorTree.mock.calls.length
@@ -418,7 +436,7 @@ describe('setupZormDevtools', () => {
     it('should not setup watch for non-reactive database', () => {
       // This should not setup watch and not throw
       expect(() => {
-        setupZormDevtools(mockApp, mockDatabase)
+        setupZormDevtools(mockApp)
       }).not.toThrow()
     })
 
@@ -429,8 +447,10 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       }
 
+      getDbMock.mockReturnValue(badDatabase as any)
+
       expect(() => {
-        setupZormDevtools(mockApp, badDatabase as any)
+        setupZormDevtools(mockApp)
       }).not.toThrow()
     })
 
@@ -441,8 +461,10 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       } as unknown as ZormDatabase
 
+      getDbMock.mockReturnValue(nullDatabase)
+
       expect(() => {
-        setupZormDevtools(mockApp, nullDatabase)
+        setupZormDevtools(mockApp)
       }).not.toThrow()
     })
 
@@ -453,8 +475,10 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       }
 
+      getDbMock.mockReturnValue(primitiveDatabase as any)
+
       expect(() => {
-        setupZormDevtools(mockApp, primitiveDatabase as any)
+        setupZormDevtools(mockApp)
       }).not.toThrow()
     })
 
@@ -465,8 +489,10 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       } as unknown as ZormDatabase
 
+      getDbMock.mockReturnValue(plainObjectDatabase)
+
       expect(() => {
-        setupZormDevtools(mockApp, plainObjectDatabase)
+        setupZormDevtools(mockApp)
       }).not.toThrow()
     })
   })
@@ -479,7 +505,9 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       } as unknown as ZormDatabase
 
-      setupZormDevtools(mockApp, emptyDatabase)
+      getDbMock.mockReturnValue(emptyDatabase)
+
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -500,7 +528,9 @@ describe('setupZormDevtools', () => {
         setEntityKey: vi.fn(),
       } as unknown as ZormDatabase
 
-      setupZormDevtools(mockApp, nullEntityDatabase)
+      getDbMock.mockReturnValue(nullEntityDatabase)
+
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -518,7 +548,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should handle deep path for record field update', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -533,7 +563,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should throw error for invalid record node path', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -546,7 +576,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should throw error for invalid entity node path without recordId', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
@@ -559,7 +589,7 @@ describe('setupZormDevtools', () => {
     })
 
     it('should throw error for invalid entity node path with empty key', () => {
-      setupZormDevtools(mockApp, mockDatabase)
+      setupZormDevtools(mockApp)
 
       const payload = {
         inspectorId: 'zorm-database',
