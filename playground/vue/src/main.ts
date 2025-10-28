@@ -1,9 +1,12 @@
+import zorm from '@zorm-ts/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { postQuery, userQuery } from './queries.js'
 import './style.css'
 
 const app = createApp(App)
+
+app.use(zorm)
 
 const zDb = JSON.parse(localStorage.getItem('zorm-database') ?? '{}')
 

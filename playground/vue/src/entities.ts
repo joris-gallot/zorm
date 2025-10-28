@@ -2,7 +2,7 @@ import { defineEntity } from '@zorm-ts/core'
 import { useReactiveDatabase } from '@zorm-ts/vue'
 import { z } from 'zod'
 
-useReactiveDatabase({ localStorage: true })
+useReactiveDatabase({ localStorage: false })
 
 export const User = defineEntity(
   'user',

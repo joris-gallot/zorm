@@ -3,6 +3,7 @@ import * as exports from '../src/index'
 
 const expectedExports = [
   'useReactiveDatabase',
+  'default',
   'VueDatabase',
 ]
 
