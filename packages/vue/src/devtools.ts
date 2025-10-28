@@ -9,6 +9,10 @@ export function setupZormDevtools(app: App): void {
   const timelineLayerId = 'zorm-operations'
   const database = getDb()
 
+  const getEntityKey = (entityName: string, recordId: number | string): string => {
+    return `${entityName}#${recordId}`
+  }
+
   setupDevtoolsPlugin({
     id: 'zorm-devtools-plugin',
     label: 'Zorm',
@@ -55,10 +59,14 @@ export function setupZormDevtools(app: App): void {
               backgroundColor: count > 0 ? 0x42B883 : 0x999999,
             },
           ],
-          children: Object.values(entityData || {}).map((record: ObjectWithId) => ({
-            id: `${entityName}-${record.id}`,
-            label: `${entityName}#${record.id}`,
-          })),
+          children: Object.values(entityData || {}).map((record: ObjectWithId) => {
+            const key = getEntityKey(entityName, record.id)
+
+            return {
+              id: key,
+              label: key,
+            }
+          }),
         }
       })
     })
@@ -71,17 +79,17 @@ export function setupZormDevtools(app: App): void {
 
       const dbData = database.getData()
 
-      // Check if it's a specific record (format: entityName-id)
-      if (payload.nodeId.includes('-')) {
-        const [entityName, recordId] = payload.nodeId.split('-')
+      // Check if it's a specific record (format: entityName#id)
+      if (payload.nodeId.includes('#')) {
+        const [entityName, recordId] = payload.nodeId.split('#')
         const entity = database.getEntity(entityName!, recordId!)
 
-        if (!entity) {
+        if (!entity || !entityName || !recordId) {
           return
         }
 
         payload.state = {
-          [`${entityName}#${recordId}`]: Object.entries(entity).map(([key, value]) => ({
+          [`${getEntityKey(entityName, recordId)}`]: Object.entries(entity).map(([key, value]) => ({
             key,
             value,
             editable: key !== 'id',
@@ -114,7 +122,7 @@ export function setupZormDevtools(app: App): void {
             },
           ],
           'Records': records.map((record: ObjectWithId) => ({
-            key: `${entityName}#${record.id}`,
+            key: getEntityKey(entityName, record.id),
             value: record,
             editable: true,
           })),
@@ -134,7 +142,7 @@ export function setupZormDevtools(app: App): void {
             newValue,
           },
           title: 'Field Updated',
-          subtitle: `${entityName}#${recordId}.${key}`,
+          subtitle: `${getEntityKey(entityName, recordId)}.${key}`,
         },
       })
     }
@@ -157,9 +165,9 @@ export function setupZormDevtools(app: App): void {
         return
       }
 
-      // Check if it's a specific record (format: entityName-id)
-      if (payload.nodeId.includes('-')) {
-        const [entityName, recordId] = payload.nodeId.split('-')
+      // Check if it's a specific record (format: entityName#id)
+      if (payload.nodeId.includes('#')) {
+        const [entityName, recordId] = payload.nodeId.split('#')
         const key = path[path.length - 1]
 
         if (!entityName || !recordId || !key) {
@@ -172,7 +180,7 @@ export function setupZormDevtools(app: App): void {
       else {
         const [entityName, recordId] = path[0]!.split('#')
 
-        if (!recordId || !entityName) {
+        if (!recordId || !entityName || !recordId) {
           throw new Error('Invalid path for editing inspector state', { cause: { path } })
         }
 
@@ -194,21 +202,12 @@ export function setupZormDevtools(app: App): void {
         }
       }
 
-      // Refresh inspector
       api.sendInspectorState(inspectorId)
     })
 
-    // Watch for database changes and notify inspector
-    if (typeof database.getData === 'function') {
-      const dbRef = database.getData()
-
-      // For Vue reactive database
-      if (dbRef && typeof dbRef === 'object' && '__v_isRef' in dbRef) {
-        watch(() => database.getData(), () => {
-          api.sendInspectorTree(inspectorId)
-          api.sendInspectorState(inspectorId)
-        }, { deep: true })
-      }
-    }
+    watch(() => database.getData(), () => {
+      api.sendInspectorTree(inspectorId)
+      api.sendInspectorState(inspectorId)
+    }, { deep: true })
   })
 }
