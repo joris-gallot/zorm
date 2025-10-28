@@ -1,11 +1,13 @@
-import type { ObjectWithId, ZormDatabase } from '@zorm-ts/core'
+import type { ObjectWithId } from '@zorm-ts/core'
 import type { App } from 'vue'
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
+import { getDb } from '@zorm-ts/core'
 import { watch } from 'vue'
 
-export function setupZormDevtools(app: App, database: ZormDatabase): void {
+export function setupZormDevtools(app: App): void {
   const inspectorId = 'zorm-database'
   const timelineLayerId = 'zorm-operations'
+  const database = getDb()
 
   setupDevtoolsPlugin({
     id: 'zorm-devtools-plugin',
