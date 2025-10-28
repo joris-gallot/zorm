@@ -229,6 +229,9 @@ importers:
         specifier: catalog:vue
         version: 3.5.13(typescript@5.9.3)
     devDependencies:
+      '@types/node':
+        specifier: catalog:types
+        version: 22.18.0
       '@vitejs/plugin-vue':
         specifier: catalog:vue
         version: 6.0.1(vite@7.1.12(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))(vue@3.5.13(typescript@5.9.3))
