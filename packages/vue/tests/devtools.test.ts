@@ -484,6 +484,47 @@ describe('setupZormDevtools', () => {
   })
 
   describe('edge cases', () => {
+    it('should return early if entityName is empty in getInspectorState', () => {
+      setupZormDevtools(mockApp)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: '#1',
+        state: {} as any,
+      }
+
+      getInspectorStateCallback(payload)
+
+      expect(payload.state).toEqual({})
+    })
+
+    it('should return early if recordId is empty in getInspectorState', () => {
+      setupZormDevtools(mockApp)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: 'users#',
+        state: {} as any,
+      }
+
+      getInspectorStateCallback(payload)
+
+      expect(payload.state).toEqual({})
+    })
+
+    it('should throw error if key is empty in editInspectorState for record node', () => {
+      setupZormDevtools(mockApp)
+
+      const payload = {
+        inspectorId: 'zorm-database',
+        nodeId: 'users#1',
+        path: [''],
+        state: { value: 'test' },
+      }
+
+      expect(() => editInspectorStateCallback(payload)).toThrow('Invalid path for editing inspector state')
+    })
+
     it('should handle empty database', () => {
       const emptyDatabase = {
         getData: vi.fn(() => ({})),
