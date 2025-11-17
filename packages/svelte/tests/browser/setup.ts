@@ -1,7 +1,6 @@
 import type { SvelteDatabaseOptions } from '../../src'
 import { defineEntity, defineQueryBuilder, LOCAL_STORAGE_KEY } from '@zorm-ts/core'
 import { z } from 'zod'
-import { zodEmail } from '../../../shared/zod'
 import { useReactiveDatabase } from '../../src'
 
 export const defaultDbData = {
@@ -71,7 +70,7 @@ export function setup({
     z.object({
       id: z.number(),
       name: z.string(),
-      email: zodEmail,
+      email: z.string().email(),
       age: z.number().optional(),
     }),
   )
