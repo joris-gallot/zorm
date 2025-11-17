@@ -92,8 +92,8 @@ catalogs:
       specifier: ^6.0.1
       version: 6.0.1
     '@vue/devtools-api':
-      specifier: ^8.0.3
-      version: 8.0.3
+      specifier: ^8.0.5
+      version: 8.0.5
     '@vue/tsconfig':
       specifier: ^0.8.1
       version: 0.8.1
@@ -215,7 +215,7 @@ importers:
     dependencies:
       '@vue/devtools-api':
         specifier: catalog:vue
-        version: 8.0.3
+        version: 8.0.5
       '@zorm-ts/core':
         specifier: workspace:>=0.2.3
         version: link:../core
@@ -1367,14 +1367,14 @@ packages:
   '@vue/compiler-vue2@2.7.16':
     resolution: {integrity: sha512-qYC3Psj9S/mfu9uVi5WvNZIzq+xnXMhOwbTFKKDD7b1lhpnn71jXSFdTQ+WsIEk0ONCd7VV2IMm7ONl6tbQ86A==}
 
-  '@vue/devtools-api@8.0.3':
-    resolution: {integrity: sha512-YxZE7xNvvfq5XmjJh1ml+CzVNrRjuZYCuT5Xjj0u9RlXU7za/MRuZDUXcKfp0j7IvYkDut49vlKqbiQ1xhXP2w==}
+  '@vue/devtools-api@8.0.5':
+    resolution: {integrity: sha512-DgVcW8H/Nral7LgZEecYFFYXnAvGuN9C3L3DtWekAncFBedBczpNW8iHKExfaM559Zm8wQWrwtYZ9lXthEHtDw==}
 
-  '@vue/devtools-kit@8.0.3':
-    resolution: {integrity: sha512-UF4YUOVGdfzXLCv5pMg2DxocB8dvXz278fpgEE+nJ/DRALQGAva7sj9ton0VWZ9hmXw+SV8yKMrxP2MpMhq9Wg==}
+  '@vue/devtools-kit@8.0.5':
+    resolution: {integrity: sha512-q2VV6x1U3KJMTQPUlRMyWEKVbcHuxhqJdSr6Jtjz5uAThAIrfJ6WVZdGZm5cuO63ZnSUz0RCsVwiUUb0mDV0Yg==}
 
-  '@vue/devtools-shared@8.0.3':
-    resolution: {integrity: sha512-s/QNll7TlpbADFZrPVsaUNPCOF8NvQgtgmmB7Tip6pLf/HcOvBTly0lfLQ0Eylu9FQ4OqBhFpLyBgwykiSf8zw==}
+  '@vue/devtools-shared@8.0.5':
+    resolution: {integrity: sha512-bRLn6/spxpmgLk+iwOrR29KrYnJjG9DGpHGkDFG82UM21ZpJ39ztUT9OXX3g+usW7/b2z+h46I9ZiYyB07XMXg==}
 
   '@vue/language-core@2.2.12':
     resolution: {integrity: sha512-IsGljWbKGU1MZpBPN+BvPAdr55YPkj2nB/TBNGNC32Vy2qLG25DYu/NBN2vNtZqdRbTRjaoYrahLrToim2NanA==}
@@ -4550,13 +4550,13 @@ snapshots:
       he: 1.2.0
     optional: true
 
-  '@vue/devtools-api@8.0.3':
+  '@vue/devtools-api@8.0.5':
     dependencies:
-      '@vue/devtools-kit': 8.0.3
+      '@vue/devtools-kit': 8.0.5
 
-  '@vue/devtools-kit@8.0.3':
+  '@vue/devtools-kit@8.0.5':
     dependencies:
-      '@vue/devtools-shared': 8.0.3
+      '@vue/devtools-shared': 8.0.5
       birpc: 2.6.1
       hookable: 5.5.3
       mitt: 3.0.1
@@ -4564,7 +4564,7 @@ snapshots:
       speakingurl: 14.0.1
       superjson: 2.2.2
 
-  '@vue/devtools-shared@8.0.3':
+  '@vue/devtools-shared@8.0.5':
     dependencies:
       rfdc: 1.4.1
 
