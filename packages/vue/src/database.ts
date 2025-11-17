@@ -48,10 +48,6 @@ export class VueDatabase implements ZormDatabase {
     this.db.value[entity]![value.id] = value
   }
 
-  public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    this.db.value[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
-  }
-
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     if (this.isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
       return

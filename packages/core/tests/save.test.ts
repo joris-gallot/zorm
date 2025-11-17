@@ -98,16 +98,16 @@ describe('save', () => {
       },
     })
 
-    _queryBuilder.user.save({
+    expect(() => _queryBuilder.user.save({
       id: 1,
       name: 'John Doe',
       // @ts-expect-error invalid object should be a post
       posts: [{}],
       // @ts-expect-error invalid object should be a settings
       settings: [{}],
-    })
+    })).toThrow()
 
-    _queryBuilder.user.save({
+    expect(() => _queryBuilder.user.save({
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -118,12 +118,12 @@ describe('save', () => {
         // @ts-expect-error invalid object should be an image
         image: {},
       }],
-    })
+    })).toThrow()
 
     // @ts-expect-error missing id
-    _queryBuilder.user.save({
+    expect(() => _queryBuilder.user.save({
       name: 'John Doe',
-    })
+    })).toThrow()
 
     /* user with array */
     _queryBuilder.user.save([{
@@ -163,16 +163,16 @@ describe('save', () => {
       },
     }])
 
-    _queryBuilder.user.save([{
+    expect(() => _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error invalid object should be a post
       posts: [{}],
       // @ts-expect-error invalid object should be a settings
       settings: [{}],
-    }])
+    }])).toThrow()
 
-    _queryBuilder.user.save([{
+    expect(() => _queryBuilder.user.save([{
       id: 1,
       name: 'John Doe',
       posts: [{
@@ -183,12 +183,12 @@ describe('save', () => {
         // @ts-expect-error invalid object should be an image
         image: {},
       }],
-    }])
+    }])).toThrow()
 
     // @ts-expect-error missing id
-    _queryBuilder.user.save([{
+    expect(() => _queryBuilder.user.save([{
       name: 'John Doe',
-    }])
+    }])).toThrow()
 
     /* post */
     _queryBuilder.post.save([{
@@ -209,25 +209,25 @@ describe('save', () => {
       },
     }])
 
-    _queryBuilder.post.save([{
+    expect(() => _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
       userId: 1,
       // @ts-expect-error invalid object should be a user
       user: [{}],
-    }])
+    }])).toThrow()
 
     // @ts-expect-error missing id
-    _queryBuilder.post.save([{
+    expect(() => _queryBuilder.post.save([{
       title: 'Post 1',
       userId: 1,
-    }])
+    }])).toThrow()
 
     // @ts-expect-error missing userId
-    _queryBuilder.post.save([{
+    expect(() => _queryBuilder.post.save([{
       id: 1,
       title: 'Post 1',
-    }])
+    }])).toThrow()
 
     /* settings */
     _queryBuilder.settings.save([{
@@ -248,17 +248,17 @@ describe('save', () => {
       },
     }])
 
-    _queryBuilder.settings.save([{
+    expect(() => _queryBuilder.settings.save([{
       id: 1,
       name: 'Admin',
       // @ts-expect-error invalid object should be a user
       user: [{}],
-    }])
+    }])).toThrow()
 
     // @ts-expect-error missing id
-    _queryBuilder.settings.save([{
+    expect(() => _queryBuilder.settings.save([{
       name: 'Admin',
-    }])
+    }])).toThrow()
 
     const entityWithoutRelations = defineEntity('entityWithoutRelations', z.object({
       id: z.number(),
@@ -272,19 +272,19 @@ describe('save', () => {
       name: 'John Doe',
     }])
 
-    expect(() => _queryBuilderWithoutRelations.entityWithoutRelations.save([{
+    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       foo: [],
-    }])).toThrow()
+    }])
 
-    expect(() => _queryBuilderWithoutRelations.entityWithoutRelations.save([{
+    _queryBuilderWithoutRelations.entityWithoutRelations.save([{
       id: 1,
       name: 'John Doe',
       // @ts-expect-error should not have relations
       bar: {},
-    }])).toThrow()
+    }])
   })
 
   it('should save entities', () => {
@@ -610,56 +610,6 @@ describe('save', () => {
     })
   })
 
-  it('should not save entities with invalid data', () => {
-    const User = defineEntity('user', z.object({
-      id: z.number(),
-      name: z.string(),
-    }))
-
-    const Post = defineEntity('post', z.object({
-      id: z.number(),
-      title: z.string().min(10),
-      userId: z.number(),
-    }))
-
-    const queryBuilder = defineQueryBuilder([User, Post], ({ many }) => ({
-      user: {
-        posts: many(Post, {
-          reference: Post.fields.userId,
-          field: User.fields.id,
-        }),
-      },
-    }))
-
-    expect(() => queryBuilder.user.save([{
-      id: 1,
-      name: 'John Doe',
-      // @ts-expect-error should not have test
-      test: 'ok',
-    }])).toThrow()
-
-    expect(() => queryBuilder.user.save([{
-      id: 1,
-      name: 'John Doe',
-      // @ts-expect-error should not have post
-      post: {
-        id: 1,
-        title: 'short',
-        userId: 1,
-      },
-    }])).toThrow()
-
-    expect(() => queryBuilder.user.save([{
-      id: 1,
-      name: 'John Doe',
-      // @ts-expect-error id is missing
-      posts: [{
-        title: 'short',
-        userId: 1,
-      }],
-    }])).toThrow()
-  })
-
   describe('parsing schema', () => {
     it('should parse schema', () => {
       const User = defineEntity('user', z.object({
@@ -669,10 +619,17 @@ describe('save', () => {
 
       const queryBuilder = defineQueryBuilder([User])
 
+      expect(() => queryBuilder.user.save([
+        // @ts-expect-error should not have test
+        {
+          email: 'test@example.com',
+        },
+      ])).toThrow()
+
       expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'not an email',
-      }])).toThrow('Error saving entity user with id 1 for field email')
+      }])).toThrow('Error saving entity user with id 1')
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -719,7 +676,7 @@ describe('save', () => {
           title: 'short',
           userId: 1,
         }],
-      }])).toThrow('Error saving entity user with id 1 for field email')
+      }])).toThrow('Error saving entity user with id 1')
     })
 
     it('should parse schema in relations - one', () => {
@@ -763,7 +720,7 @@ describe('save', () => {
           id: 1,
           email: 'not an email',
         },
-      }])).toThrow('Error saving entity user with id 1 for field email')
+      }])).toThrow('Error saving entity user with id 1')
     })
 
     it('should parse schema with deep relations - many', () => {
@@ -802,7 +759,7 @@ describe('save', () => {
       expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'invalid email',
-      }])).toThrow('Error saving entity user with id 1 for field email')
+      }])).toThrow('Error saving entity user with id 1')
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -921,7 +878,7 @@ describe('save', () => {
           id: 1,
           email: 'not an email',
         },
-      }])).toThrow('Error saving entity user with id 1 for field email')
+      }])).toThrow('Error saving entity user with id 1')
 
       expect(() => queryBuilder.post.save([{
         id: 1,

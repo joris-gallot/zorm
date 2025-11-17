@@ -55,10 +55,6 @@ export class SolidjsDatabase implements ZormDatabase {
     this.setDb(entity, String(value.id), value)
   }
 
-  public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    this.setDb(entity, String(id), key, value as ObjectWithId[keyof ObjectWithId])
-  }
-
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     if (this.isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
       return

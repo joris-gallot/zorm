@@ -7,7 +7,6 @@ export interface ZormDatabase {
   getAll: (entity: string) => ObjectWithId[]
   getEntity: (entity: string, id: ObjectWithId['id']) => ObjectWithId | null
   setEntity: (entity: string, value: ObjectWithId) => void
-  setEntityKey: (entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown) => void
   setData: (db: Record<string, Record<string, ObjectWithId>>) => void
   getData: () => Record<string, Record<string, ObjectWithId>>
 }
@@ -31,10 +30,6 @@ export class DefaultDatabase implements ZormDatabase {
 
   public setEntity(entity: string, value: ObjectWithId): void {
     this.db[entity]![value.id] = value
-  }
-
-  public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    this.db[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
   }
 
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {

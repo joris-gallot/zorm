@@ -262,44 +262,33 @@ function parseAndSaveEntity<E extends Entity<any, any>>(
     relations: Relations<any>
   },
 ): void {
+  try {
+    const validatedData = entity.zodSchema.parse(data)
+    db.setEntity(entity.name, validatedData)
+  }
+  catch (e) {
+    throw new Error(`Error saving entity ${entity.name} with id ${data.id}`, { cause: e })
+  }
+
   const myRelations = relations[entity.name] || {}
   const relationsNames = Object.keys(myRelations)
+  const relationKeys = Object.keys(data).filter(key => relationsNames.includes(key))
 
-  db.setEntity(entity.name, { id: data.id })
+  for (const key of relationKeys) {
+    const relation = myRelations[key] as Relation
 
-  for (const key of Object.keys(data)) {
-    if (relationsNames.includes(key)) {
-      const relation = myRelations[key] as Relation
+    // @ts-expect-error key is a string, but we can use it to index the object
+    const relationObject = data[key]! as ObjectWithId | ObjectWithId[]
 
-      // @ts-expect-error key is a string, but we can use it to index the object
-      const relationObject = data[key]! as ObjectWithId | ObjectWithId[]
-
-      // Handle array relations (many)
-      if (Array.isArray(relationObject)) {
-        for (const refEntity of relationObject) {
-          parseAndSaveEntity({ entity: relation.reference.entity, data: refEntity, relations })
-        }
-      }
-      // Handle single relations (one)
-      else {
-        parseAndSaveEntity({ entity: relation.reference.entity, data: relationObject, relations })
+    // Handle array relations (many)
+    if (Array.isArray(relationObject)) {
+      for (const refEntity of relationObject) {
+        parseAndSaveEntity({ entity: relation.reference.entity, data: refEntity, relations })
       }
     }
-    // else handle regular properties
+    // Handle single relations (one)
     else {
-      const k = key as keyof ShapeToFields<ZodSchemaWithId>
-
-      if (!entity.fields[k]) {
-        throw new Error(`Field ${k} not found on entity ${entity.name}`)
-      }
-
-      try {
-        const validatedData = entity.fields[k].zodType.parse(data[k])
-        db.setEntityKey(entity.name, data.id, k, validatedData)
-      }
-      catch (e) {
-        throw new Error(`Error saving entity ${entity.name} with id ${data.id} for field ${k}`, { cause: e })
-      }
+      parseAndSaveEntity({ entity: relation.reference.entity, data: relationObject, relations })
     }
   }
 }

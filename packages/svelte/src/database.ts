@@ -59,11 +59,6 @@ export class SvelteDatabase implements ZormDatabase {
     this.update()
   }
 
-  public setEntityKey(entity: string, id: ObjectWithId['id'], key: keyof ObjectWithId, value: unknown): void {
-    this.db[entity]![id]![key] = value as ObjectWithId[keyof ObjectWithId]
-    this.update()
-  }
-
   public setData(db: Record<string, Record<string, ObjectWithId>>): void {
     if (this.isLocalStorage && localStorage.getItem(LOCAL_STORAGE_KEY)) {
       return
