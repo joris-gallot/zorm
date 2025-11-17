@@ -293,7 +293,13 @@ function parseAndSaveEntity<E extends Entity<any, any>>(
         throw new Error(`Field ${k} not found on entity ${entity.name}`)
       }
 
-      db.setEntityKey(entity.name, data.id, k, entity.fields[k].zodType.parse(data[k]))
+      try {
+        const validatedData = entity.fields[k].zodType.parse(data[k])
+        db.setEntityKey(entity.name, data.id, k, validatedData)
+      }
+      catch (e) {
+        throw new Error(`Error saving entity ${entity.name} with id ${data.id} for field ${k}`, { cause: e })
+      }
     }
   }
 }

@@ -672,7 +672,7 @@ describe('save', () => {
       expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'not an email',
-      }])).toThrow('Invalid email')
+      }])).toThrow('Error saving entity user with id 1 for field email')
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -719,7 +719,7 @@ describe('save', () => {
           title: 'short',
           userId: 1,
         }],
-      }])).toThrow('Invalid email')
+      }])).toThrow('Error saving entity user with id 1 for field email')
     })
 
     it('should parse schema in relations - one', () => {
@@ -763,7 +763,7 @@ describe('save', () => {
           id: 1,
           email: 'not an email',
         },
-      }])).toThrow('Invalid email')
+      }])).toThrow('Error saving entity user with id 1 for field email')
     })
 
     it('should parse schema with deep relations - many', () => {
@@ -802,7 +802,7 @@ describe('save', () => {
       expect(() => queryBuilder.user.save([{
         id: 1,
         email: 'invalid email',
-      }])).toThrow('Invalid email')
+      }])).toThrow('Error saving entity user with id 1 for field email')
 
       expect(() => queryBuilder.user.save([{
         id: 1,
@@ -921,7 +921,7 @@ describe('save', () => {
           id: 1,
           email: 'not an email',
         },
-      }])).toThrow('Invalid email')
+      }])).toThrow('Error saving entity user with id 1 for field email')
 
       expect(() => queryBuilder.post.save([{
         id: 1,
