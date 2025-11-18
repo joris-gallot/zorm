@@ -34,7 +34,7 @@ catalogs:
     vitest: ^4.0.9
   types:
     "@tsconfig/node22": ^22.0.3
-    "@types/node": ^22.19.0
+    "@types/node": ^24.10.1
     typescript: ^5.9.3
   vue:
     "@vitejs/plugin-vue": ^6.0.1
