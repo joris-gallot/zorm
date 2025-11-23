@@ -26,12 +26,12 @@ catalogs:
     svelte-check: ^4.3.4
     vitest-browser-svelte: ^2.0.1
   test:
-    "@vitest/browser": ^4.0.9
-    "@vitest/coverage-istanbul": ^4.0.9
-    "@vitest/ui": ^4.0.9
-    "@vitest/browser-playwright": ^4.0.9
+    "@vitest/browser": ^4.0.13
+    "@vitest/coverage-istanbul": ^4.0.13
+    "@vitest/ui": ^4.0.13
+    "@vitest/browser-playwright": ^4.0.13
     playwright: ^1.56.1
-    vitest: ^4.0.9
+    vitest: ^4.0.13
   types:
     "@tsconfig/node22": ^22.0.5
     "@types/node": ^24.10.1
