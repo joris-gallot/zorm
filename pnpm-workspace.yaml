@@ -20,7 +20,7 @@ catalogs:
     vite-plugin-solid: ^2.11.10
   svelte:
     "@sveltejs/adapter-auto": ^7.0.0
-    "@sveltejs/kit": ^2.49.5
+    "@sveltejs/kit": ^2.50.0
     "@sveltejs/vite-plugin-svelte": ^6.2.4
     svelte: ">=5.0.0"
     svelte-check: ^4.3.5
