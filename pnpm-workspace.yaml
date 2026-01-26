@@ -42,4 +42,4 @@ catalogs:
     "@vue/devtools-api": "^8.0.5"
     vitest-browser-vue: ^2.0.2
     vue: ">=3.2.25"
-    vue-tsc: ^3.2.2
+    vue-tsc: ^3.2.4
